@@ -1,8 +1,8 @@
 namespace Robin;
 
-public readonly struct Token(TokenType type, int start, int length)
+public readonly struct ExpressionToken(ExpressionType type, int start, int length)
 {
-    public TokenType Type => type;
+    public ExpressionType Type => type;
     public int Start => start;
     public int Length => length;
 

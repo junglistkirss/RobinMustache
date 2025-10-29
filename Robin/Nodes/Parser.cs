@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Nodes;
 
@@ -15,10 +16,10 @@ public static class Parser
                     nodes.Add(new TextNode(lexer.GetValue(token.Value)));
                     break;
                 case TokenType.Variable:
-                    nodes.Add(ParseVariable(lexer.GetValue(token.Value), false));
+                    nodes.Add(ParseExpression(lexer.GetValue(token.Value), false));
                     break;
                 case TokenType.UnescapedVariable:
-                    nodes.Add(ParseVariable(lexer.GetValue(token.Value), true));
+                    nodes.Add(ParseExpression(lexer.GetValue(token.Value), true));
                     break;
                 case TokenType.SectionOpen:
                     nodes.Add(ParseSection(ref lexer, token.Value, false));
@@ -38,7 +39,7 @@ public static class Parser
         return [.. nodes];
     }
 
-    private static INode ParseVariable(ReadOnlyMemory<char> variableExpression, bool isEscaped)
+    private static INode ParseExpression(ReadOnlyMemory<char> variableExpression, bool isEscaped)
     {
         return new VariableNode(variableExpression, isEscaped);
     } 
@@ -52,7 +53,7 @@ public static class Parser
             ReadOnlyMemory<char> beforeSpace = name[..spaceIndex];
             ReadOnlyMemory<char> afterSpace = name[(spaceIndex + 1)..];
             // this is an helper
-            return new HelperNode(beforeSpace, ParseVariable(afterSpace, false));
+            return new HelperNode(beforeSpace, ParseExpression(afterSpace, false));
         }
         else
         {
@@ -68,10 +69,10 @@ public static class Parser
                         nodes.Add(new TextNode(lexer.GetValue(token.Value)));
                         break;
                     case TokenType.Variable:
-                        nodes.Add(ParseVariable(lexer.GetValue(token.Value), false));
+                        nodes.Add(ParseExpression(lexer.GetValue(token.Value), false));
                         break;
                     case TokenType.UnescapedVariable:
-                        nodes.Add(ParseVariable(lexer.GetValue(token.Value), true));
+                        nodes.Add(ParseExpression(lexer.GetValue(token.Value), true));
                         break;
                     case TokenType.SectionOpen:
                         nodes.Add(ParseSection(ref lexer, token.Value, false));
@@ -91,4 +92,5 @@ public static class Parser
         }
     }
 }
+
 

@@ -20,13 +20,13 @@ public class LexerTests
         Token[] txt = [.. tokens.Where(x => x.Type == TokenType.Text)];
         Assert.Equal(8, txt.Length);
         Assert.Equal("Hello ", txt[0].GetValue(source).Span);
-        Assert.Equal("!\n", txt[1].GetValue(source).Span);
-        Assert.Equal("\n  - ", txt[2].GetValue(source).Span);
+        Assert.Equal($"!{Environment.NewLine}", txt[1].GetValue(source).Span);
+        Assert.Equal($"{Environment.NewLine}  - ", txt[2].GetValue(source).Span);
         Assert.Equal(": ", txt[3].GetValue(source).Span);
-        Assert.Equal("\n", txt[4].GetValue(source).Span);
+        Assert.Equal(Environment.NewLine, txt[4].GetValue(source).Span);
         Assert.Equal("Missing item", txt[5].GetValue(source).Span);
-        Assert.Equal("\n", txt[6].GetValue(source).Span);
-        Assert.Equal("\n", txt[7].GetValue(source).Span);
+        Assert.Equal(Environment.NewLine, txt[6].GetValue(source).Span);
+        Assert.Equal(Environment.NewLine, txt[7].GetValue(source).Span);
 
         Token[] vars = [.. tokens.Where(x => x.Type == TokenType.Variable)];
         Assert.Equal(2, vars.Length);
