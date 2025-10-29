@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CoverageSession>
-  <Summary numSequencePoints="126" visitedSequencePoints="102" numBranchPoints="54" visitedBranchPoints="42" sequenceCoverage="80.95" branchCoverage="77.77" maxCyclomaticComplexity="58" minCyclomaticComplexity="58" visitedClasses="2" numClasses="2" visitedMethods="7" numMethods="8" />
+  <Summary numSequencePoints="212" visitedSequencePoints="102" numBranchPoints="104" visitedBranchPoints="42" sequenceCoverage="48.11" branchCoverage="40.38" maxCyclomaticComplexity="121" minCyclomaticComplexity="121" visitedClasses="3" numClasses="9" visitedMethods="7" numMethods="26" />
   <Modules>
-    <Module hash="1B54D951-417F-43DE-B129-2CBE64190C25">
+    <Module hash="419D8AD0-FB0D-4127-ADAF-59BF39EB3783">
       <ModulePath>Robin.dll</ModulePath>
-      <ModuleTime>2025-10-29T12:07:59</ModuleTime>
+      <ModuleTime>2025-10-29T02:49:34</ModuleTime>
       <ModuleName>Robin</ModuleName>
       <Files>
         <File uid="1" fullPath="/config/workspace/Robin/Robin/Lexer.cs" />
         <File uid="2" fullPath="/config/workspace/Robin/Robin/Token.cs" />
+        <File uid="3" fullPath="/config/workspace/Robin/Robin/Tokenizer.cs" />
+        <File uid="4" fullPath="/config/workspace/Robin/Robin/Nodes/Context.cs" />
+        <File uid="5" fullPath="/config/workspace/Robin/Robin/Nodes/HelperNode.cs" />
+        <File uid="6" fullPath="/config/workspace/Robin/Robin/Nodes/Node.cs" />
+        <File uid="7" fullPath="/config/workspace/Robin/Robin/Nodes/SectionNode.cs" />
+        <File uid="8" fullPath="/config/workspace/Robin/Robin/Nodes/TextNode.cs" />
+        <File uid="9" fullPath="/config/workspace/Robin/Robin/Nodes/VariableNode.cs" />
       </Files>
       <Classes>
         <Class>
-          <Summary numSequencePoints="117" visitedSequencePoints="96" numBranchPoints="54" visitedBranchPoints="42" sequenceCoverage="82.05" branchCoverage="77.77" maxCyclomaticComplexity="34" minCyclomaticComplexity="1" visitedClasses="1" numClasses="1" visitedMethods="5" numMethods="5" />
+          <Summary numSequencePoints="111" visitedSequencePoints="87" numBranchPoints="52" visitedBranchPoints="40" sequenceCoverage="78.37" branchCoverage="76.92" maxCyclomaticComplexity="34" minCyclomaticComplexity="1" visitedClasses="1" numClasses="1" visitedMethods="4" numMethods="5" />
           <FullName>Robin.Lexer</FullName>
           <Methods>
             <Method cyclomaticComplexity="6" nPathComplexity="6" sequenceCoverage="71.42" branchCoverage="83.33" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
@@ -204,27 +211,18 @@
               </BranchPoints>
               <MethodPoint vc="16" uspid="0" p8:type="SequencePoint" ordinal="2" offset="2" sc="0" sl="146" ec="1" el="164" bec="0" bev="0" fileid="1" xmlns:p8="xsi" />
             </Method>
-            <Method cyclomaticComplexity="2" nPathComplexity="2" sequenceCoverage="100" branchCoverage="100" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
-              <Summary numSequencePoints="9" visitedSequencePoints="9" numBranchPoints="2" visitedBranchPoints="2" sequenceCoverage="100" branchCoverage="100" maxCyclomaticComplexity="2" minCyclomaticComplexity="2" visitedClasses="0" numClasses="0" visitedMethods="1" numMethods="1" />
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="3" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
               <MetadataToken />
-              <Name>Robin.Token[] Robin.Lexer::Tokenize(System.ReadOnlySpan`1&lt;System.Char&gt;)</Name>
+              <Name>System.ReadOnlyMemory`1&lt;System.Char&gt; Robin.Lexer::GetValue(Robin.Token)</Name>
               <FileRef uid="1" />
               <SequencePoints>
-                <SequencePoint vc="1" uspid="168" ordinal="0" sl="168" sc="1" el="168" ec="2" bec="0" bev="0" fileid="1" />
-                <SequencePoint vc="1" uspid="169" ordinal="1" sl="169" sc="1" el="169" ec="2" bec="0" bev="0" fileid="1" />
-                <SequencePoint vc="1" uspid="170" ordinal="2" sl="170" sc="1" el="170" ec="2" bec="0" bev="0" fileid="1" />
-                <SequencePoint vc="17" uspid="172" ordinal="3" sl="172" sc="1" el="172" ec="2" bec="2" bev="2" fileid="1" />
-                <SequencePoint vc="16" uspid="173" ordinal="4" sl="173" sc="1" el="173" ec="2" bec="0" bev="0" fileid="1" />
-                <SequencePoint vc="16" uspid="174" ordinal="5" sl="174" sc="1" el="174" ec="2" bec="0" bev="0" fileid="1" />
-                <SequencePoint vc="16" uspid="175" ordinal="6" sl="175" sc="1" el="175" ec="2" bec="0" bev="0" fileid="1" />
-                <SequencePoint vc="1" uspid="177" ordinal="7" sl="177" sc="1" el="177" ec="2" bec="0" bev="0" fileid="1" />
-                <SequencePoint vc="1" uspid="178" ordinal="8" sl="178" sc="1" el="178" ec="2" bec="0" bev="0" fileid="1" />
+                <SequencePoint vc="0" uspid="166" ordinal="0" sl="166" sc="1" el="166" ec="2" bec="0" bev="0" fileid="1" />
+                <SequencePoint vc="0" uspid="167" ordinal="1" sl="167" sc="1" el="167" ec="2" bec="0" bev="0" fileid="1" />
+                <SequencePoint vc="0" uspid="168" ordinal="2" sl="168" sc="1" el="168" ec="2" bec="0" bev="0" fileid="1" />
               </SequencePoints>
-              <BranchPoints>
-                <BranchPoint vc="16" uspid="172" ordinal="0" path="0" offset="26" offsetend="28" sl="172" fileid="1" />
-                <BranchPoint vc="1" uspid="172" ordinal="1" path="1" offset="26" offsetend="46" sl="172" fileid="1" />
-              </BranchPoints>
-              <MethodPoint vc="9" uspid="0" p8:type="SequencePoint" ordinal="3" offset="3" sc="0" sl="168" ec="1" el="178" bec="0" bev="0" fileid="1" xmlns:p8="xsi" />
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="3" offset="3" sc="0" sl="166" ec="1" el="168" bec="0" bev="0" fileid="1" xmlns:p8="xsi" />
             </Method>
             <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="100" branchCoverage="100" isConstructor="True" isGetter="False" isSetter="False" isStatic="True">
               <Summary numSequencePoints="4" visitedSequencePoints="4" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="100" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="1" numMethods="1" />
@@ -249,7 +247,7 @@
             <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="100" branchCoverage="100" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
               <Summary numSequencePoints="3" visitedSequencePoints="3" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="100" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="1" numMethods="1" />
               <MetadataToken />
-              <Name>System.ReadOnlySpan`1&lt;System.Char&gt; Robin.Token::GetValue(System.ReadOnlySpan`1&lt;System.Char&gt;)</Name>
+              <Name>System.ReadOnlyMemory`1&lt;System.Char&gt; Robin.Token::GetValue(System.ReadOnlySpan`1&lt;System.Char&gt;)</Name>
               <FileRef uid="2" />
               <SequencePoints>
                 <SequencePoint vc="16" uspid="10" ordinal="0" sl="10" sc="1" el="10" ec="2" bec="0" bev="0" fileid="2" />
@@ -284,6 +282,378 @@
               </SequencePoints>
               <BranchPoints />
               <MethodPoint vc="3" uspid="0" p8:type="SequencePoint" ordinal="2" offset="2" sc="0" sl="5" ec="1" el="7" bec="0" bev="0" fileid="2" xmlns:p8="xsi" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="9" visitedSequencePoints="9" numBranchPoints="2" visitedBranchPoints="2" sequenceCoverage="100" branchCoverage="100" maxCyclomaticComplexity="2" minCyclomaticComplexity="2" visitedClasses="1" numClasses="1" visitedMethods="1" numMethods="1" />
+          <FullName>Robin.Tokenizer</FullName>
+          <Methods>
+            <Method cyclomaticComplexity="2" nPathComplexity="2" sequenceCoverage="100" branchCoverage="100" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="9" visitedSequencePoints="9" numBranchPoints="2" visitedBranchPoints="2" sequenceCoverage="100" branchCoverage="100" maxCyclomaticComplexity="2" minCyclomaticComplexity="2" visitedClasses="0" numClasses="0" visitedMethods="1" numMethods="1" />
+              <MetadataToken />
+              <Name>Robin.Token[] Robin.Tokenizer::Tokenize(System.ReadOnlySpan`1&lt;System.Char&gt;)</Name>
+              <FileRef uid="3" />
+              <SequencePoints>
+                <SequencePoint vc="1" uspid="6" ordinal="0" sl="6" sc="1" el="6" ec="2" bec="0" bev="0" fileid="3" />
+                <SequencePoint vc="1" uspid="7" ordinal="1" sl="7" sc="1" el="7" ec="2" bec="0" bev="0" fileid="3" />
+                <SequencePoint vc="1" uspid="8" ordinal="2" sl="8" sc="1" el="8" ec="2" bec="0" bev="0" fileid="3" />
+                <SequencePoint vc="17" uspid="10" ordinal="3" sl="10" sc="1" el="10" ec="2" bec="2" bev="2" fileid="3" />
+                <SequencePoint vc="16" uspid="11" ordinal="4" sl="11" sc="1" el="11" ec="2" bec="0" bev="0" fileid="3" />
+                <SequencePoint vc="16" uspid="12" ordinal="5" sl="12" sc="1" el="12" ec="2" bec="0" bev="0" fileid="3" />
+                <SequencePoint vc="16" uspid="13" ordinal="6" sl="13" sc="1" el="13" ec="2" bec="0" bev="0" fileid="3" />
+                <SequencePoint vc="1" uspid="15" ordinal="7" sl="15" sc="1" el="15" ec="2" bec="0" bev="0" fileid="3" />
+                <SequencePoint vc="1" uspid="16" ordinal="8" sl="16" sc="1" el="16" ec="2" bec="0" bev="0" fileid="3" />
+              </SequencePoints>
+              <BranchPoints>
+                <BranchPoint vc="16" uspid="10" ordinal="0" path="0" offset="26" offsetend="28" sl="10" fileid="3" />
+                <BranchPoint vc="1" uspid="10" ordinal="1" path="1" offset="26" offsetend="46" sl="10" fileid="3" />
+              </BranchPoints>
+              <MethodPoint vc="9" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="6" ec="1" el="16" bec="0" bev="0" fileid="3" xmlns:p8="xsi" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="4" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="1" visitedMethods="0" numMethods="3" />
+          <FullName>Robin.Nodes.Context</FullName>
+          <Methods>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Collections.Generic.Dictionary`2&lt;System.String,System.Action`3&lt;Robin.Nodes.Context,Robin.Nodes.INode[],System.Text.StringBuilder&gt;&gt; Robin.Nodes.Context::get_Helpers()</Name>
+              <FileRef uid="4" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="8" ordinal="0" sl="8" sc="1" el="8" ec="2" bec="0" bev="0" fileid="4" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="8" ec="1" el="8" bec="0" bev="0" fileid="4" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Boolean Robin.Nodes.Context::TryResolve(System.String,System.Object&amp;)</Name>
+              <FileRef uid="4" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="10" ordinal="0" sl="10" sc="1" el="10" ec="2" bec="0" bev="0" fileid="4" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="1" offset="1" sc="0" sl="10" ec="1" el="10" bec="0" bev="0" fileid="4" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="True" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="2" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Void Robin.Nodes.Context::.ctor(System.Collections.Generic.IReadOnlyDictionary`2&lt;System.String,System.Object&gt;)</Name>
+              <FileRef uid="4" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="5" ordinal="0" sl="5" sc="1" el="5" ec="2" bec="0" bev="0" fileid="4" />
+                <SequencePoint vc="0" uspid="7" ordinal="1" sl="7" sc="1" el="7" ec="2" bec="0" bev="0" fileid="4" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="2" offset="2" sc="0" sl="5" ec="1" el="7" bec="0" bev="0" fileid="4" xmlns:p8="xsi" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="8" visitedSequencePoints="0" numBranchPoints="2" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="2" minCyclomaticComplexity="1" visitedClasses="0" numClasses="1" visitedMethods="0" numMethods="3" />
+          <FullName>Robin.Nodes.HelperNode</FullName>
+          <Methods>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.ReadOnlyMemory`1&lt;System.Char&gt; Robin.Nodes.HelperNode::get_Name()</Name>
+              <FileRef uid="5" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="7" ordinal="0" sl="7" sc="1" el="7" ec="2" bec="0" bev="0" fileid="5" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="7" ec="1" el="7" bec="0" bev="0" fileid="5" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Collections.Generic.List`1&lt;Robin.Nodes.INode&gt; Robin.Nodes.HelperNode::get_Arguments()</Name>
+              <FileRef uid="5" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="8" ordinal="0" sl="8" sc="1" el="8" ec="2" bec="0" bev="0" fileid="5" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="1" offset="1" sc="0" sl="8" ec="1" el="8" bec="0" bev="0" fileid="5" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="2" nPathComplexity="2" sequenceCoverage="0" branchCoverage="0" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="6" visitedSequencePoints="0" numBranchPoints="2" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="2" minCyclomaticComplexity="2" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Void Robin.Nodes.HelperNode::Render(Robin.Nodes.Context,System.Text.StringBuilder)</Name>
+              <FileRef uid="5" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="11" ordinal="0" sl="11" sc="1" el="11" ec="2" bec="0" bev="0" fileid="5" />
+                <SequencePoint vc="0" uspid="12" ordinal="1" sl="12" sc="1" el="12" ec="2" bec="2" bev="0" fileid="5" />
+                <SequencePoint vc="0" uspid="13" ordinal="2" sl="13" sc="1" el="13" ec="2" bec="0" bev="0" fileid="5" />
+                <SequencePoint vc="0" uspid="14" ordinal="3" sl="14" sc="1" el="14" ec="2" bec="0" bev="0" fileid="5" />
+                <SequencePoint vc="0" uspid="15" ordinal="4" sl="15" sc="1" el="15" ec="2" bec="0" bev="0" fileid="5" />
+                <SequencePoint vc="0" uspid="16" ordinal="5" sl="16" sc="1" el="16" ec="2" bec="0" bev="0" fileid="5" />
+              </SequencePoints>
+              <BranchPoints>
+                <BranchPoint vc="0" uspid="12" ordinal="0" path="0" offset="36" offsetend="38" sl="12" fileid="5" />
+                <BranchPoint vc="0" uspid="12" ordinal="1" path="1" offset="36" offsetend="60" sl="12" fileid="5" />
+              </BranchPoints>
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="2" offset="2" sc="0" sl="11" ec="1" el="16" bec="0" bev="0" fileid="5" xmlns:p8="xsi" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="44" visitedSequencePoints="0" numBranchPoints="24" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="14" minCyclomaticComplexity="10" visitedClasses="0" numClasses="1" visitedMethods="0" numMethods="2" />
+          <FullName>Robin.Nodes.Parser</FullName>
+          <Methods>
+            <Method cyclomaticComplexity="10" nPathComplexity="10" sequenceCoverage="0" branchCoverage="0" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="20" visitedSequencePoints="0" numBranchPoints="10" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="10" minCyclomaticComplexity="10" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Collections.Immutable.ImmutableArray`1&lt;Robin.Nodes.INode&gt; Robin.Nodes.Parser::Parse(Robin.Lexer&amp;)</Name>
+              <FileRef uid="6" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="8" ordinal="0" sl="8" sc="1" el="8" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="9" ordinal="1" sl="9" sc="1" el="9" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="10" ordinal="2" sl="10" sc="1" el="10" ec="2" bec="2" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="11" ordinal="3" sl="11" sc="1" el="11" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="12" ordinal="4" sl="12" sc="1" el="12" ec="2" bec="8" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="15" ordinal="5" sl="15" sc="1" el="15" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="16" ordinal="6" sl="16" sc="1" el="16" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="18" ordinal="7" sl="18" sc="1" el="18" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="19" ordinal="8" sl="19" sc="1" el="19" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="21" ordinal="9" sl="21" sc="1" el="21" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="22" ordinal="10" sl="22" sc="1" el="22" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="24" ordinal="11" sl="24" sc="1" el="24" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="25" ordinal="12" sl="25" sc="1" el="25" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="27" ordinal="13" sl="27" sc="1" el="27" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="28" ordinal="14" sl="28" sc="1" el="28" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="31" ordinal="15" sl="31" sc="1" el="31" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="35" ordinal="16" sl="35" sc="1" el="35" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="37" ordinal="17" sl="37" sc="1" el="37" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="38" ordinal="18" sl="38" sc="1" el="38" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="39" ordinal="19" sl="39" sc="1" el="39" ec="2" bec="0" bev="0" fileid="6" />
+              </SequencePoints>
+              <BranchPoints>
+                <BranchPoint vc="0" uspid="10" ordinal="0" path="0" offset="17" offsetend="22" sl="10" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="3" path="1" offset="41" offsetend="79" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="4" path="2" offset="41" offsetend="114" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="5" path="3" offset="41" offsetend="150" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="6" path="4" offset="41" offsetend="183" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="7" path="5" offset="41" offsetend="211" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="2" path="0" offset="41" offsetend="241" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="8" path="6" offset="41" offsetend="241" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="12" ordinal="9" path="7" offset="41" offsetend="297" sl="12" fileid="6" />
+                <BranchPoint vc="0" uspid="10" ordinal="1" path="1" offset="17" offsetend="303" sl="10" fileid="6" />
+              </BranchPoints>
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="8" ec="1" el="39" bec="0" bev="0" fileid="6" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="14" nPathComplexity="14" sequenceCoverage="0" branchCoverage="0" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="24" visitedSequencePoints="0" numBranchPoints="14" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="14" minCyclomaticComplexity="14" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>Robin.Nodes.SectionNode Robin.Nodes.Parser::ParseSection(Robin.Lexer&amp;,Robin.Token,System.Boolean)</Name>
+              <FileRef uid="6" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="42" ordinal="0" sl="42" sc="1" el="42" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="43" ordinal="1" sl="43" sc="1" el="43" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="45" ordinal="2" sl="45" sc="1" el="45" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="46" ordinal="3" sl="46" sc="1" el="46" ec="2" bec="2" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="47" ordinal="4" sl="47" sc="1" el="47" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="48" ordinal="5" sl="48" sc="1" el="48" ec="2" bec="4" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="49" ordinal="6" sl="49" sc="1" el="49" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="51" ordinal="7" sl="51" sc="1" el="51" ec="2" bec="8" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="54" ordinal="8" sl="54" sc="1" el="54" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="55" ordinal="9" sl="55" sc="1" el="55" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="57" ordinal="10" sl="57" sc="1" el="57" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="58" ordinal="11" sl="58" sc="1" el="58" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="60" ordinal="12" sl="60" sc="1" el="60" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="61" ordinal="13" sl="61" sc="1" el="61" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="63" ordinal="14" sl="63" sc="1" el="63" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="64" ordinal="15" sl="64" sc="1" el="64" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="66" ordinal="16" sl="66" sc="1" el="66" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="67" ordinal="17" sl="67" sc="1" el="67" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="69" ordinal="18" sl="69" sc="1" el="69" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="71" ordinal="19" sl="71" sc="1" el="71" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="73" ordinal="20" sl="73" sc="1" el="73" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="74" ordinal="21" sl="74" sc="1" el="74" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="76" ordinal="22" sl="76" sc="1" el="76" ec="2" bec="0" bev="0" fileid="6" />
+                <SequencePoint vc="0" uspid="77" ordinal="23" sl="77" sc="1" el="77" ec="2" bec="0" bev="0" fileid="6" />
+              </SequencePoints>
+              <BranchPoints>
+                <BranchPoint vc="0" uspid="46" ordinal="0" path="0" offset="27" offsetend="32" sl="46" fileid="6" />
+                <BranchPoint vc="0" uspid="48" ordinal="2" path="0" offset="46" offsetend="48" sl="48" fileid="6" />
+                <BranchPoint vc="0" uspid="48" ordinal="3" path="1" offset="46" offsetend="73" sl="48" fileid="6" />
+                <BranchPoint vc="0" uspid="48" ordinal="5" path="1" offset="78" offsetend="85" sl="48" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="7" path="1" offset="105" offsetend="143" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="8" path="2" offset="105" offsetend="178" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="9" path="3" offset="105" offsetend="214" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="10" path="4" offset="105" offsetend="247" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="11" path="5" offset="105" offsetend="275" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="6" path="0" offset="105" offsetend="305" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="12" path="6" offset="105" offsetend="305" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="51" ordinal="13" path="7" offset="105" offsetend="374" sl="51" fileid="6" />
+                <BranchPoint vc="0" uspid="46" ordinal="1" path="1" offset="27" offsetend="380" sl="46" fileid="6" />
+                <BranchPoint vc="0" uspid="48" ordinal="4" path="0" offset="78" offsetend="380" sl="48" fileid="6" />
+              </BranchPoints>
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="1" offset="1" sc="0" sl="42" ec="1" el="77" bec="0" bev="0" fileid="6" xmlns:p8="xsi" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="16" visitedSequencePoints="0" numBranchPoints="16" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="16" minCyclomaticComplexity="1" visitedClasses="0" numClasses="1" visitedMethods="0" numMethods="4" />
+          <FullName>Robin.Nodes.SectionNode</FullName>
+          <Methods>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.ReadOnlyMemory`1&lt;System.Char&gt; Robin.Nodes.SectionNode::get_Name()</Name>
+              <FileRef uid="7" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="8" ordinal="0" sl="8" sc="1" el="8" ec="2" bec="0" bev="0" fileid="7" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="8" ec="1" el="8" bec="0" bev="0" fileid="7" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Collections.Immutable.ImmutableArray`1&lt;Robin.Nodes.INode&gt; Robin.Nodes.SectionNode::get_Children()</Name>
+              <FileRef uid="7" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="9" ordinal="0" sl="9" sc="1" el="9" ec="2" bec="0" bev="0" fileid="7" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="1" offset="1" sc="0" sl="9" ec="1" el="9" bec="0" bev="0" fileid="7" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Boolean Robin.Nodes.SectionNode::get_Inverted()</Name>
+              <FileRef uid="7" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="10" ordinal="0" sl="10" sc="1" el="10" ec="2" bec="0" bev="0" fileid="7" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="2" offset="2" sc="0" sl="10" ec="1" el="10" bec="0" bev="0" fileid="7" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="16" nPathComplexity="16" sequenceCoverage="0" branchCoverage="0" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="13" visitedSequencePoints="0" numBranchPoints="16" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="16" minCyclomaticComplexity="16" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Void Robin.Nodes.SectionNode::Render(Robin.Nodes.Context,System.Text.StringBuilder)</Name>
+              <FileRef uid="7" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="13" ordinal="0" sl="13" sc="1" el="13" ec="2" bec="0" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="14" ordinal="1" sl="14" sc="1" el="14" ec="2" bec="2" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="15" ordinal="2" sl="15" sc="1" el="15" ec="2" bec="0" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="16" ordinal="3" sl="16" sc="1" el="16" ec="2" bec="2" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="17" ordinal="4" sl="17" sc="1" el="17" ec="2" bec="4" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="18" ordinal="5" sl="18" sc="1" el="18" ec="2" bec="2" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="19" ordinal="6" sl="19" sc="1" el="19" ec="2" bec="2" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="20" ordinal="7" sl="20" sc="1" el="20" ec="2" bec="0" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="21" ordinal="8" sl="21" sc="1" el="21" ec="2" bec="2" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="22" ordinal="9" sl="22" sc="1" el="22" ec="2" bec="0" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="23" ordinal="10" sl="23" sc="1" el="23" ec="2" bec="2" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="24" ordinal="11" sl="24" sc="1" el="24" ec="2" bec="0" bev="0" fileid="7" />
+                <SequencePoint vc="0" uspid="25" ordinal="12" sl="25" sc="1" el="25" ec="2" bec="0" bev="0" fileid="7" />
+              </SequencePoints>
+              <BranchPoints>
+                <BranchPoint vc="0" uspid="14" ordinal="0" path="0" offset="31" offsetend="33" sl="14" fileid="7" />
+                <BranchPoint vc="0" uspid="16" ordinal="2" path="0" offset="35" offsetend="37" sl="16" fileid="7" />
+                <BranchPoint vc="0" uspid="16" ordinal="3" path="1" offset="35" offsetend="48" sl="16" fileid="7" />
+                <BranchPoint vc="0" uspid="17" ordinal="4" path="0" offset="60" offsetend="62" sl="17" fileid="7" />
+                <BranchPoint vc="0" uspid="17" ordinal="6" path="0" offset="63" offsetend="65" sl="17" fileid="7" />
+                <BranchPoint vc="0" uspid="17" ordinal="7" path="1" offset="63" offsetend="79" sl="17" fileid="7" />
+                <BranchPoint vc="0" uspid="17" ordinal="5" path="1" offset="60" offsetend="81" sl="17" fileid="7" />
+                <BranchPoint vc="0" uspid="18" ordinal="8" path="0" offset="86" offsetend="88" sl="18" fileid="7" />
+                <BranchPoint vc="0" uspid="19" ordinal="11" path="1" offset="134" offsetend="108" sl="19" fileid="7" />
+                <BranchPoint vc="0" uspid="18" ordinal="9" path="1" offset="86" offsetend="136" sl="18" fileid="7" />
+                <BranchPoint vc="0" uspid="19" ordinal="10" path="0" offset="134" offsetend="136" sl="19" fileid="7" />
+                <BranchPoint vc="0" uspid="14" ordinal="1" path="1" offset="31" offsetend="139" sl="14" fileid="7" />
+                <BranchPoint vc="0" uspid="21" ordinal="12" path="0" offset="149" offsetend="151" sl="21" fileid="7" />
+                <BranchPoint vc="0" uspid="23" ordinal="15" path="1" offset="198" offsetend="172" sl="23" fileid="7" />
+                <BranchPoint vc="0" uspid="23" ordinal="14" path="0" offset="198" offsetend="200" sl="23" fileid="7" />
+                <BranchPoint vc="0" uspid="21" ordinal="13" path="1" offset="149" offsetend="201" sl="21" fileid="7" />
+              </BranchPoints>
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="3" offset="3" sc="0" sl="13" ec="1" el="25" bec="0" bev="0" fileid="7" xmlns:p8="xsi" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="2" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="1" visitedMethods="0" numMethods="2" />
+          <FullName>Robin.Nodes.TextNode</FullName>
+          <Methods>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.ReadOnlyMemory`1&lt;System.Char&gt; Robin.Nodes.TextNode::get_Text()</Name>
+              <FileRef uid="8" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="7" ordinal="0" sl="7" sc="1" el="7" ec="2" bec="0" bev="0" fileid="8" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="7" ec="1" el="7" bec="0" bev="0" fileid="8" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Void Robin.Nodes.TextNode::Render(Robin.Nodes.Context,System.Text.StringBuilder)</Name>
+              <FileRef uid="8" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="9" ordinal="0" sl="9" sc="1" el="9" ec="2" bec="0" bev="0" fileid="8" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="1" offset="1" sc="0" sl="9" ec="1" el="9" bec="0" bev="0" fileid="8" xmlns:p8="xsi" />
+            </Method>
+          </Methods>
+        </Class>
+        <Class>
+          <Summary numSequencePoints="9" visitedSequencePoints="0" numBranchPoints="8" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="8" minCyclomaticComplexity="1" visitedClasses="0" numClasses="1" visitedMethods="0" numMethods="3" />
+          <FullName>Robin.Nodes.VariableNode</FullName>
+          <Methods>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.ReadOnlyMemory`1&lt;System.Char&gt; Robin.Nodes.VariableNode::get_Name()</Name>
+              <FileRef uid="9" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="7" ordinal="0" sl="7" sc="1" el="7" ec="2" bec="0" bev="0" fileid="9" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="0" offset="0" sc="0" sl="7" ec="1" el="7" bec="0" bev="0" fileid="9" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="1" nPathComplexity="1" sequenceCoverage="0" branchCoverage="100" isConstructor="False" isGetter="True" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="1" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="100" maxCyclomaticComplexity="1" minCyclomaticComplexity="1" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Boolean Robin.Nodes.VariableNode::get_IsUnescaped()</Name>
+              <FileRef uid="9" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="8" ordinal="0" sl="8" sc="1" el="8" ec="2" bec="0" bev="0" fileid="9" />
+              </SequencePoints>
+              <BranchPoints />
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="1" offset="1" sc="0" sl="8" ec="1" el="8" bec="0" bev="0" fileid="9" xmlns:p8="xsi" />
+            </Method>
+            <Method cyclomaticComplexity="8" nPathComplexity="8" sequenceCoverage="0" branchCoverage="0" isConstructor="False" isGetter="False" isSetter="False" isStatic="True">
+              <Summary numSequencePoints="7" visitedSequencePoints="0" numBranchPoints="8" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="8" minCyclomaticComplexity="8" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="1" />
+              <MetadataToken />
+              <Name>System.Void Robin.Nodes.VariableNode::Render(Robin.Nodes.Context,System.Text.StringBuilder)</Name>
+              <FileRef uid="9" />
+              <SequencePoints>
+                <SequencePoint vc="0" uspid="11" ordinal="0" sl="11" sc="1" el="11" ec="2" bec="0" bev="0" fileid="9" />
+                <SequencePoint vc="0" uspid="12" ordinal="1" sl="12" sc="1" el="12" ec="2" bec="2" bev="0" fileid="9" />
+                <SequencePoint vc="0" uspid="13" ordinal="2" sl="13" sc="1" el="13" ec="2" bec="0" bev="0" fileid="9" />
+                <SequencePoint vc="0" uspid="14" ordinal="3" sl="14" sc="1" el="14" ec="2" bec="4" bev="0" fileid="9" />
+                <SequencePoint vc="0" uspid="15" ordinal="4" sl="15" sc="1" el="15" ec="2" bec="2" bev="0" fileid="9" />
+                <SequencePoint vc="0" uspid="16" ordinal="5" sl="16" sc="1" el="16" ec="2" bec="0" bev="0" fileid="9" />
+                <SequencePoint vc="0" uspid="17" ordinal="6" sl="17" sc="1" el="17" ec="2" bec="0" bev="0" fileid="9" />
+              </SequencePoints>
+              <BranchPoints>
+                <BranchPoint vc="0" uspid="12" ordinal="0" path="0" offset="31" offsetend="33" sl="12" fileid="9" />
+                <BranchPoint vc="0" uspid="14" ordinal="2" path="0" offset="35" offsetend="37" sl="14" fileid="9" />
+                <BranchPoint vc="0" uspid="14" ordinal="3" path="1" offset="35" offsetend="40" sl="14" fileid="9" />
+                <BranchPoint vc="0" uspid="14" ordinal="4" path="0" offset="47" offsetend="49" sl="14" fileid="9" />
+                <BranchPoint vc="0" uspid="14" ordinal="5" path="1" offset="47" offsetend="55" sl="14" fileid="9" />
+                <BranchPoint vc="0" uspid="15" ordinal="6" path="0" offset="63" offsetend="65" sl="15" fileid="9" />
+                <BranchPoint vc="0" uspid="15" ordinal="7" path="1" offset="63" offsetend="73" sl="15" fileid="9" />
+                <BranchPoint vc="0" uspid="12" ordinal="1" path="1" offset="31" offsetend="81" sl="12" fileid="9" />
+              </BranchPoints>
+              <MethodPoint vc="0" uspid="0" p8:type="SequencePoint" ordinal="2" offset="2" sc="0" sl="11" ec="1" el="17" bec="0" bev="0" fileid="9" xmlns:p8="xsi" />
             </Method>
           </Methods>
         </Class>

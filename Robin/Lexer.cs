@@ -162,18 +162,10 @@ public ref struct Lexer
         }
         return -1;
     }
-
-    // Convenience method to tokenize entire input
-    public static Token[] Tokenize(ReadOnlySpan<char> source)
+    public readonly ReadOnlyMemory<char> GetValue(Token token)
     {
-        List<Token> tokens = [];
-        Lexer lexer = new(source);
-
-        while (lexer.TryGetNextToken(out Token? token))
-        {
-            tokens.Add(token.Value);
-        }
-
-        return [.. tokens];
+        return _source.Slice(token.Start, token.Length).ToString().AsMemory();
     }
+    // Convenience method to tokenize entire input
+
 }
