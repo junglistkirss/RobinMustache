@@ -6,8 +6,8 @@ public enum TokenType
     Variable,           // {{variable}}
     UnescapedVariable,  // {{{variable}}} or {{&variable}}
     SectionOpen,        // {{#section}}
-    SectionClose,       // {{/section}}
     InvertedSection,    // {{^section}}
+    SectionClose,       // {{/section}}
     Comment,            // {{! comment}}
     Partial             // {{> partial}}
 }

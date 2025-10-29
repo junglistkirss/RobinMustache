@@ -1,5 +1,3 @@
-
-
 namespace Robin.tests;
 
 public class LexerTests
@@ -7,25 +5,26 @@ public class LexerTests
     [Fact]
     public void TestName()
     {
-        string template = @"Hello {{name}}!
+        string template = @"Hello {{ name }}!
 {{#items}}
-  - {{title}}: {{&description}}
-{{/items}}
+  - {{title}}: {{& description}}
+{{^items}}Missing item{{/items}}
 {{! This is a comment }}
 {{> footer}}";
         ReadOnlySpan<char> source = template.AsSpan();
-        List<Token> tokens = Lexer.Tokenize(source);
+        Token[] tokens = Lexer.Tokenize(source);
         Assert.NotEmpty(tokens);
 
         Token[] txt = [.. tokens.Where(x => x.Type == TokenType.Text)];
-        Assert.Equal(7, txt.Length);
+        Assert.Equal(8, txt.Length);
         Assert.Equal("Hello ", txt[0].GetValue(source));
         Assert.Equal("!\n", txt[1].GetValue(source));
         Assert.Equal("\n  - ", txt[2].GetValue(source));
         Assert.Equal(": ", txt[3].GetValue(source));
         Assert.Equal("\n", txt[4].GetValue(source));
-        Assert.Equal("\n", txt[5].GetValue(source));
+        Assert.Equal("Missing item", txt[5].GetValue(source));
         Assert.Equal("\n", txt[6].GetValue(source));
+        Assert.Equal("\n", txt[7].GetValue(source));
 
         Token[] vars = [.. tokens.Where(x => x.Type == TokenType.Variable)];
         Assert.Equal(2, vars.Length);
@@ -38,6 +37,9 @@ public class LexerTests
 
         Token secOpen = Assert.Single(tokens, x => x.Type == TokenType.SectionOpen);
         Assert.Equal("items", secOpen.GetValue(source));
+
+        Token invSecOpen = Assert.Single(tokens, x => x.Type == TokenType.InvertedSection);
+        Assert.Equal("items", invSecOpen.GetValue(source));
 
         Token secClose = Assert.Single(tokens, x => x.Type == TokenType.SectionClose);
         Assert.Equal("items", secClose.GetValue(source));
