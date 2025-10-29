@@ -10,6 +10,13 @@ public class ExpressionLexerTests
     [InlineData("  test")]
     [InlineData(" test ")]
     [InlineData("  test   ")]
+    [InlineData("  test_test   ")]
+    [InlineData("_test_")]
+    [InlineData("_test")]
+    [InlineData("test_")]
+    [InlineData("__test__")]
+    [InlineData("__test")]
+    [InlineData("test__")]
     public void SimpleIdentifier(string dat)
     {
         ReadOnlySpan<char> source = dat.AsSpan();
@@ -68,6 +75,7 @@ public class ExpressionLexerTests
     [InlineData("(left && right)")]
     [InlineData("(left & right)")]
     [InlineData("(left || right)")]
+    [InlineData("(left | right)")]
     [InlineData("(left | right)")]
     public void IdentifierOperator(string dat)
     {
