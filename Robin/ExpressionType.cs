@@ -2,7 +2,8 @@ namespace Robin;
 
 public enum ExpressionType
 {
-    Constant,
+    Literal,
+    Number,
     Identifier,
     Operator,
     LeftParenthesis,  // (

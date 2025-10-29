@@ -111,7 +111,7 @@ public ref struct ExpressionLexer
                 {
                     _position++;
                 }
-                token = new ExpressionToken(ExpressionType.Constant, start, _position - start);
+                token = new ExpressionToken(ExpressionType.Literal, start, _position - start);
                 _position++;
             }
             else if (_source[_position] == '\'')
@@ -122,7 +122,7 @@ public ref struct ExpressionLexer
                 {
                     _position++;
                 }
-                token = new ExpressionToken(ExpressionType.Constant, start, _position - start);
+                token = new ExpressionToken(ExpressionType.Literal, start, _position - start);
                 _position++;
             }
             else
@@ -136,7 +136,7 @@ public ref struct ExpressionLexer
                 }
                 if (isOnlyDigits)
                 {
-                    token = new ExpressionToken(ExpressionType.Constant, start, _position - start);
+                    token = new ExpressionToken(ExpressionType.Number, start, _position - start);
                     return true;
                 }
                 token = new ExpressionToken(ExpressionType.Identifier, start, _position - start);

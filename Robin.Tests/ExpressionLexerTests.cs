@@ -40,7 +40,7 @@ public class ExpressionLexerTests
         ReadOnlySpan<char> source = dat.AsSpan();
         ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
         Assert.NotEmpty(tokens);
-        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Constant);
+        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Literal);
         Assert.Equal(dat.Trim('\''), secOpen.GetValue(source));
     }
     [Theory]
@@ -53,7 +53,7 @@ public class ExpressionLexerTests
         ReadOnlySpan<char> source = dat.AsSpan();
         ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
         Assert.NotEmpty(tokens);
-        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Constant);
+        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Literal);
         Assert.Equal(dat.Trim('"'), secOpen.GetValue(source));
     }
     [Theory]
@@ -61,12 +61,13 @@ public class ExpressionLexerTests
     [InlineData("12 ")]
     [InlineData(" 12")]
     [InlineData(" 12 ")]
+    [InlineData(" 12.1 ")]
     public void NumberConstant(string dat)
     {
         ReadOnlySpan<char> source = dat.AsSpan();
         ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
         Assert.NotEmpty(tokens);
-        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Constant);
+        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Number);
         Assert.Equal(dat.Trim(), secOpen.GetValue(source));
     }
 
