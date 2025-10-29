@@ -115,10 +115,10 @@ public ref struct ExpressionLexer
 
 
 
-    public readonly ReadOnlyMemory<char> GetValue(ExpressionToken token)
+    public readonly string GetValue(ExpressionToken token)
     {
         ReadOnlySpan<char> x = _source.Slice(token.Start, token.Length);
-        return new ReadOnlyMemory<char>(x.ToArray());
+        return x.ToString();
     }
     // Convenience method to tokenize entire input
 

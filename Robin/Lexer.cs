@@ -24,7 +24,7 @@ public ref struct Lexer
         }
 
         // Look for opening delimiter
-        int delimiterPos = IndexOf(_source.Slice(_position), OpenDelimiter);
+        int delimiterPos = IndexOf(_source[_position..], OpenDelimiter);
 
         // If no delimiter found, rest is text
         if (delimiterPos == -1)
@@ -114,7 +114,7 @@ public ref struct Lexer
 
         // Find closing delimiter
         string closingDelim = isTripleBrace ? "}}}" : CloseDelimiter;
-        int closePos = IndexOf(_source.Slice(_position), closingDelim);
+        int closePos = IndexOf(_source[_position..], closingDelim);
 
         if (closePos == -1)
         {
@@ -162,10 +162,10 @@ public ref struct Lexer
         }
         return -1;
     }
-    public readonly ReadOnlyMemory<char> GetValue(Token token)
+    public readonly string GetValue(Token token)
     {
         ReadOnlySpan<char> x = _source.Slice(token.Start, token.Length);
-        return  new ReadOnlyMemory<char>(x.ToArray());
+        return x.ToString();
     }
     // Convenience method to tokenize entire input
 

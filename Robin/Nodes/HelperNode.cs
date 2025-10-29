@@ -3,9 +3,9 @@ using System.Text;
 
 namespace Robin.Nodes;
 
-public readonly struct HelperNode(ReadOnlyMemory<char> name, INode argument) : INode
+public readonly struct HelperNode(string name, INode argument) : INode
 {
-    public ReadOnlyMemory<char> Name { get; } = name;
+    public string Name { get; } = name;
     public INode Argument { get; } = argument;
 
     public void Render(Context context, StringBuilder output)

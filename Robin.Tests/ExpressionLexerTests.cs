@@ -26,7 +26,7 @@ public class ExpressionLexerTests
         ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
         Assert.NotEmpty(tokens);
         ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Identifier);
-        Assert.Equal(dat.Trim(), secOpen.GetValue(source).Span);
+        Assert.Equal(dat.Trim(), secOpen.GetValue(source));
     }
 
     [Theory]
@@ -43,7 +43,7 @@ public class ExpressionLexerTests
         ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
         Assert.NotEmpty(tokens);
         ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Identifier);
-        Assert.Equal(dat, secOpen.GetValue(source).Span);
+        Assert.Equal(dat, secOpen.GetValue(source));
     }
 
     [Theory]
@@ -63,7 +63,7 @@ public class ExpressionLexerTests
         Assert.Single(tokens, x => x.Type == ExpressionType.LeftParenthesis);
         Assert.Single(tokens, x => x.Type == ExpressionType.RightParenthesis);
         ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Identifier);
-        Assert.Equal("test", secOpen.GetValue(source).Span);
+        Assert.Equal("test", secOpen.GetValue(source));
     }
     [Theory]
     [InlineData("(left + right)")]
@@ -88,7 +88,7 @@ public class ExpressionLexerTests
         Assert.Single(tokens, x => x.Type == ExpressionType.Operator);
         ExpressionToken[] idenitifers = [.. tokens.Where(x => x.Type == ExpressionType.Identifier)];
         Assert.Equal(2, idenitifers.Length);
-        Assert.Equal("left", idenitifers[0].GetValue(source).Span);
-        Assert.Equal("right", idenitifers[1].GetValue(source).Span);
+        Assert.Equal("left", idenitifers[0].GetValue(source));
+        Assert.Equal("right", idenitifers[1].GetValue(source));
     }
 }

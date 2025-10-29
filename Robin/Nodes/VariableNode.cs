@@ -2,9 +2,9 @@ using System.Text;
 
 namespace Robin.Nodes;
 
-public readonly struct VariableNode(ReadOnlyMemory<char> name, bool unescaped) : INode
+public readonly struct VariableNode(string name, bool unescaped) : INode
 {
-    public ReadOnlyMemory<char> Name { get; } = name;
+    public string Name { get; } = name;
     public bool IsUnescaped { get; } = unescaped;
 
     public void Render(Context context, StringBuilder output)
