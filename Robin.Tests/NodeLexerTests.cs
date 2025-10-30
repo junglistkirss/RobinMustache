@@ -1,8 +1,7 @@
 using Robin.Nodes;
 
 namespace Robin.tests;
-
-public class LexerTests
+public class NodeLexerTests
 {
     [Fact]
     public void TestTokenTypes()
