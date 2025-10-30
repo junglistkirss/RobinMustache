@@ -1,11 +1,10 @@
-using Robin.Nodes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Robin;
+namespace Robin.Nodes;
 
 public ref struct Lexer
 {
-    private ReadOnlySpan<char> _source;
+    private readonly ReadOnlySpan<char> _source;
     private int _position;
     private const string OpenDelimiter = "{{";
     private const string CloseDelimiter = "}}";
@@ -19,19 +18,19 @@ public ref struct Lexer
     {
         _position = position;
     }
-    public bool TryPeekNextToken([NotNullWhen(true)] out Token? token, out int endPosition)
+    public readonly bool TryPeekNextToken([NotNullWhen(true)] out Token? token, out int endPosition)
     {
         int savedPosition = _position;
-        bool result = TryGetNextToken(out token, ref savedPosition);
+        bool result = TryGetNextTokenInternal(out token, ref savedPosition);
         endPosition = savedPosition;
         return result;
     }
     public bool TryGetNextToken([NotNullWhen(true)] out Token? token)
     {
-        return TryGetNextToken(out token, ref _position);
+        return TryGetNextTokenInternal(out token, ref _position);
 
     }
-    private bool TryGetNextToken([NotNullWhen(true)] out Token? token, ref int pos)
+    private readonly bool TryGetNextTokenInternal([NotNullWhen(true)] out Token? token, ref int pos)
     {
         if (pos >= _source.Length)
         {
@@ -65,7 +64,7 @@ public ref struct Lexer
         return TryParseMustacheTag(out token, ref pos);
     }
 
-    private bool TryParseMustacheTag([NotNullWhen(true)] out Token? token, ref int pos)
+    private readonly bool TryParseMustacheTag([NotNullWhen(true)] out Token? token, ref int pos)
     {
         int tagStart = pos;
         pos += OpenDelimiter.Length;

@@ -4,7 +4,7 @@ namespace Robin.Nodes.Expressions;
 
 public ref struct ExpressionLexer
 {
-    private ReadOnlySpan<char> _source;
+    private readonly ReadOnlySpan<char> _source;
     private int _position;
 
     public ExpressionLexer(ReadOnlySpan<char> source)
@@ -29,7 +29,7 @@ public ref struct ExpressionLexer
         return TryGetNextTokenInternal(out token, ref _position);
     }
 
-    public bool TryPeekNextToken([NotNullWhen(true)] out ExpressionToken? token, out int endPosition)
+    public readonly bool TryPeekNextToken([NotNullWhen(true)] out ExpressionToken? token, out int endPosition)
     {
         int peekPosition = _position;
         bool result = TryGetNextTokenInternal(out token, ref peekPosition);

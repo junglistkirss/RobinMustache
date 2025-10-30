@@ -1,4 +1,4 @@
-using Robin.Expressions;
+using Robin.Nodes;
 using Robin.Nodes.Expressions;
 using System.Collections.Immutable;
 
@@ -40,7 +40,7 @@ public static class Parser
         return [.. nodes];
     }
 
-    private static INode ParseExpression(string variableExpression, bool isEscaped)
+    private static VariableNode ParseExpression(string variableExpression, bool isEscaped)
     {
         ExpressionLexer exprLexer = new(variableExpression.AsSpan());
         IExpressionNode node = exprLexer.Parse() ?? throw new Exception("Variable expression is invalid");
@@ -48,7 +48,7 @@ public static class Parser
         return new VariableNode(node, isEscaped);
     }
 
-    private static INode ParseSection(ref Lexer lexer, Token startToken, bool inverted)
+    private static SectionNode ParseSection(ref Lexer lexer, Token startToken, bool inverted)
     {
         string name = lexer.GetValue(startToken);
         ExpressionLexer exprLexer = new(name.AsSpan());

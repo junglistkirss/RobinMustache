@@ -1,6 +1,4 @@
-using Robin.Nodes;
-
-namespace Robin;
+namespace Robin.Nodes;
 
 public readonly struct Token(TokenType type, int start, int length)
 {
