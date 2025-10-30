@@ -2,6 +2,24 @@ using System.Text;
 
 namespace Robin.Nodes;
 
+public readonly struct LiteralNode(string constant) : IExpressionNode
+{
+    public string Constant{ get; } = constant;
+
+    public void Render(Context context, StringBuilder output)
+    {
+        throw new NotImplementedException();
+    }
+}
+public readonly struct NumberNode(double constant) : IExpressionNode
+{
+    public double Constant { get; } = constant;
+
+    public void Render(Context context, StringBuilder output)
+    {
+        throw new NotImplementedException();
+    }
+}
 public readonly struct UnaryOperatorNode(string @operator, IExpressionNode operand) : IExpressionNode
 {
     public string Operator { get; } = @operator;

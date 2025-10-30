@@ -10,9 +10,9 @@ public class ExpressionParserTests
     {
         ReadOnlySpan<char> source = "".AsSpan();
         ExpressionLexer lexer = new ExpressionLexer(source);
-        ImmutableArray<IExpressionNode> nodes = lexer.Parse();
+        IExpressionNode? node = lexer.Parse();
 
-        Assert.Empty(nodes);
+        Assert.Null(node);
     }
 
     [Fact]
@@ -20,8 +20,7 @@ public class ExpressionParserTests
     {
         ReadOnlySpan<char> source = "func(test)".AsSpan();
         ExpressionLexer lexer = new ExpressionLexer(source);
-        ImmutableArray<IExpressionNode> nodes = lexer.Parse();
-        IExpressionNode node = Assert.Single(nodes);
+        IExpressionNode? node = lexer.Parse();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
         IExpressionNode arg = Assert.Single(func.Arguments);
@@ -34,8 +33,7 @@ public class ExpressionParserTests
     {
         ReadOnlySpan<char> source = "func(one two)".AsSpan();
         ExpressionLexer lexer = new ExpressionLexer(source);
-        ImmutableArray<IExpressionNode> nodes = lexer.Parse();
-        IExpressionNode node = Assert.Single(nodes);
+        IExpressionNode? node = lexer.Parse();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
         Assert.Equal(2, func.Arguments.Length);
@@ -67,7 +65,7 @@ public class ExpressionParserTests
         ExpressionLexer lexer = new ExpressionLexer(source);
         try
         {
-            ImmutableArray<IExpressionNode> nodes = lexer.Parse();
+            IExpressionNode? nodes = lexer.Parse();
         }
         catch (Exception)
         {

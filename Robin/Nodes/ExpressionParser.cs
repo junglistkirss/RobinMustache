@@ -1,254 +1,201 @@
-using System.Collections.Immutable;
-
 namespace Robin.Nodes;
 
 public static class ExpressionParser
 {
-    private enum PendingType
+    /// <summary>
+    /// Parse une expression à partir d'un lexer (méthode d'extension)
+    /// </summary>
+    public static IExpressionNode? Parse(this ref ExpressionLexer lexer)
     {
-        Identifier,
-        FunctionCall,
-        Group,
-    }
-    private record struct Pending(string Name, PendingType Type, List<Pending> Arguments);
+        if (!lexer.TryGetNextToken(out ExpressionToken? currentToken))
+            return null;
 
-    private static IExpressionNode Qualify(this Pending pending)
-    {
-        if (pending.Type == PendingType.Identifier)
-        {
-            return new IdentifierNode(pending.Name);
-        }
-        else if (pending.Type == PendingType.FunctionCall)
-        {
-            return new FunctionCallNode(pending.Name, [.. pending.Arguments.Select(Qualify)]);
-        }
-        else if (pending.Type == PendingType.Group)
-        {
-            if(pending.Arguments.Count == 0)
-                throw new InvalidOperationException("Empty group");
-            else if (pending.Arguments.Count == 2)
-                return new BinaryOperatorNode(pending.Name, pending.Arguments[0].Qualify(), pending.Arguments[1].Qualify());
-            else
-                throw new InvalidOperationException("too long group");
+        IExpressionNode result = ParseExpression(ref lexer, currentToken.Value);
 
-        }
-        else
-        {
-            throw new InvalidOperationException("Unsupported pending type");
-        }
+        // Vérifier qu'il n'y a plus de tokens
+        if (lexer.TryGetNextToken(out ExpressionToken? extraToken))
+            throw new Exception($"Tokens inattendus après la fin: {extraToken.Value.Type}");
+
+        return result;
     }
 
-    public static ImmutableArray<IExpressionNode> Parse(this ref ExpressionLexer lexer)
+    // Niveau 1 : Addition et Soustraction
+    private static IExpressionNode ParseExpression(ref ExpressionLexer lexer, ExpressionToken currentToken)
     {
-        List<IExpressionNode> output = [];
-        Stack<Pending> funcStack = new();
-        //Stack<int> functionArgCountStack = new();
-        //ExpressionToken? previousToken = null;
-        ExpressionToken? currentToken = null;
-        ExpressionToken? nextToken = null;
+        IExpressionNode left = ParseTerm(ref lexer, currentToken);
 
-        // Pre-fetch first token
-        if (lexer.TryGetNextToken(out ExpressionToken? token))
+        while (lexer.TryGetNextToken(out ExpressionToken? nextToken))
         {
-            currentToken = token.Value;
+            currentToken = nextToken.Value;
+
+            if (currentToken.Type != ExpressionType.Operator)
+                break;
+
+            string op = lexer.GetValue(currentToken);
+            if (op != "+" && op != "-")
+                break;
+
+            if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
+                throw new Exception("Opérande attendu après opérateur");
+
+            IExpressionNode right = ParseTerm(ref lexer, rightToken.Value);
+            left = new BinaryOperatorNode(left, op, right);
         }
 
-        while (currentToken != null)
+        return left;
+    }
+
+    // Niveau 2 : Multiplication et Division
+    private static IExpressionNode ParseTerm(ref ExpressionLexer lexer, ExpressionToken currentToken)
+    {
+        IExpressionNode left = ParsePower(ref lexer, currentToken);
+
+        while (lexer.TryGetNextToken(out ExpressionToken? nextToken))
         {
-            // Peek ahead for next token
-            if (lexer.TryGetNextToken(out ExpressionToken? peekedToken))
+            currentToken = nextToken.Value;
+
+            if (currentToken.Type != ExpressionType.Operator)
+                break;
+
+            string op = lexer.GetValue(currentToken);
+            if (op != "*" && op != "/")
+                break;
+
+            if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
+                throw new Exception("Opérande attendu après opérateur");
+
+            IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
+            left = new BinaryOperatorNode(left, op, right);
+        }
+
+        return left;
+    }
+
+    // Niveau 3 : Puissance (associativité à droite)
+    private static IExpressionNode ParsePower(ref ExpressionLexer lexer, ExpressionToken currentToken)
+    {
+        IExpressionNode left = ParseUnary(ref lexer, currentToken);
+
+        if (lexer.TryGetNextToken(out ExpressionToken? nextToken))
+        {
+            currentToken = nextToken.Value;
+
+            if (currentToken.Type == ExpressionType.Operator)
             {
-                nextToken = peekedToken.Value;
-            }
-            else
-            {
-                nextToken = null;
-            }
-            ExpressionToken current = currentToken.Value;
-            bool isPending = funcStack.TryPeek(out Pending pending);
-            switch (current.Type)
-            {
-                case ExpressionType.Identifier:
-                    string currentValue = lexer.GetValue(current);
-                    // Check if next token is '(' for function call
-                    if (nextToken.HasValue && nextToken.Value.Type == ExpressionType.LeftParenthesis)
-                    {
-                        if (isPending)
-                        {
-                            pending.Arguments.Add(new Pending(currentValue, PendingType.FunctionCall, [])); // Push function name
-                        }
-                        else
-                        {
-                            funcStack.Push(new Pending(currentValue, PendingType.FunctionCall, []));
-                        }
-                        currentToken = null; // Consume '('
-                    }
-                    else
-                    {
-                        if (isPending)
-                            pending.Arguments.Add(new Pending(currentValue, PendingType.Identifier, []));
-                        else
-                            output.Add(new IdentifierNode(currentValue));
-                        currentToken = nextToken; // next not yet consumed
+                string op = lexer.GetValue(currentToken);
+                if (op == "^")
+                {
+                    if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
+                        throw new Exception("Opérande attendu après opérateur");
 
-                        //// Track argument count in function calls
-                        //if (functionArgCountStack.Count > 0 &&
-                        //    (previousToken == null || previousToken.Value.Type == ExpressionType.LeftParenthesis))
-                        //{
-                        //    int count = functionArgCountStack.Pop();
-                        //    functionArgCountStack.Push(count + 1);
-                        //}
-                    }
-                    break;
-
-                //case ExpressionType.Operator:
-                //    // Handle unary operators
-                //    bool isUnary = previousToken == null ||
-                //                   previousToken.Value.Type == ExpressionType.Operator ||
-                //                   previousToken.Value.Type == ExpressionType.LeftParenthesis;
-                //    string currentValue = lexer.GetValue(current);
-                //    if (isUnary && (currentValue == "+" || currentValue == "-"))
-                //    {
-                //        // Push unary operator with highest precedence
-                //        operatorStack.Push(current);//, "unary" + currentValue));
-                //    }
-                //    else if (currentValue == ",")
-                //    {
-                //        // Comma separates function arguments
-                //        // Pop operators until we hit '('
-                //        while (operatorStack.Count > 0)
-                //        {
-                //            var top = operatorStack.Peek();
-                //            string topValue = lexer.GetValue(top);
-                //            if (top.Type == ExpressionType.LeftParenthesis)
-                //                break;
-
-                //            operatorStack.Pop();
-                //            if (top.Type == ExpressionType.Operator)
-                //            {
-                //                if (OperatorPrecedence.TryGetValue(topValue, out int prec))
-                //                {
-                //                    output.Add(new OperatorNode(topValue, prec));
-                //                }
-                //            }
-                //        }
-
-                //        // Increment argument count
-                //        if (functionArgCountStack.Count > 0)
-                //        {
-                //            int count = functionArgCountStack.Pop();
-                //            functionArgCountStack.Push(count + 1);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        // Handle binary operators with precedence
-                //        if (!OperatorPrecedence.TryGetValue(currentValue, out int precedence))
-                //        {
-                //            throw new InvalidOperationException($"Unknown operator: {currentValue}");
-                //        }
-
-                //        while (operatorStack.Count > 0)
-                //        {
-                //            var top = operatorStack.Peek();
-                //            if (top.Type == ExpressionType.LeftParenthesis)
-                //                break;
-
-                //            if (top.Type == ExpressionType.Operator)
-                //            {
-                //                string topValue = lexer.GetValue(top);
-                //                if (!OperatorPrecedence.TryGetValue(topValue, out int topPrecedence))
-                //                    break;
-
-                //                // Right-associative for ^ (power), left-associative for others
-                //                bool isRightAssociative = currentValue == "^";
-                //                if (isRightAssociative ? precedence < topPrecedence : precedence <= topPrecedence)
-                //                {
-                //                    operatorStack.Pop();
-                //                    output.Add(new OperatorNode(topValue, topPrecedence));
-                //                }
-                //                else
-                //                {
-                //                    break;
-                //                }
-                //            }
-                //            else
-                //            {
-                //                break;
-                //            }
-                //        }
-
-                //        operatorStack.Push(current);
-                //    }
-                //    break;
-
-                //case ExpressionType.LeftParenthesis:
-                //    operatorStack.Push(current);
-                //    break;
-
-                case ExpressionType.RightParenthesis:
-
-                    if (!isPending)
-                        throw new Exception("Invalid parenthesis");
-
-                    Pending pop = funcStack.Pop();
-                    if (funcStack.TryPeek(out Pending topPending))
-                    {
-                        topPending.Arguments.Add(pop);
-                    }
-                    else
-                    {
-                        output.Add(pop.Qualify());
-                    }
-                    currentToken = null; // consume
-                    break;
-
-                default:
-                    throw new InvalidOperationException($"Unsupported token type {current.Type}");
-            }
-            if (currentToken is null)
-            {
-                lexer.TryGetNextToken(out currentToken);
+                    IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
+                    return new BinaryOperatorNode(left, op, right);
+                }
             }
         }
-        if (funcStack.Count > 0)
-            throw new Exception("Malformed expression");
 
-        return [.. output];
+        return left;
+    }
+
+    // Niveau 4 : Opérateurs unaires
+    private static IExpressionNode ParseUnary(ref ExpressionLexer lexer, ExpressionToken currentToken)
+    {
+        if (currentToken.Type == ExpressionType.Operator)
+        {
+            string op = lexer.GetValue(currentToken);
+            if (op == "+" || op == "-")
+            {
+                if (!lexer.TryGetNextToken(out ExpressionToken? operandToken))
+                    throw new Exception("Opérande attendu après opérateur unaire");
+
+                return new UnaryOperatorNode(op, ParseUnary(ref lexer, operandToken.Value));
+            }
+        }
+
+        return ParsePrimary(ref lexer, currentToken);
+    }
+
+    // Niveau 5 : Éléments primaires
+    private static IExpressionNode ParsePrimary(ref ExpressionLexer lexer, ExpressionToken currentToken)
+    {
+        // Parenthèses
+        if (currentToken.Type == ExpressionType.LeftParenthesis)
+        {
+            if (!lexer.TryGetNextToken(out ExpressionToken? innerToken))
+                throw new Exception("Expression attendue après '('");
+
+            IExpressionNode node = ParseExpression(ref lexer, innerToken.Value);
+
+            if (!lexer.TryGetNextToken(out ExpressionToken? closingToken) ||
+                closingToken.Value.Type != ExpressionType.RightParenthesis)
+                throw new Exception("')' attendu");
+
+            return node;
+        }
+
+        // Literal
+        if (currentToken.Type == ExpressionType.Literal)
+        {
+            string value = lexer.GetValue(currentToken);
+            return new LiteralNode(value);
+        }
+
+        // Number
+        if (currentToken.Type == ExpressionType.Number)
+        {
+            string value = lexer.GetValue(currentToken);
+            double number = double.Parse(value);
+            return new NumberNode(number);
+        }
+
+        // Identifier (variable ou fonction)
+        if (currentToken.Type == ExpressionType.Identifier)
+        {
+            string name = lexer.GetValue(currentToken);
+
+            // Vérifier si c'est un appel de fonction
+            if (lexer.TryGetNextToken(out ExpressionToken? nextToken) &&
+                nextToken.Value.Type == ExpressionType.LeftParenthesis)
+            {
+                List<IExpressionNode> arguments = new List<IExpressionNode>();
+
+                // Vérifier s'il y a des arguments
+                if (lexer.TryGetNextToken(out ExpressionToken? argToken))
+                {
+                    if (argToken.Value.Type != ExpressionType.RightParenthesis)
+                    {
+                        // Parser le premier argument
+                        arguments.Add(ParseExpression(ref lexer, argToken.Value));
+
+                        // Parser les arguments suivants
+                        while (lexer.TryGetNextToken(out ExpressionToken? sepToken))
+                        {
+                            if (sepToken.Value.Type == ExpressionType.RightParenthesis)
+                                break;
+
+                            if (sepToken.Value.Type != ExpressionType.Operator ||
+                                lexer.GetValue(sepToken.Value) != ",")
+                                throw new Exception("',' ou ')' attendu dans la liste d'arguments");
+
+                            if (!lexer.TryGetNextToken(out ExpressionToken? nextArgToken))
+                                throw new Exception("Argument attendu après ','");
+
+                            arguments.Add(ParseExpression(ref lexer, nextArgToken.Value));
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("')' attendu");
+                }
+
+                return new FunctionCallNode(name, [..arguments]);
+            }
+
+            // Sinon, c'est une variable
+            return new IdentifierNode(name);
+        }
+
+        throw new Exception($"Token inattendu: {currentToken.Type}");
     }
 }
-
-
-//// Example usage and testing
-//public class Program
-//{
-//    public static void Main()
-//    {
-//        TestExpression("3 + 4 * 2");
-//        TestExpression("(3 + 4) * 2");
-//        TestExpression("foo(1, 2, 3)");
-//        TestExpression("max(a, b) + min(c, d)");
-//        TestExpression("-5 + 3");
-//        TestExpression("a > 5 && b < 10");
-//        TestExpression("x == 5 || y == 10");
-//        TestExpression("2 ^ 3 ^ 2");
-//        TestExpression("price * 1.2");
-//        TestExpression("obj.property[0]");
-//    }
-
-//    static void TestExpression(string expr)
-//    {
-//        Console.WriteLine($"\nParsing: {expr}");
-//        try
-//        {
-//            var parser = new ExpressionParser(expr.AsSpan());
-//            var result = parser.Parse();
-//            Console.WriteLine($"Result: {result}");
-//        }
-//        catch (Exception ex)
-//        {
-//            Console.WriteLine($"Error: {ex.Message}");
-//        }
-//    }
-//}
-
