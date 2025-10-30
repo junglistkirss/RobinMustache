@@ -116,6 +116,7 @@ public static class ExpressionParser
     }
 
     // Niveau 5 : Éléments primaires
+    // Niveau 5 : Éléments primaires
     private static IExpressionNode ParsePrimary(ref ExpressionLexer lexer, ExpressionToken currentToken)
     {
         // Parenthèses
@@ -163,39 +164,48 @@ public static class ExpressionParser
                 List<IExpressionNode> arguments = new List<IExpressionNode>();
 
                 // Vérifier s'il y a des arguments
-                if (lexer.TryPeekNextToken(out ExpressionToken? argToken, out int argEndPosition))
+                if (lexer.TryPeekNextToken(out ExpressionToken? peekToken, out int peekEndPosition))
                 {
-                    if (argToken.Value.Type == ExpressionType.RightParenthesis)
+                    if (peekToken.Value.Type == ExpressionType.RightParenthesis)
                     {
-                        // Fonction sans arguments
-                        lexer.AdvanceTo(argEndPosition);
+                        // Fonction sans arguments: func()
+                        lexer.AdvanceTo(peekEndPosition);
                     }
                     else
                     {
-                        // Consommer le premier token d'argument
-                        lexer.AdvanceTo(argEndPosition);
-                        
-                        // Parser le premier argument
-                        arguments.Add(ParseExpression(ref lexer, argToken.Value));
+                        // Il y a au moins un argument
+                        // Consommer le premier token pour commencer l'expression
+                        if (!lexer.TryGetNextToken(out ExpressionToken? firstArgToken))
+                            throw new Exception("Argument attendu après '('");
+
+                        // Parser le premier argument (expression complète)
+                        arguments.Add(ParseExpression(ref lexer, firstArgToken.Value));
 
                         // Parser les arguments suivants
-                        while (lexer.TryPeekNextToken(out ExpressionToken? sepToken, out int sepEndPosition))
+                        while (true)
                         {
+                            if (!lexer.TryPeekNextToken(out ExpressionToken? sepToken, out int sepEndPosition))
+                                throw new Exception("')' attendu à la fin de la liste d'arguments");
+
                             if (sepToken.Value.Type == ExpressionType.RightParenthesis)
                             {
+                                // Fin de la liste d'arguments
                                 lexer.AdvanceTo(sepEndPosition);
                                 break;
                             }
 
-                            if (sepToken.Value.Type != ExpressionType.Operator ||
-                                lexer.GetValue(sepToken.Value) != ",")
-                                throw new Exception("',' ou ')' attendu dans la liste d'arguments");
+                            // if (sepToken.Value.Type != ExpressionType.Operator ||
+                            //     lexer.GetValue(sepToken.Value) != ",")
+                            //     throw new Exception("',' ou ')' attendu dans la liste d'arguments");
 
-                            lexer.AdvanceTo(sepEndPosition);
+                            // // Consommer la virgule
+                            // lexer.AdvanceTo(sepEndPosition);
 
+                            // Consommer le token suivant pour l'argument
                             if (!lexer.TryGetNextToken(out ExpressionToken? nextArgToken))
                                 throw new Exception("Argument attendu après ','");
 
+                            // Parser l'argument suivant (expression complète)
                             arguments.Add(ParseExpression(ref lexer, nextArgToken.Value));
                         }
                     }
@@ -205,7 +215,7 @@ public static class ExpressionParser
                     throw new Exception("')' attendu");
                 }
 
-                return new FunctionCallNode(name, [..arguments]);
+                return new FunctionCallNode(name, [.. arguments]);
             }
 
             // Sinon, c'est une variable
