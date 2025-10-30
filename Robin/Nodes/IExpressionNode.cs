@@ -1,6 +1,6 @@
 namespace Robin.Nodes;
 
-public interface IExpressionNode : INode;
+public interface IExpressionNode;
 
 
 //// Example usage and testing

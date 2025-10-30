@@ -8,20 +8,5 @@ public readonly struct SectionNode(string name, ImmutableArray<INode> children, 
     public string Name { get; } = name;
     public ImmutableArray<INode> Children { get; } = children;
     public bool Inverted { get; } = inverted;
-
-    public void Render(Context context, StringBuilder output)
-    {
-        if (context.TryResolve(Name.ToString(), out var value))
-        {
-            bool isTruthy = value != null && (!Inverted);
-            if (Inverted) isTruthy = value == null || value.Equals(false);
-            if (isTruthy)
-                foreach (INode child in Children) child.Render(context, output);
-        }
-        else if (Inverted)
-        {
-            foreach (INode child in Children) child.Render(context, output);
-        }
-    }
 }
 

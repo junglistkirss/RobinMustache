@@ -7,11 +7,6 @@ public readonly struct BinaryOperationNode(IExpressionNode left, string @operato
     public string Operator { get; } = @operator;
     public IExpressionNode Left { get; } = left;
     public IExpressionNode Right { get; } = right;
-
-    public void Render(Context context, StringBuilder output)
-    {
-        throw new NotImplementedException();
-    }
 }
 
 

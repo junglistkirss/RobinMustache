@@ -42,9 +42,10 @@ public static class Parser
 
     private static INode ParseExpression(string variableExpression, bool isEscaped)
     {
-        //ExpressionLexer exprLexer = new(variableExpression.AsSpan());
+        ExpressionLexer exprLexer = new(variableExpression.AsSpan());
+        IExpressionNode node = exprLexer.Parse() ?? throw new Exception("Variable expression is invalid");
 
-        return new VariableNode(variableExpression, isEscaped);
+        return new VariableNode(node, isEscaped);
     }
 
     private static INode ParseSection(ref Lexer lexer, Token startToken, bool inverted)

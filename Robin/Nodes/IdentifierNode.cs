@@ -5,11 +5,6 @@ namespace Robin.Nodes;
 public readonly struct IdentifierNode(string name) : IExpressionNode
 {
     public string Name => name;
-
-    public void Render(Context context, StringBuilder output)
-    {
-        throw new NotImplementedException();
-    }
 };
 
 

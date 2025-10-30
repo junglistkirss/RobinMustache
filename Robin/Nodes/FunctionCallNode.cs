@@ -7,11 +7,6 @@ public readonly struct FunctionCallNode(string functionName, ImmutableArray<IExp
 {
     public string FunctionName { get; } = functionName;
     public ImmutableArray<IExpressionNode> Arguments { get; } = arguments;
-
-    public void Render(Context context, StringBuilder output)
-    {
-        throw new NotImplementedException();
-    }
 }
 
 
