@@ -109,17 +109,20 @@ public class ExpressionParserTests
         Assert.Equal(funcRight, right.FunctionName);
         Assert.Empty(right.Arguments);
     }
-    [Fact]
-    public void FunctionExpression()
+    [Theory]
+    [InlineData("func", "test")]
+    [InlineData("func", "test[0]")]
+    [InlineData("func", "test[a.b.c]")]
+    public void FunctionExpression(string funcName, string ident)
     {
-        ReadOnlySpan<char> source = "func(test)".AsSpan();
+        ReadOnlySpan<char> source = $"{funcName}({ident})".AsSpan();
         ExpressionLexer lexer = new(source);
         IExpressionNode? node = lexer.Parse();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
-        Assert.Equal("func", func.FunctionName);
+        Assert.Equal(funcName, func.FunctionName);
         IExpressionNode arg = Assert.Single(func.Arguments);
-        IdentifierNode ident = Assert.IsType<IdentifierNode>(arg);
-        Assert.Equal("test", ident.Path);
+        IdentifierNode identifier = Assert.IsType<IdentifierNode>(arg);
+        Assert.Equal(ident, identifier.Path);
     }
 
     [Fact]
