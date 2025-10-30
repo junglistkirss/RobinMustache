@@ -125,10 +125,6 @@ public readonly struct IndexAccessor(int index) : IPathSegment
     public int Index { get; } = index;
 }
 
-public readonly struct StaticKeyAccessor(string key) : IPathSegment
-{
-    public string Key { get; } = key;
-}
 public readonly struct KeyAccessor(ChainPath key) : IPathSegment
 {
     public ChainPath Key { get; } = key;
