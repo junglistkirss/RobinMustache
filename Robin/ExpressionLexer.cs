@@ -12,50 +12,68 @@ public ref struct ExpressionLexer
         _source = source;
         _position = 0;
     }
-    private void SkipWhitespace(ReadOnlySpan<char> span)
+    private readonly void SkipWhitespace(ref int pos)
     {
-        while (_position < span.Length && char.IsWhiteSpace(span[_position]))
+        while (pos < _source.Length && char.IsWhiteSpace(_source[pos]))
         {
-            _position++;
+            pos++;
         }
     }
+    public void AdvanceTo(int position)
+    {
+        _position = position;
+    }
+
     public bool TryGetNextToken([NotNullWhen(true)] out ExpressionToken? token)
     {
-        SkipWhitespace(_source);
-        if (_position >= _source.Length)
+        return TryGetNextTokenInternal(out token, ref _position);
+    }
+
+    public bool TryPeekNextToken([NotNullWhen(true)] out ExpressionToken? token, out int endPosition)
+    {
+        int peekPosition = _position;
+        bool result = TryGetNextTokenInternal(out token, ref peekPosition);
+        endPosition = peekPosition;
+        return result;
+    }
+
+    private bool TryGetNextTokenInternal([NotNullWhen(true)] out ExpressionToken? token, ref int pos)
+    {
+        SkipWhitespace(ref pos);
+        if (pos >= _source.Length)
         {
             token = null;
             return false;
         }
 
-        char current = _source[_position];
+        char current = _source[pos];
 
         if (current == '(')
         {
-            token = new ExpressionToken(ExpressionType.LeftParenthesis, _position, 1);
-            _position++;
+            token = new ExpressionToken(ExpressionType.LeftParenthesis, pos, 1);
+            pos++;
             return true;
         }
         else if (current == ')')
         {
-            token = new ExpressionToken(ExpressionType.RightParenthesis, _position, 1);
-            _position++;
+            token = new ExpressionToken(ExpressionType.RightParenthesis, pos, 1);
+            pos++;
             return true;
         }
         else if (current == '+' || current == '-' || current == '/' || current == '*' || current == '%' || current == '^')
         {
-            token = new ExpressionToken(ExpressionType.Operator, _position, 1);
-            _position++;
+            token = new ExpressionToken(ExpressionType.Operator, pos, 1);
+            pos++;
             return true;
         }
         else if (current == '>' || current == '<')
         {
-            int operatorStart = _position;
-            _position++;
-            if (_source[_position] == '=')
+            int operatorStart = pos;
+            pos++;
+            if (_source[pos] == '=')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
-                _position++;
+                pos++;
             }
             else
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 1);
@@ -63,12 +81,12 @@ public ref struct ExpressionLexer
         }
         else if (current == '=')
         {
-            int operatorStart = _position;
-            _position++;
-            if (_source[_position] == '=')
+            int operatorStart = pos;
+            pos++;
+            if (_source[pos] == '=')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
-                _position++;
+                pos++;
             }
             else
                 throw new InvalidOperationException($"Invalid assign '=', assignation are not supported");
@@ -76,12 +94,12 @@ public ref struct ExpressionLexer
         }
         else if (current == '&')
         {
-            int operatorStart = _position;
-            _position++;
-            if (_source[_position] == '&')
+            int operatorStart = pos;
+            pos++;
+            if (_source[pos] == '&')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
-                _position++;
+                pos++;
             }
             else
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 1);
@@ -89,12 +107,12 @@ public ref struct ExpressionLexer
         }
         else if (current == '|')
         {
-            int operatorStart = _position;
-            _position++;
-            if (_source[_position] == '|')
+            int operatorStart = pos;
+            pos++;
+            if (_source[pos] == '|')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
-                _position++;
+                pos++;
             }
             else
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 1);
@@ -102,44 +120,44 @@ public ref struct ExpressionLexer
         }
         else
         {
-            int start = _position;
-            if (_source[_position] == '"')
+            int start = pos;
+            if (_source[pos] == '"')
             {
-                    _position++;
+                pos++;
                 start++;
-                while (_position < _source.Length && _source[_position] != '"')
+                while (pos < _source.Length && _source[pos] != '"')
                 {
-                    _position++;
+                    pos++;
                 }
-                token = new ExpressionToken(ExpressionType.Literal, start, _position - start);
-                _position++;
+                token = new ExpressionToken(ExpressionType.Literal, start, pos - start);
+                pos++;
             }
-            else if (_source[_position] == '\'')
+            else if (_source[pos] == '\'')
             {
-                    _position++;
+                pos++;
                 start++;
-                while (_position < _source.Length && _source[_position] != '\'')
+                while (pos < _source.Length && _source[pos] != '\'')
                 {
-                    _position++;
+                    pos++;
                 }
-                token = new ExpressionToken(ExpressionType.Literal, start, _position - start);
-                _position++;
+                token = new ExpressionToken(ExpressionType.Literal, start, pos - start);
+                pos++;
             }
             else
             {
-                bool isOnlyDigits = char.IsDigit(_source[_position]) || _source[_position] == '.';
-                while (_position < _source.Length &&
-                       (char.IsLetterOrDigit(_source[_position]) || _source[_position] == '_' || _source[_position] == '.' || _source[_position] == '[' || _source[_position] == ']'))
+                bool isOnlyDigits = char.IsDigit(_source[pos]) || _source[pos] == '.';
+                while (pos < _source.Length &&
+                       (char.IsLetterOrDigit(_source[pos]) || _source[pos] == '_' || _source[pos] == '.' || _source[pos] == '[' || _source[pos] == ']'))
                 {
-                    isOnlyDigits = isOnlyDigits && char.IsDigit(_source[_position]) || _source[_position] == '.';
-                    _position++;
+                    isOnlyDigits = isOnlyDigits && char.IsDigit(_source[pos]) || _source[pos] == '.';
+                    pos++;
                 }
                 if (isOnlyDigits)
                 {
-                    token = new ExpressionToken(ExpressionType.Number, start, _position - start);
+                    token = new ExpressionToken(ExpressionType.Number, start, pos - start);
                     return true;
                 }
-                token = new ExpressionToken(ExpressionType.Identifier, start, _position - start);
+                token = new ExpressionToken(ExpressionType.Identifier, start, pos - start);
             }
             return true;
         }
