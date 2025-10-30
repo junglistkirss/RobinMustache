@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Robin;
+namespace Robin.Expressions;
 
 public ref struct ExpressionLexer
 {
@@ -37,7 +37,7 @@ public ref struct ExpressionLexer
         return result;
     }
 
-    private bool TryGetNextTokenInternal([NotNullWhen(true)] out ExpressionToken? token, ref int pos)
+    private readonly bool TryGetNextTokenInternal([NotNullWhen(true)] out ExpressionToken? token, ref int pos)
     {
         SkipWhitespace(ref pos);
         if (pos >= _source.Length)

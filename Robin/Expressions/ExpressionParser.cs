@@ -1,6 +1,7 @@
+using Robin.Nodes;
 using System.Globalization;
 
-namespace Robin.Nodes;
+namespace Robin.Expressions;
 
 public static class ExpressionParser
 {
@@ -163,7 +164,7 @@ public static class ExpressionParser
                 // C'est une fonction, on consomme la parenthèse ouvrante
                 lexer.AdvanceTo(endPosition);
 
-                List<IExpressionNode> arguments = new List<IExpressionNode>();
+                List<IExpressionNode> arguments = [];
 
                 // Vérifier s'il y a des arguments
                 if (lexer.TryPeekNextToken(out ExpressionToken? peekToken, out int peekEndPosition))

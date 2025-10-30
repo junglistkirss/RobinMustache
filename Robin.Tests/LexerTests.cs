@@ -1,3 +1,4 @@
+using Robin.Nodes;
 using Xunit.Sdk;
 
 namespace Robin.tests;

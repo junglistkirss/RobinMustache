@@ -1,6 +1,7 @@
+using Robin.Nodes;
 using System.Text;
 
-namespace Robin.Nodes;
+namespace Robin.Expressions;
 
 public readonly struct VariableNode(IExpressionNode expression, bool unescaped) : INode
 {

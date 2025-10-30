@@ -1,19 +1,34 @@
 using System.Text;
 
-namespace Robin.Nodes;
+namespace Robin.Expressions;
 
 public readonly struct LiteralNode(string constant) : IExpressionNode
 {
     public string Constant{ get; } = constant;
+
+    public TOut Accept<TOut, TArgs>(IExpressionNodeVisitor<TOut, TArgs> visitor, TArgs args)
+    {
+        return visitor.VisitLiteral(this, args);
+    }
 }
 public readonly struct NumberNode(double constant) : IExpressionNode
 {
     public double Constant { get; } = constant;
+
+    public TOut Accept<TOut, TArgs>(IExpressionNodeVisitor<TOut, TArgs> visitor, TArgs args)
+    {
+        return visitor.VisitNumber(this, args);
+    }
 }
 public readonly struct UnaryOperationNode(string @operator, IExpressionNode operand) : IExpressionNode
 {
     public string Operator { get; } = @operator;
     public IExpressionNode Operand { get; } = operand;
+
+    public TOut Accept<TOut, TArgs>(IExpressionNodeVisitor<TOut, TArgs> visitor, TArgs args)
+    {
+        return visitor.VisitUnaryOperation(this, args);
+    }
 }
 
 

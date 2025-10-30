@@ -1,4 +1,4 @@
-namespace Robin;
+namespace Robin.Expressions;
 
 public readonly struct ExpressionToken(ExpressionType type, int start, int length)
 {

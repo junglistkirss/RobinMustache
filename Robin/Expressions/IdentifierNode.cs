@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Robin.Nodes;
+namespace Robin.Expressions;
 
 public interface IPathSegment;
 public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
@@ -38,7 +38,7 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
     public static ChainPath Parse(string path)
     {
         if (string.IsNullOrEmpty(path))
-            return new ChainPath(ImmutableArray<IPathSegment>.Empty);
+            return new ChainPath([]);
 
         var segments = new List<IPathSegment>();
         int i = 0;
@@ -80,7 +80,7 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
                 if (bracketDepth != 0)
                     throw new FormatException("Unclosed accessor");
 
-                string content = path.Substring(start, i - start).Trim();
+                string content = path[start..i].Trim();
 
                 // Try to parse as numeric index first
                 if (int.TryParse(content, out int index))
@@ -104,7 +104,7 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
                 while (i < path.Length && path[i] != '.' && path[i] != '[')
                     i++;
 
-                string memberName = path.Substring(start, i - start);
+                string memberName = path[start..i];
                 if (string.IsNullOrEmpty(memberName))
                     throw new FormatException("Empty member name");
 
@@ -112,7 +112,7 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
             }
         }
 
-        return new ChainPath(segments.ToImmutableArray());
+        return new ChainPath([.. segments]);
     }
 }
 
@@ -132,6 +132,11 @@ public readonly struct KeyAccessor(ChainPath key) : IPathSegment
 public readonly struct IdentifierNode(ChainPath path) : IExpressionNode
 {
     public ChainPath Path { get; } = path;
+
+    public TOut Accept<TOut, TArgs>(IExpressionNodeVisitor<TOut, TArgs> visitor, TArgs args)
+    {
+        return visitor.VisitIdenitifer(this, args);
+    }
 };
 
 
