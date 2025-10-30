@@ -14,6 +14,24 @@ public class ExpressionParserTests
         Assert.Null(node);
     }
 
+
+    [Theory]
+    [InlineData("two")]
+    [InlineData("one")]
+    [InlineData("one.two")]
+    [InlineData("one[0].two")]
+    [InlineData("one[test].two")]
+    [InlineData("one[test[3]].two")]
+    [InlineData("one[test.one.two[3]].two")]
+    [InlineData("one[\"test\"].two",Skip = "Not working parsing")]
+    public void IdenitiferExpression(string ident)
+    {
+        ReadOnlySpan<char> source = ident.AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        IdentifierNode operand = Assert.IsType<IdentifierNode>(node);
+        Assert.Equal(ident, operand.Path);
+    }
     [Theory]
     [InlineData("+", "two")]
     [InlineData("-", "one")]
@@ -57,7 +75,7 @@ public class ExpressionParserTests
         NumberNode operand = Assert.IsType<NumberNode>(unary.Operand);
         Assert.Equal(member, operand.Constant);
     }
-    
+
 
     [Fact]
     public void FunctionNoArgsExpression()

@@ -6,8 +6,8 @@ namespace Robin.Nodes;
 public interface IPathSegment;
 public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
 {
-    public static implicit operator ChainPath (string value) => Parse(value);
-    public static implicit operator string (ChainPath value) => value.ToString();
+    public static implicit operator ChainPath(string value) => Parse(value);
+    public static implicit operator string(ChainPath value) => value.ToString();
     public ImmutableArray<IPathSegment> Segments { get; } = segments;
     public override string ToString()
     {
@@ -25,6 +25,12 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
                     case IndexAccessor index:
                         sb.Append('[').Append(index.Index).Append(']');
                         break;
+                    case StaticKeyAccessor key:
+                        sb.Append("[\"").Append(key.Key.Replace("\"", "\\\"")).Append("\"]");
+                        break;
+                    case KeyAccessor chainKey:
+                        sb.Append('[').Append(chainKey.Key.ToString()).Append(']');
+                        break;
                 }
                 return sb;
             },
@@ -36,10 +42,10 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
     {
         if (string.IsNullOrEmpty(path))
             return new ChainPath(ImmutableArray<IPathSegment>.Empty);
-        
+
         var segments = new List<IPathSegment>();
         int i = 0;
-        
+
         while (i < path.Length)
         {
             // Skip dots
@@ -48,24 +54,92 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
                 i++;
                 continue;
             }
-            
-            // Parse index accessor
+
+            // Parse bracket accessor (index, static key, or chain path key)
             if (path[i] == '[')
             {
                 i++; // skip '['
-                int start = i;
-                while (i < path.Length && path[i] != ']')
+
+                // Skip leading whitespace
+                while (i < path.Length && char.IsWhiteSpace(path[i]))
                     i++;
-                
-                if (i >= path.Length)
-                    throw new FormatException("Unclosed index accessor");
-                
-                string indexStr = path.Substring(start, i - start);
-                if (!int.TryParse(indexStr, out int index))
-                    throw new FormatException($"Invalid index: {indexStr}");
-                
-                segments.Add(new IndexAccessor(index));
-                i++; // skip ']'
+
+                // Check if it's a static string key (starts with quote)
+                if (i < path.Length && (path[i] == '"' || path[i] == '\''))
+                {
+                    char quote = path[i];
+                    i++; // skip opening quote
+                    var keyBuilder = new StringBuilder();
+
+                    while (i < path.Length)
+                    {
+                        if (path[i] == '\\' && i + 1 < path.Length)
+                        {
+                            // Handle escape sequences
+                            i++;
+                            keyBuilder.Append(path[i]);
+                            i++;
+                        }
+                        else if (path[i] == quote)
+                        {
+                            i++; // skip closing quote
+                            break;
+                        }
+                        else
+                        {
+                            keyBuilder.Append(path[i]);
+                            i++;
+                        }
+                    }
+
+                    // Skip whitespace and closing bracket
+                    while (i < path.Length && char.IsWhiteSpace(path[i]))
+                        i++;
+
+                    if (i >= path.Length || path[i] != ']')
+                        throw new FormatException("Unclosed key accessor");
+
+                    segments.Add(new StaticKeyAccessor(keyBuilder.ToString()));
+                    i++; // skip ']'
+                }
+                else
+                {
+                    // Could be numeric index or chain path key
+                    int start = i;
+                    int bracketDepth = 1;
+
+                    // Find the matching closing bracket
+                    while (i < path.Length && bracketDepth > 0)
+                    {
+                        if (path[i] == '[')
+                            bracketDepth++;
+                        else if (path[i] == ']')
+                            bracketDepth--;
+
+                        if (bracketDepth > 0)
+                            i++;
+                    }
+
+                    if (bracketDepth != 0)
+                        throw new FormatException("Unclosed accessor");
+
+                    string content = path.Substring(start, i - start).Trim();
+
+                    // Try to parse as numeric index first
+                    if (int.TryParse(content, out int index))
+                    {
+                        segments.Add(new IndexAccessor(index));
+                    }
+                    else
+                    {
+                        // Parse as chain path key
+                        var chainPath = Parse(content);
+                        segments.Add(new KeyAccessor(chainPath));
+                    }
+
+                    i++; // skip ']'
+                }
+                // Don't continue here - let the loop naturally handle what comes next
             }
             // Parse member accessor
             else
@@ -73,15 +147,15 @@ public readonly struct ChainPath(ImmutableArray<IPathSegment> segments)
                 int start = i;
                 while (i < path.Length && path[i] != '.' && path[i] != '[')
                     i++;
-                
+
                 string memberName = path.Substring(start, i - start);
                 if (string.IsNullOrEmpty(memberName))
                     throw new FormatException("Empty member name");
-                
+
                 segments.Add(new MemberAccesor(memberName));
             }
         }
-        
+
         return new ChainPath(segments.ToImmutableArray());
     }
 }
@@ -93,6 +167,15 @@ public readonly struct MemberAccesor(string memberName) : IPathSegment
 public readonly struct IndexAccessor(int index) : IPathSegment
 {
     public int Index { get; } = index;
+}
+
+public readonly struct StaticKeyAccessor(string key) : IPathSegment
+{
+    public string Key { get; } = key;
+}
+public readonly struct KeyAccessor(ChainPath key) : IPathSegment
+{
+    public ChainPath Key { get; } = key;
 }
 public readonly struct IdentifierNode(ChainPath path) : IExpressionNode
 {
