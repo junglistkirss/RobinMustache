@@ -36,7 +36,7 @@ public class NodeParserTests
         IdentifierNode id = Assert.IsType<IdentifierNode>(text.Expression);
         Assert.Equal("text", id.Path);
     }
-    
+
     [Fact]
     public void EmptySection()
     {
