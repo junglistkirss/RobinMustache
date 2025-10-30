@@ -20,10 +20,10 @@ public class ExpressionParserTests
     [InlineData("one")]
     [InlineData("one.two")]
     [InlineData("one[0].two")]
+    [InlineData("one[0][1].two")]
     [InlineData("one[test].two")]
     [InlineData("one[test[3]].two")]
     [InlineData("one[test.one.two[3]].two")]
-    [InlineData("one[\"test\"].two",Skip = "Not working parsing")]
     public void IdenitiferExpression(string ident)
     {
         ReadOnlySpan<char> source = ident.AsSpan();
