@@ -81,7 +81,7 @@ public static class ExpressionParser
             if (nextToken.Value.Type == ExpressionType.Operator)
             {
                 string op = lexer.GetValue(nextToken.Value);
-                if (op == "^")
+                if (op == "^" || op == "%")
                 {
                     lexer.AdvanceTo(endPosition);
 
@@ -90,7 +90,7 @@ public static class ExpressionParser
 
                     IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
                     return new BinaryOperationNode(left, op, right);
-                }
+                }                
             }
         }
 

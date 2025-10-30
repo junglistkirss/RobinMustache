@@ -1,5 +1,4 @@
 using Robin.Nodes;
-using System.Collections.Immutable;
 
 namespace Robin.tests;
 
@@ -9,17 +8,94 @@ public class ExpressionParserTests
     public void EmptyExpression()
     {
         ReadOnlySpan<char> source = "".AsSpan();
-        ExpressionLexer lexer = new ExpressionLexer(source);
+        ExpressionLexer lexer = new(source);
         IExpressionNode? node = lexer.Parse();
 
         Assert.Null(node);
     }
 
+    [Theory]
+    [InlineData("+", "two")]
+    [InlineData("-", "one")]
+    public void UnaryExpression(string op, string ident)
+    {
+        ReadOnlySpan<char> source = $"{op}{ident}".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
+        Assert.Equal(op, unary.Operator);
+        IdentifierNode operand = Assert.IsType<IdentifierNode>(unary.Operand);
+        Assert.Equal(ident, operand.Name);
+    }
+
+    [Theory]
+    [InlineData("+", "two")]
+    [InlineData("-", "one")]
+    public void UnaryFunctionExpression(string op, string funcName)
+    {
+        ReadOnlySpan<char> source = $"{op}{funcName}()".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
+        Assert.Equal(op, unary.Operator);
+        FunctionCallNode operand = Assert.IsType<FunctionCallNode>(unary.Operand);
+        Assert.Equal(funcName, operand.FunctionName);
+        Assert.Empty(operand.Arguments);
+    }
+
+    [Theory]
+    [InlineData("+", 321)]
+    [InlineData("-", 123)]
+    [InlineData("-", 0.5)]
+    public void UnaryConstantExpression(string op, double member)
+    {
+        ReadOnlySpan<char> source = $"{op}{member}".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
+        Assert.Equal(op, unary.Operator);
+        NumberNode operand = Assert.IsType<NumberNode>(unary.Operand);
+        Assert.Equal(member, operand.Constant);
+    }
+    
+
+    [Fact]
+    public void FunctionNoArgsExpression()
+    {
+        ReadOnlySpan<char> source = "func()".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
+        Assert.Equal("func", func.FunctionName);
+        Assert.Empty(func.Arguments);
+    }
+
+    [Theory]
+    [InlineData("one", "+", "two")]
+    [InlineData("one", "-", "two")]
+    [InlineData("one", "/", "two")]
+    [InlineData("one", "*", "two")]
+    [InlineData("one", "^", "two")]
+    [InlineData("one", "%", "two")]
+    public void OperatorFunctionNoArgsExpression(string funcLeft, string funcOp, string funcRight)
+    {
+        ReadOnlySpan<char> source = $"{funcLeft}() {funcOp} {funcRight}()".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        BinaryOperationNode func = Assert.IsType<BinaryOperationNode>(node);
+        Assert.Equal(funcOp, func.Operator);
+        FunctionCallNode left = Assert.IsType<FunctionCallNode>(func.Left);
+        Assert.Equal(funcLeft, left.FunctionName);
+        Assert.Empty(left.Arguments);
+        FunctionCallNode right = Assert.IsType<FunctionCallNode>(func.Right);
+        Assert.Equal(funcRight, right.FunctionName);
+        Assert.Empty(right.Arguments);
+    }
     [Fact]
     public void FunctionExpression()
     {
         ReadOnlySpan<char> source = "func(test)".AsSpan();
-        ExpressionLexer lexer = new ExpressionLexer(source);
+        ExpressionLexer lexer = new(source);
         IExpressionNode? node = lexer.Parse();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
@@ -29,10 +105,28 @@ public class ExpressionParserTests
     }
 
     [Fact]
+    public void FunctionNestedExpression()
+    {
+        ReadOnlySpan<char> source = "func(one nested(two))".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
+        Assert.Equal("func", func.FunctionName);
+        Assert.Equal(2, func.Arguments.Length);
+        IdentifierNode ident = Assert.IsType<IdentifierNode>(func.Arguments[0]);
+        Assert.Equal("one", ident.Name);
+        FunctionCallNode nested = Assert.IsType<FunctionCallNode>(func.Arguments[1]);
+        Assert.Equal("nested", nested.FunctionName);
+        IExpressionNode nestedArg = Assert.Single(nested.Arguments);
+        IdentifierNode nestedIdent = Assert.IsType<IdentifierNode>(nestedArg);
+        Assert.Equal("two", nestedIdent.Name);
+    }
+
+    [Fact]
     public void FunctionManyArgs()
     {
         ReadOnlySpan<char> source = "func(one two)".AsSpan();
-        ExpressionLexer lexer = new ExpressionLexer(source);
+        ExpressionLexer lexer = new(source);
         IExpressionNode? node = lexer.Parse();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
@@ -43,25 +137,79 @@ public class ExpressionParserTests
         Assert.Equal("two", ident2.Name);
     }
 
-    [Fact]
-    public void OperatorManyArgs()
+    [Theory]
+    [InlineData("one", "+", "two")]
+    [InlineData("one", "-", "two")]
+    [InlineData("one", "/", "two")]
+    [InlineData("one", "*", "two")]
+    [InlineData("one", "^", "two")]
+    [InlineData("one", "%", "two")]
+    public void OperatorManyArgs(string left, string op, string right)
     {
-        ReadOnlySpan<char> source = "one + two".AsSpan();
-        ExpressionLexer lexer = new ExpressionLexer(source);
-        IExpressionNode?node = lexer.Parse();
+        ReadOnlySpan<char> source = $"{left} {op} {right}".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
         BinaryOperationNode func = Assert.IsType<BinaryOperationNode>(node);
-        Assert.Equal("+", func.Operator);
+        Assert.Equal(op, func.Operator);
         IdentifierNode ident1 = Assert.IsType<IdentifierNode>(func.Left);
-        Assert.Equal("one", ident1.Name);
+        Assert.Equal(left, ident1.Name);
         IdentifierNode ident2 = Assert.IsType<IdentifierNode>(func.Right);
-        Assert.Equal("two", ident2.Name);
+        Assert.Equal(right, ident2.Name);
+    }
+
+    [Theory]
+    [InlineData("one", "+", "two", "*", "three")]
+    [InlineData("one", "-", "two", "*", "three")]
+    [InlineData("one", "/", "two", "*", "three")]
+    [InlineData("one", "*", "two", "*", "three")]
+    [InlineData("one", "^", "two", "*", "three")]
+    [InlineData("one", "%", "two", "*", "three")]
+    [InlineData("one", "+", "two", "/", "three")]
+    [InlineData("one", "-", "two", "/", "three")]
+    [InlineData("one", "/", "two", "/", "three")]
+    [InlineData("one", "*", "two", "/", "three")]
+    [InlineData("one", "^", "two", "/", "three")]
+    [InlineData("one", "%", "two", "/", "three")]
+    [InlineData("one", "+", "two", "+", "three")]
+    [InlineData("one", "-", "two", "+", "three")]
+    [InlineData("one", "/", "two", "+", "three")]
+    [InlineData("one", "*", "two", "+", "three")]
+    [InlineData("one", "^", "two", "+", "three")]
+    [InlineData("one", "%", "two", "+", "three")]
+    [InlineData("one", "+", "two", "-", "three")]
+    [InlineData("one", "-", "two", "-", "three")]
+    [InlineData("one", "/", "two", "-", "three")]
+    [InlineData("one", "*", "two", "-", "three")]
+    [InlineData("one", "^", "two", "-", "three")]
+    [InlineData("one", "%", "two", "-", "three")]
+    [InlineData("one", "+", "two", "%", "three")]
+    [InlineData("one", "-", "two", "%", "three")]
+    [InlineData("one", "/", "two", "%", "three")]
+    [InlineData("one", "*", "two", "%", "three")]
+    [InlineData("one", "^", "two", "%", "three")]
+    [InlineData("one", "%", "two", "%", "three")]
+    public void OperatorsManyArgs(string left, string firstOp, string innerLeft, string innerOp, string innerRight)
+    {
+        ReadOnlySpan<char> source = $"{left} {firstOp} ({innerLeft} {innerOp} {innerRight})".AsSpan();
+        ExpressionLexer lexer = new(source);
+        IExpressionNode? node = lexer.Parse();
+        BinaryOperationNode op = Assert.IsType<BinaryOperationNode>(node);
+        Assert.Equal(firstOp, op.Operator);
+        IdentifierNode ident1 = Assert.IsType<IdentifierNode>(op.Left);
+        Assert.Equal(left, ident1.Name);
+        BinaryOperationNode op2 = Assert.IsType<BinaryOperationNode>(op.Right);
+        Assert.Equal(innerOp, op2.Operator);
+        IdentifierNode ident2 = Assert.IsType<IdentifierNode>(op2.Left);
+        Assert.Equal(innerLeft, ident2.Name);
+        IdentifierNode ident3 = Assert.IsType<IdentifierNode>(op2.Right);
+        Assert.Equal(innerRight, ident3.Name);
     }
 
     [Fact]
     public void FunctionManyArgs__Malformed()
     {
         ReadOnlySpan<char> source = "func(one two".AsSpan();
-        ExpressionLexer lexer = new ExpressionLexer(source);
+        ExpressionLexer lexer = new(source);
         try
         {
             IExpressionNode? nodes = lexer.Parse();
