@@ -9,10 +9,7 @@ public class ExpressionParserTests
     [Fact]
     public void EmptyExpression()
     {
-        ReadOnlySpan<char> source = "".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
-
+        IExpressionNode? node = "".AsSpan().ParseExpression();
         Assert.Null(node);
     }
 
@@ -28,9 +25,7 @@ public class ExpressionParserTests
     [InlineData("one[test.one.two[3]].two")]
     public void IdenitiferExpression(string ident)
     {
-        ReadOnlySpan<char> source = ident.AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = ident.AsSpan().ParseExpression();
         IdentifierNode operand = Assert.IsType<IdentifierNode>(node);
         Assert.Equal(ident, operand.Path);
     }
@@ -39,9 +34,7 @@ public class ExpressionParserTests
     [InlineData("-", "one")]
     public void UnaryExpression(string op, string ident)
     {
-        ReadOnlySpan<char> source = $"{op}{ident}".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = $"{op}{ident}".AsSpan().ParseExpression();
         UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
         Assert.Equal(op, unary.Operator);
         IdentifierNode operand = Assert.IsType<IdentifierNode>(unary.Operand);
@@ -53,9 +46,7 @@ public class ExpressionParserTests
     [InlineData("-", "one")]
     public void UnaryFunctionExpression(string op, string funcName)
     {
-        ReadOnlySpan<char> source = $"{op}{funcName}()".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = $"{op}{funcName}()".AsSpan().ParseExpression();
         UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
         Assert.Equal(op, unary.Operator);
         FunctionCallNode operand = Assert.IsType<FunctionCallNode>(unary.Operand);
@@ -69,9 +60,7 @@ public class ExpressionParserTests
     [InlineData("-", "0.5")]
     public void UnaryConstantExpression(string op, string member)
     {
-        ReadOnlySpan<char> source = $"{op}{member}".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = $"{op}{member}".AsSpan().ParseExpression();
         UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
         Assert.Equal(op, unary.Operator);
         NumberNode operand = Assert.IsType<NumberNode>(unary.Operand);
@@ -82,9 +71,7 @@ public class ExpressionParserTests
     [Fact]
     public void FunctionNoArgsExpression()
     {
-        ReadOnlySpan<char> source = "func()".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = "func()".AsSpan().ParseExpression();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
         Assert.Empty(func.Arguments);
@@ -99,9 +86,7 @@ public class ExpressionParserTests
     [InlineData("one", "%", "two")]
     public void OperatorFunctionNoArgsExpression(string funcLeft, string funcOp, string funcRight)
     {
-        ReadOnlySpan<char> source = $"{funcLeft}() {funcOp} {funcRight}()".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = $"{funcLeft}() {funcOp} {funcRight}()".AsSpan().ParseExpression();
         BinaryOperationNode func = Assert.IsType<BinaryOperationNode>(node);
         Assert.Equal(funcOp, func.Operator);
         FunctionCallNode left = Assert.IsType<FunctionCallNode>(func.Left);
@@ -130,9 +115,7 @@ public class ExpressionParserTests
     [Fact]
     public void FunctionNestedExpression()
     {
-        ReadOnlySpan<char> source = "func(one nested(two))".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = "func(one nested(two))".AsSpan().ParseExpression();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
         Assert.Equal(2, func.Arguments.Length);
@@ -148,9 +131,7 @@ public class ExpressionParserTests
     [Fact]
     public void FunctionManyArgs()
     {
-        ReadOnlySpan<char> source = "func(one two)".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = "func(one two)".AsSpan().ParseExpression();
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
         Assert.Equal(2, func.Arguments.Length);
@@ -169,9 +150,7 @@ public class ExpressionParserTests
     [InlineData("one", "%", "two")]
     public void OperatorManyArgs(string left, string op, string right)
     {
-        ReadOnlySpan<char> source = $"{left} {op} {right}".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = $"{left} {op} {right}".AsSpan().ParseExpression();
         BinaryOperationNode func = Assert.IsType<BinaryOperationNode>(node);
         Assert.Equal(op, func.Operator);
         IdentifierNode ident1 = Assert.IsType<IdentifierNode>(func.Left);
@@ -213,9 +192,7 @@ public class ExpressionParserTests
     [InlineData("one", "%", "two", "%", "three")]
     public void OperatorsManyArgs(string left, string firstOp, string innerLeft, string innerOp, string innerRight)
     {
-        ReadOnlySpan<char> source = $"{left} {firstOp} ({innerLeft} {innerOp} {innerRight})".AsSpan();
-        ExpressionLexer lexer = new(source);
-        IExpressionNode? node = lexer.Parse();
+        IExpressionNode? node = $"{left} {firstOp} ({innerLeft} {innerOp} {innerRight})".AsSpan().ParseExpression();
         BinaryOperationNode op = Assert.IsType<BinaryOperationNode>(node);
         Assert.Equal(firstOp, op.Operator);
         IdentifierNode ident1 = Assert.IsType<IdentifierNode>(op.Left);
@@ -231,11 +208,9 @@ public class ExpressionParserTests
     [Fact]
     public void FunctionManyArgs__Malformed()
     {
-        ReadOnlySpan<char> source = "func(one two".AsSpan();
-        ExpressionLexer lexer = new(source);
         try
         {
-            IExpressionNode? nodes = lexer.Parse();
+            _ = "func(one two".AsSpan().ParseExpression();
         }
         catch (Exception)
         {

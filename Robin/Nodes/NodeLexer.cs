@@ -2,14 +2,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Nodes;
 
-public ref struct Lexer
+public ref struct NodeLexer
 {
     private readonly ReadOnlySpan<char> _source;
     private int _position;
     private const string OpenDelimiter = "{{";
     private const string CloseDelimiter = "}}";
 
-    public Lexer(ReadOnlySpan<char> source)
+    public NodeLexer(ReadOnlySpan<char> source)
     {
         _source = source;
         _position = 0;

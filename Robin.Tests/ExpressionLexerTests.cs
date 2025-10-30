@@ -6,7 +6,7 @@ namespace Robin.tests;
 public class ExpressionLexerTests
 {
     [Fact]
-    public void ThisIdentifier( )
+    public void ThisIdentifier()
     {
         ReadOnlySpan<char> source = ".".AsSpan();
         ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
@@ -16,7 +16,7 @@ public class ExpressionLexerTests
     }
 
     [Fact]
-    public void ParentIdentifier( )
+    public void ParentIdentifier()
     {
         ReadOnlySpan<char> source = "~".AsSpan();
         ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);

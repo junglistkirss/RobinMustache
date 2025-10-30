@@ -4,9 +4,9 @@ using System.Collections.Immutable;
 
 namespace Robin.Nodes;
 
-public static class Parser
+public static class NodeParser
 {
-    public static ImmutableArray<INode> Parse(this ref Lexer lexer)
+    public static ImmutableArray<INode> Parse(this ref NodeLexer lexer)
     {
         List<INode> nodes = [];
         while (lexer.TryGetNextToken(out Token? token))
@@ -48,7 +48,7 @@ public static class Parser
         return new VariableNode(node, isEscaped);
     }
 
-    private static SectionNode ParseSection(ref Lexer lexer, Token startToken, bool inverted)
+    private static SectionNode ParseSection(ref NodeLexer lexer, Token startToken, bool inverted)
     {
         string name = lexer.GetValue(startToken);
         ExpressionLexer exprLexer = new(name.AsSpan());
