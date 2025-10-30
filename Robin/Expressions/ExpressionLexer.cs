@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Robin.Nodes.Expressions;
+namespace Robin.Expressions;
 
 public ref struct ExpressionLexer
 {
@@ -145,8 +145,8 @@ public ref struct ExpressionLexer
             }
             else
             {
-                bool isOnlyDigits = char.IsDigit(_source[pos]) || _source[pos] == '.';
-                while (pos < _source.Length && (char.IsLetterOrDigit(_source[pos]) || _source[pos] == '_' || _source[pos] == '.' || _source[pos] == '[' || _source[pos] == ']' || _source[pos] == '.'))
+                bool isOnlyDigits = char.IsDigit(_source[pos]);
+                while (pos < _source.Length && (char.IsLetterOrDigit(_source[pos]) || _source[pos] == '_' || _source[pos] == '.' || _source[pos] == '[' || _source[pos] == ']' || _source[pos] == '.' || _source[pos] == '~'))
                 {
                     isOnlyDigits = isOnlyDigits && (char.IsDigit(_source[pos]) || _source[pos] == '.');
                     pos++;

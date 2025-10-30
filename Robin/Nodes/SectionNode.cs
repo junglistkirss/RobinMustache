@@ -1,4 +1,4 @@
-using Robin.Nodes.Expressions;
+using Robin.Expressions;
 using System.Collections.Immutable;
 
 namespace Robin.Nodes;

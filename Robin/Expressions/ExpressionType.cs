@@ -1,4 +1,4 @@
-namespace Robin.Nodes.Expressions;
+namespace Robin.Expressions;
 
 public enum ExpressionType
 {

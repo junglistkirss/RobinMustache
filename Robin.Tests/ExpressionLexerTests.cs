@@ -1,10 +1,30 @@
-using Robin.Nodes.Expressions;
+using Robin.Expressions;
 
 namespace Robin.tests;
 
 
 public class ExpressionLexerTests
 {
+    [Fact]
+    public void ThisIdentifier( )
+    {
+        ReadOnlySpan<char> source = ".".AsSpan();
+        ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
+        Assert.NotEmpty(tokens);
+        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Identifier);
+        Assert.Equal(".", secOpen.GetValue(source));
+    }
+
+    [Fact]
+    public void ParentIdentifier( )
+    {
+        ReadOnlySpan<char> source = "~".AsSpan();
+        ExpressionToken[] tokens = Tokenizer.TokenizeExpression(source);
+        Assert.NotEmpty(tokens);
+        ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Identifier);
+        Assert.Equal("~", secOpen.GetValue(source));
+    }
+
     [Theory]
     [InlineData("test")]
     [InlineData("test ")]
@@ -58,6 +78,7 @@ public class ExpressionLexerTests
         ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Literal);
         Assert.Equal(dat.Trim('"'), secOpen.GetValue(source));
     }
+
     [Theory]
     [InlineData("12")]
     [InlineData("12 ")]

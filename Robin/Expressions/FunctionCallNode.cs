@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Robin.Nodes.Expressions;
+namespace Robin.Expressions;
 
 public readonly struct FunctionCallNode(string functionName, ImmutableArray<IExpressionNode> arguments) : IExpressionNode
 {

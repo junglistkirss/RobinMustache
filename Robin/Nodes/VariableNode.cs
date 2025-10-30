@@ -1,4 +1,4 @@
-using Robin.Nodes.Expressions;
+using Robin.Expressions;
 
 namespace Robin.Nodes;
 
