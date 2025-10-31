@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="Robin.MustacheSpecs.Tests/Robin.MustacheSpecs.Tests.csproj" />
   <Project Path="Robin.Evaluator.System.Text.Json/Robin.Evaluator.System.Text.Json.csproj" />
+  <Project Path="Robin.Evaluator.System.Text.Json.Tests/Robin.Evaluator.System.Text.Json.Tests.csproj" />
   <Project Path="Robin.Tests/Robin.Tests.csproj" />
   <Project Path="Robin.Contracts/Robin.Contracts.csproj" />
   <Project Path="Robin/Robin.csproj" />
