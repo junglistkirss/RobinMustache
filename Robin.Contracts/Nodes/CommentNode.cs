@@ -1,4 +1,4 @@
-namespace Robin.Nodes;
+namespace Robin.Contracts.Nodes;
 
 public readonly struct CommentNode(string message) : INode
 {

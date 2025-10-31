@@ -1,7 +1,7 @@
-using Robin.Expressions;
+using Robin.Contracts.Expressions;
 using System.Collections.Immutable;
 
-namespace Robin.Nodes;
+namespace Robin.Contracts.Nodes;
 
 public readonly struct SectionNode(IExpressionNode expression, ImmutableArray<INode> children, bool inverted = false) : INode
 {

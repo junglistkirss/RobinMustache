@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Robin.Variables;
+namespace Robin.Contracts.Variables;
 
 internal class InlineAccessorPrinter : IAccessorVisitor<StringBuilder, StringBuilder>
 {

@@ -1,4 +1,4 @@
-namespace Robin.Variables;
+namespace Robin.Contracts.Variables;
 
 public readonly struct IndexAccessor(int index) : IAccessor
 {

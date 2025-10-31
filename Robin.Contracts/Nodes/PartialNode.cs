@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Robin.Nodes;
+namespace Robin.Contracts.Nodes;
 
 public readonly struct PartialNode(string name, ImmutableArray<INode> children) : INode
 {

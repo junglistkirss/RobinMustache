@@ -1,6 +1,6 @@
-using Robin.Nodes;
+using Robin.Contracts.Nodes;
 
-namespace Robin.Expressions;
+namespace Robin.Contracts.Expressions;
 
 public interface IExpressionNodeVisitor<TOut, TArgs>
 {

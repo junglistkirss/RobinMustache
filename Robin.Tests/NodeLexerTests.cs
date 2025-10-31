@@ -1,6 +1,7 @@
 using Robin.Nodes;
 
 namespace Robin.tests;
+
 public class NodeLexerTests
 {
     [Fact]

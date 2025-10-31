@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-
- <ItemGroup>
-    <ProjectReference Include="..\Robin.Contracts\Robin.Contracts.csproj" />
-  </ItemGroup>
-  
 </Project>

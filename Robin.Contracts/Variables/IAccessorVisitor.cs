@@ -1,4 +1,4 @@
-namespace Robin.Variables;
+namespace Robin.Contracts.Variables;
 
 public interface IAccessorVisitor<TOut, TArgs>
 {

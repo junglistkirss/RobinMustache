@@ -1,4 +1,4 @@
-namespace Robin.Expressions;
+namespace Robin.Contracts.Expressions;
 
 public readonly struct LiteralExpressionNode(string constant) : IExpressionNode
 {

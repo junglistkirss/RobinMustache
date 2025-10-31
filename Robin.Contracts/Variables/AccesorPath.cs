@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Robin.Variables;
+namespace Robin.Contracts.Variables;
 
 public readonly struct AccesorPath(ImmutableArray<IAccessor> segments)
 {

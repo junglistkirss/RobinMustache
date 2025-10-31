@@ -1,6 +1,7 @@
-using Robin.Variables;
+using Robin.Contracts.Variables;
 
-namespace Robin.Expressions;
+namespace Robin.Contracts.Expressions;
+
 public readonly struct IdentifierExpressionNode(AccesorPath path) : IExpressionNode
 {
     public AccesorPath Path { get; } = path;

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Robin.Variables;
+namespace Robin.Contracts.Variables;
 
 public static class AccessPathParser
 {
