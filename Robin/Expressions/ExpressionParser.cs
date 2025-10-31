@@ -41,7 +41,7 @@ public static class ExpressionParser
                 throw new Exception("Opérande attendu après opérateur");
 
             IExpressionNode right = ParseTerm(ref lexer, rightToken.Value);
-            left = new BinaryOperationNode(left, op, right);
+            left = new BinaryOperationExpressionNode(left, op, right);
         }
 
         return left;
@@ -67,7 +67,7 @@ public static class ExpressionParser
                 throw new Exception("Opérande attendu après opérateur");
 
             IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
-            left = new BinaryOperationNode(left, op, right);
+            left = new BinaryOperationExpressionNode(left, op, right);
         }
 
         return left;
@@ -91,7 +91,7 @@ public static class ExpressionParser
                         throw new Exception("Opérande attendu après opérateur");
 
                     IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
-                    return new BinaryOperationNode(left, op, right);
+                    return new BinaryOperationExpressionNode(left, op, right);
                 }
             }
         }
@@ -110,7 +110,7 @@ public static class ExpressionParser
                 if (!lexer.TryGetNextToken(out ExpressionToken? operandToken))
                     throw new Exception("Opérande attendu après opérateur unaire");
 
-                return new UnaryOperationNode(op, ParseUnary(ref lexer, operandToken.Value));
+                return new UnaryOperationExpressionNode(op, ParseUnary(ref lexer, operandToken.Value));
             }
         }
 
@@ -140,7 +140,7 @@ public static class ExpressionParser
         if (currentToken.Type == ExpressionType.Literal)
         {
             string value = lexer.GetValue(currentToken);
-            return new LiteralNode(value);
+            return new LiteralExpressionNode(value);
         }
 
         // Number
@@ -148,7 +148,7 @@ public static class ExpressionParser
         {
             string value = lexer.GetValue(currentToken);
             double number = double.Parse(value, CultureInfo.InvariantCulture);
-            return new NumberNode(number);
+            return new NumberExpressionNode(number);
         }
 
         // Identifier (variable ou fonction)
@@ -221,7 +221,7 @@ public static class ExpressionParser
             }
 
             // Sinon, c'est une variable
-            return new IdentifierNode(name);
+            return new IdentifierExpressionNode(name);
         }
 
         throw new Exception($"Token inattendu: {currentToken.Type}");

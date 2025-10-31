@@ -1,7 +1,7 @@
 using Robin.Variables;
 
 namespace Robin.Expressions;
-public readonly struct IdentifierNode(AccesorPath path) : IExpressionNode
+public readonly struct IdentifierExpressionNode(AccesorPath path) : IExpressionNode
 {
     public AccesorPath Path { get; } = path;
 

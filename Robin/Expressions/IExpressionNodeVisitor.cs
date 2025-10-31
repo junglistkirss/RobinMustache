@@ -4,11 +4,11 @@ namespace Robin.Expressions;
 
 public interface IExpressionNodeVisitor<TOut, TArgs>
 {
-    TOut VisitIdenitifer(IdentifierNode node, TArgs args);
+    TOut VisitIdenitifer(IdentifierExpressionNode node, TArgs args);
     TOut VisitFunctionCall(FunctionCallNode node, TArgs args);
-    TOut VisitNumber(NumberNode node, TArgs args);
-    TOut VisitLiteral(LiteralNode node, TArgs args);
+    TOut VisitNumber(NumberExpressionNode node, TArgs args);
+    TOut VisitLiteral(LiteralExpressionNode node, TArgs args);
     TOut VisitVariable(VariableNode node, TArgs args);
-    TOut VisitBinaryOperation(BinaryOperationNode node, TArgs args);
-    TOut VisitUnaryOperation(UnaryOperationNode node, TArgs args);
+    TOut VisitBinaryOperation(BinaryOperationExpressionNode node, TArgs args);
+    TOut VisitUnaryOperation(UnaryOperationExpressionNode node, TArgs args);
 }

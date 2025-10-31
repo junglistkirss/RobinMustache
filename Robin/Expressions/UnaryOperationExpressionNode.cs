@@ -1,6 +1,6 @@
 namespace Robin.Expressions;
 
-public readonly struct UnaryOperationNode(string @operator, IExpressionNode operand) : IExpressionNode
+public readonly struct UnaryOperationExpressionNode(string @operator, IExpressionNode operand) : IExpressionNode
 {
     public string Operator { get; } = @operator;
     public IExpressionNode Operand { get; } = operand;

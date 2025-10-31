@@ -6,7 +6,7 @@ public readonly struct TextNode(string text) : INode
 
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)
     {
-        return visitor.VisitTextNode(this, args);
+        return visitor.VisitText(this, args);
     }
 }
 

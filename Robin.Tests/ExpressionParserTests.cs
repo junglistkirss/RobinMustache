@@ -26,7 +26,7 @@ public class ExpressionParserTests
     public void IdenitiferExpression(string ident)
     {
         IExpressionNode? node = ident.AsSpan().ParseExpression();
-        IdentifierNode operand = Assert.IsType<IdentifierNode>(node);
+        IdentifierExpressionNode operand = Assert.IsType<IdentifierExpressionNode>(node);
         Assert.Equal(ident, operand.Path);
     }
     [Theory]
@@ -35,9 +35,9 @@ public class ExpressionParserTests
     public void UnaryExpression(string op, string ident)
     {
         IExpressionNode? node = $"{op}{ident}".AsSpan().ParseExpression();
-        UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
+        UnaryOperationExpressionNode unary = Assert.IsType<UnaryOperationExpressionNode>(node);
         Assert.Equal(op, unary.Operator);
-        IdentifierNode operand = Assert.IsType<IdentifierNode>(unary.Operand);
+        IdentifierExpressionNode operand = Assert.IsType<IdentifierExpressionNode>(unary.Operand);
         Assert.Equal(ident, operand.Path);
     }
 
@@ -47,7 +47,7 @@ public class ExpressionParserTests
     public void UnaryFunctionExpression(string op, string funcName)
     {
         IExpressionNode? node = $"{op}{funcName}()".AsSpan().ParseExpression();
-        UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
+        UnaryOperationExpressionNode unary = Assert.IsType<UnaryOperationExpressionNode>(node);
         Assert.Equal(op, unary.Operator);
         FunctionCallNode operand = Assert.IsType<FunctionCallNode>(unary.Operand);
         Assert.Equal(funcName, operand.FunctionName);
@@ -61,9 +61,9 @@ public class ExpressionParserTests
     public void UnaryConstantExpression(string op, string member)
     {
         IExpressionNode? node = $"{op}{member}".AsSpan().ParseExpression();
-        UnaryOperationNode unary = Assert.IsType<UnaryOperationNode>(node);
+        UnaryOperationExpressionNode unary = Assert.IsType<UnaryOperationExpressionNode>(node);
         Assert.Equal(op, unary.Operator);
-        NumberNode operand = Assert.IsType<NumberNode>(unary.Operand);
+        NumberExpressionNode operand = Assert.IsType<NumberExpressionNode>(unary.Operand);
         Assert.Equal(double.Parse(member, CultureInfo.InvariantCulture), operand.Constant);
     }
 
@@ -87,7 +87,7 @@ public class ExpressionParserTests
     public void OperatorFunctionNoArgsExpression(string funcLeft, string funcOp, string funcRight)
     {
         IExpressionNode? node = $"{funcLeft}() {funcOp} {funcRight}()".AsSpan().ParseExpression();
-        BinaryOperationNode func = Assert.IsType<BinaryOperationNode>(node);
+        BinaryOperationExpressionNode func = Assert.IsType<BinaryOperationExpressionNode>(node);
         Assert.Equal(funcOp, func.Operator);
         FunctionCallNode left = Assert.IsType<FunctionCallNode>(func.Left);
         Assert.Equal(funcLeft, left.FunctionName);
@@ -108,7 +108,7 @@ public class ExpressionParserTests
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal(funcName, func.FunctionName);
         IExpressionNode arg = Assert.Single(func.Arguments);
-        IdentifierNode identifier = Assert.IsType<IdentifierNode>(arg);
+        IdentifierExpressionNode identifier = Assert.IsType<IdentifierExpressionNode>(arg);
         Assert.Equal(ident, identifier.Path);
     }
 
@@ -119,12 +119,12 @@ public class ExpressionParserTests
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
         Assert.Equal(2, func.Arguments.Length);
-        IdentifierNode ident = Assert.IsType<IdentifierNode>(func.Arguments[0]);
+        IdentifierExpressionNode ident = Assert.IsType<IdentifierExpressionNode>(func.Arguments[0]);
         Assert.Equal("one", ident.Path);
         FunctionCallNode nested = Assert.IsType<FunctionCallNode>(func.Arguments[1]);
         Assert.Equal("nested", nested.FunctionName);
         IExpressionNode nestedArg = Assert.Single(nested.Arguments);
-        IdentifierNode nestedIdent = Assert.IsType<IdentifierNode>(nestedArg);
+        IdentifierExpressionNode nestedIdent = Assert.IsType<IdentifierExpressionNode>(nestedArg);
         Assert.Equal("two", nestedIdent.Path);
     }
 
@@ -135,9 +135,9 @@ public class ExpressionParserTests
         FunctionCallNode func = Assert.IsType<FunctionCallNode>(node);
         Assert.Equal("func", func.FunctionName);
         Assert.Equal(2, func.Arguments.Length);
-        IdentifierNode ident1 = Assert.IsType<IdentifierNode>(func.Arguments[0]);
+        IdentifierExpressionNode ident1 = Assert.IsType<IdentifierExpressionNode>(func.Arguments[0]);
         Assert.Equal("one", ident1.Path);
-        IdentifierNode ident2 = Assert.IsType<IdentifierNode>(func.Arguments[1]);
+        IdentifierExpressionNode ident2 = Assert.IsType<IdentifierExpressionNode>(func.Arguments[1]);
         Assert.Equal("two", ident2.Path);
     }
 
@@ -151,11 +151,11 @@ public class ExpressionParserTests
     public void OperatorManyArgs(string left, string op, string right)
     {
         IExpressionNode? node = $"{left} {op} {right}".AsSpan().ParseExpression();
-        BinaryOperationNode func = Assert.IsType<BinaryOperationNode>(node);
+        BinaryOperationExpressionNode func = Assert.IsType<BinaryOperationExpressionNode>(node);
         Assert.Equal(op, func.Operator);
-        IdentifierNode ident1 = Assert.IsType<IdentifierNode>(func.Left);
+        IdentifierExpressionNode ident1 = Assert.IsType<IdentifierExpressionNode>(func.Left);
         Assert.Equal(left, ident1.Path);
-        IdentifierNode ident2 = Assert.IsType<IdentifierNode>(func.Right);
+        IdentifierExpressionNode ident2 = Assert.IsType<IdentifierExpressionNode>(func.Right);
         Assert.Equal(right, ident2.Path);
     }
 
@@ -193,15 +193,15 @@ public class ExpressionParserTests
     public void OperatorsManyArgs(string left, string firstOp, string innerLeft, string innerOp, string innerRight)
     {
         IExpressionNode? node = $"{left} {firstOp} ({innerLeft} {innerOp} {innerRight})".AsSpan().ParseExpression();
-        BinaryOperationNode op = Assert.IsType<BinaryOperationNode>(node);
+        BinaryOperationExpressionNode op = Assert.IsType<BinaryOperationExpressionNode>(node);
         Assert.Equal(firstOp, op.Operator);
-        IdentifierNode ident1 = Assert.IsType<IdentifierNode>(op.Left);
+        IdentifierExpressionNode ident1 = Assert.IsType<IdentifierExpressionNode>(op.Left);
         Assert.Equal(left, ident1.Path);
-        BinaryOperationNode op2 = Assert.IsType<BinaryOperationNode>(op.Right);
+        BinaryOperationExpressionNode op2 = Assert.IsType<BinaryOperationExpressionNode>(op.Right);
         Assert.Equal(innerOp, op2.Operator);
-        IdentifierNode ident2 = Assert.IsType<IdentifierNode>(op2.Left);
+        IdentifierExpressionNode ident2 = Assert.IsType<IdentifierExpressionNode>(op2.Left);
         Assert.Equal(innerLeft, ident2.Path);
-        IdentifierNode ident3 = Assert.IsType<IdentifierNode>(op2.Right);
+        IdentifierExpressionNode ident3 = Assert.IsType<IdentifierExpressionNode>(op2.Right);
         Assert.Equal(innerRight, ident3.Path);
     }
 

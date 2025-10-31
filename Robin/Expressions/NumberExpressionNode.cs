@@ -1,6 +1,6 @@
 namespace Robin.Expressions;
 
-public readonly struct NumberNode(double constant) : IExpressionNode
+public readonly struct NumberExpressionNode(double constant) : IExpressionNode
 {
     public double Constant { get; } = constant;
 

@@ -9,7 +9,7 @@ public readonly struct VariableNode(IExpressionNode expression, bool unescaped) 
 
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)
     {
-        return visitor.VisitVariableNode(this, args);
+        return visitor.VisitVariable(this, args);
     }
 }
 

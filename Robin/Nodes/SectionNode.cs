@@ -11,7 +11,7 @@ public readonly struct SectionNode(IExpressionNode expression, ImmutableArray<IN
 
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)
     {
-        return visitor.VisitSectionNode(this, args);
+        return visitor.VisitSection(this, args);
     }
 }
 
