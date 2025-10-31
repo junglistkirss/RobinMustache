@@ -1,11 +1,27 @@
 using Robin.Expressions;
 using Robin.Nodes;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Nodes;
 
 public static class NodeParser
 {
+
+    public static bool TryParse(this ref NodeLexer lexer, [NotNullWhen(true)] out ImmutableArray<INode>? nodes)
+    {
+        try
+        {
+            nodes = Parse(ref lexer);
+            return true;
+        }
+        catch (Exception)
+        {
+            nodes = null;
+            return false;
+        }
+    }
+
     public static ImmutableArray<INode> Parse(this ref NodeLexer lexer)
     {
         List<INode> nodes = [];

@@ -1,12 +1,25 @@
+using Robin.Variables;
 using System.Globalization;
+using System.IO;
 
 namespace Robin.Expressions;
 
 public static class ExpressionParser
 {
-    /// <summary>
-    /// Parse une expression à partir d'un lexer (méthode d'extension)
-    /// </summary>
+    public static bool TryParse(this ref ExpressionLexer lexer, out IExpressionNode? expressionNode)
+    {
+        try
+        {
+            expressionNode = Parse(ref lexer);
+            return true;
+        }
+        catch (Exception)
+        {
+            expressionNode = null;
+            return false;
+        }
+    }
+
     public static IExpressionNode? Parse(this ref ExpressionLexer lexer)
     {
         if (!lexer.TryGetNextToken(out ExpressionToken? currentToken))
@@ -221,7 +234,8 @@ public static class ExpressionParser
             }
 
             // Sinon, c'est une variable
-            return new IdentifierExpressionNode(name);
+            AccesorPath chainPath = name.Parse();
+            return new IdentifierExpressionNode(chainPath);
         }
 
         throw new Exception($"Token inattendu: {currentToken.Type}");
