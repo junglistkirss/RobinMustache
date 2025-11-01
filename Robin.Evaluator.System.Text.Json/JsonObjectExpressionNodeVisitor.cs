@@ -1,41 +1,48 @@
 using System.Text.Json.Nodes;
 using Robin.Contracts.Expressions;
-using Robin.Contracts.Variables;
 
 namespace Robin.Evaluator.System.Text.Json;
-
-internal static class AccesorPathEvaluator
-{
-    internal static object? Evaluate(this AccesorPath path, JsonNode node)
-    {
-        JsonEvaluationResult result = new(true, null);
-        int i = 0;
-        object? ctx = node;
-        while (result.Found && i < path.Segments.Length)
-        {
-            IAccessor item = path.Segments[i];
-            if (ctx is JsonNode n)
-            {
-                JsonEvaluationResult res = item.Accept(JsonObjectAccesorVisitor.Instance, n);
-                result = res;
-                if (res.Found)
-                    ctx = res.Value;
-            }
-            else
-            {
-                result = result with { Found = false };
-            }
-            i++;
-        }
-        return result.Value;
-    }
-}
 
 internal sealed class JsonObjectExpressionNodeVisitor : IExpressionNodeVisitor<object?, JsonNode>
 {
     internal static readonly JsonObjectExpressionNodeVisitor Instance = new();
     public object? VisitBinaryOperation(BinaryOperationExpressionNode node, JsonNode args)
     {
+        var left = node.Left.Accept(this, args);
+        var right= node.Right.Accept(this, args);
+        switch (node.Operator)
+        {
+            case BinaryOperator.Add:
+                break;
+            case BinaryOperator.Subtract:
+                break;
+            case BinaryOperator.Multiply:
+                break;
+            case BinaryOperator.Divide:
+                break;
+            case BinaryOperator.Power:
+                break;
+            case BinaryOperator.Modulus:
+                break;
+            case BinaryOperator.And:
+                break;
+            case BinaryOperator.Or:
+                break;
+            case BinaryOperator.Equal:
+                break;
+            case BinaryOperator.NotEqual:
+                break;
+            case BinaryOperator.GreaterThan:
+                break;
+            case BinaryOperator.LessThan:
+                break;
+            case BinaryOperator.GreaterThanOrEqual:
+                break;
+            case BinaryOperator.LessThanOrEqual:
+                break;
+            default:
+                break;
+        }
         throw new NotImplementedException();
     }
 

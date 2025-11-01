@@ -13,7 +13,7 @@ public class JsonEvaluatorTests
     {
         JsonObject json = [];
         AccesorPath path = AccessPathParser.Parse(".");
-        Assert.IsType<ThisAccessor>( Assert.Single(path.Segments));
+        Assert.IsType<ThisAccessor>(Assert.Single(path.Segments));
         IExpressionNode expression = new IdentifierExpressionNode(path);
         bool resolved = JsonEvaluator.Instance.TryResolve(expression, json, out object? found);
         Assert.True(resolved);
@@ -30,7 +30,7 @@ public class JsonEvaluatorTests
         Assert.True(resolved);
         Assert.Equal(0.5, found);
     }
-   
+
     [Fact]
     public void ResolveLiteralConstant()
     {
@@ -60,14 +60,14 @@ public class JsonEvaluatorTests
     {
         JsonObject json = new()
         {
-            ["prop"] = new JsonArray {"test", "test2"}
+            ["prop"] = new JsonArray { "test", "test2" }
         };
         IExpressionNode expression = new IdentifierExpressionNode(AccessPathParser.Parse("prop[1]"));
         bool resolved = JsonEvaluator.Instance.TryResolve(expression, json, out object? found);
         Assert.True(resolved);
         Assert.Equal("test2", found?.ToString());
     }
-    
+
     [Fact]
     public void ResolveMemberPath()
     {
@@ -83,15 +83,15 @@ public class JsonEvaluatorTests
         Assert.True(resolved);
         Assert.Equal("inner test", found?.ToString());
     }
-[Fact]
+    [Fact]
     public void ResolveKeyMemberPath()
     {
         JsonObject json = new()
         {
+            ["key"] = "inner",
             ["prop"] = new JsonObject()
             {
                 ["inner"] = "inner prop test",
-                ["key"] = "inner",
             }
         };
         IExpressionNode expression = new IdentifierExpressionNode(AccessPathParser.Parse("prop[key]"));
@@ -99,6 +99,27 @@ public class JsonEvaluatorTests
         Assert.True(resolved);
         Assert.Equal("inner prop test", found?.ToString());
     }
+
+    [Fact]
+    public void ResolveKeyMemberPathParentStack()
+    {
+        JsonObject json = new()
+        {
+            ["key"] = "inner",
+            ["prop"] = new JsonObject()
+            {
+                ["prop"] = new JsonObject()
+                {
+                    ["inner"] = "inner prop test",
+                }
+            }
+        };
+        IExpressionNode expression = new IdentifierExpressionNode(AccessPathParser.Parse("prop.prop[key]"));
+        bool resolved = JsonEvaluator.Instance.TryResolve(expression, json, out object? found);
+        Assert.True(resolved);
+        Assert.Null(found);
+    }
+
 
     [Fact]
     public void ResolveParent()

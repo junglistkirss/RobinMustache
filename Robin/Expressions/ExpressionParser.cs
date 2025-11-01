@@ -53,8 +53,11 @@ public static class ExpressionParser
             if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
                 throw new Exception("Opérande attendu après opérateur");
 
+            if(!op.TryParse(out BinaryOperator binaryOp))
+                throw new Exception($"Opérateur inconnu: {op}");
+
             IExpressionNode right = ParseTerm(ref lexer, rightToken.Value);
-            left = new BinaryOperationExpressionNode(left, op, right);
+            left = new BinaryOperationExpressionNode(left, binaryOp, right);
         }
 
         return left;
@@ -79,8 +82,11 @@ public static class ExpressionParser
             if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
                 throw new Exception("Opérande attendu après opérateur");
 
+            if (!op.TryParse(out BinaryOperator binaryOp))
+                throw new Exception($"Opérateur inconnu: {op}");
+
             IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
-            left = new BinaryOperationExpressionNode(left, op, right);
+            left = new BinaryOperationExpressionNode(left, binaryOp, right);
         }
 
         return left;
@@ -102,9 +108,12 @@ public static class ExpressionParser
 
                     if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
                         throw new Exception("Opérande attendu après opérateur");
-
+                    
+                    if (!op.TryParse(out BinaryOperator binaryOp))
+                        throw new Exception($"Opérateur inconnu: {op}");
+                    
                     IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
-                    return new BinaryOperationExpressionNode(left, op, right);
+                    return new BinaryOperationExpressionNode(left, binaryOp, right);
                 }
             }
         }
@@ -122,8 +131,11 @@ public static class ExpressionParser
             {
                 if (!lexer.TryGetNextToken(out ExpressionToken? operandToken))
                     throw new Exception("Opérande attendu après opérateur unaire");
+                
+                if (!op.TryParse(out UnaryOperator unaryOp))
+                    throw new Exception($"Opérateur inconnu: {op}");
 
-                return new UnaryOperationExpressionNode(op, ParseUnary(ref lexer, operandToken.Value));
+                return new UnaryOperationExpressionNode(unaryOp, ParseUnary(ref lexer, operandToken.Value));
             }
         }
 

@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Robin.Evaluator.System.Text.Json\Robin.Evaluator.System.Text.Json.csproj" />
     <ProjectReference Include="..\Robin\Robin.csproj" />
   </ItemGroup>
 

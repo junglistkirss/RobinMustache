@@ -37,7 +37,7 @@ public class ExpressionParserTests
     {
         IExpressionNode? node = $"{op}{ident}".AsSpan().ParseExpression();
         UnaryOperationExpressionNode unary = Assert.IsType<UnaryOperationExpressionNode>(node);
-        Assert.Equal(op, unary.Operator);
+        Assert.Equal(op, unary.Operator.GetSymbol());
         IdentifierExpressionNode operand = Assert.IsType<IdentifierExpressionNode>(unary.Operand);
         Assert.Equal(ident, operand.Path);
     }
@@ -49,7 +49,7 @@ public class ExpressionParserTests
     {
         IExpressionNode? node = $"{op}{funcName}()".AsSpan().ParseExpression();
         UnaryOperationExpressionNode unary = Assert.IsType<UnaryOperationExpressionNode>(node);
-        Assert.Equal(op, unary.Operator);
+        Assert.Equal(op, unary.Operator.GetSymbol());
         FunctionCallNode operand = Assert.IsType<FunctionCallNode>(unary.Operand);
         Assert.Equal(funcName, operand.FunctionName);
         Assert.Empty(operand.Arguments);
@@ -63,7 +63,7 @@ public class ExpressionParserTests
     {
         IExpressionNode? node = $"{op}{member}".AsSpan().ParseExpression();
         UnaryOperationExpressionNode unary = Assert.IsType<UnaryOperationExpressionNode>(node);
-        Assert.Equal(op, unary.Operator);
+        Assert.Equal(op, unary.Operator.GetSymbol());
         NumberExpressionNode operand = Assert.IsType<NumberExpressionNode>(unary.Operand);
         Assert.Equal(double.Parse(member, CultureInfo.InvariantCulture), operand.Constant);
     }
@@ -89,7 +89,7 @@ public class ExpressionParserTests
     {
         IExpressionNode? node = $"{funcLeft}() {funcOp} {funcRight}()".AsSpan().ParseExpression();
         BinaryOperationExpressionNode func = Assert.IsType<BinaryOperationExpressionNode>(node);
-        Assert.Equal(funcOp, func.Operator);
+        Assert.Equal(funcOp, func.Operator.GetSymbol());
         FunctionCallNode left = Assert.IsType<FunctionCallNode>(func.Left);
         Assert.Equal(funcLeft, left.FunctionName);
         Assert.Empty(left.Arguments);
@@ -153,7 +153,7 @@ public class ExpressionParserTests
     {
         IExpressionNode? node = $"{left} {op} {right}".AsSpan().ParseExpression();
         BinaryOperationExpressionNode func = Assert.IsType<BinaryOperationExpressionNode>(node);
-        Assert.Equal(op, func.Operator);
+        Assert.Equal(op, func.Operator.GetSymbol());
         IdentifierExpressionNode ident1 = Assert.IsType<IdentifierExpressionNode>(func.Left);
         Assert.Equal(left, ident1.Path);
         IdentifierExpressionNode ident2 = Assert.IsType<IdentifierExpressionNode>(func.Right);
@@ -195,11 +195,11 @@ public class ExpressionParserTests
     {
         IExpressionNode? node = $"{left} {firstOp} ({innerLeft} {innerOp} {innerRight})".AsSpan().ParseExpression();
         BinaryOperationExpressionNode op = Assert.IsType<BinaryOperationExpressionNode>(node);
-        Assert.Equal(firstOp, op.Operator);
+        Assert.Equal(firstOp, op.Operator.GetSymbol());
         IdentifierExpressionNode ident1 = Assert.IsType<IdentifierExpressionNode>(op.Left);
         Assert.Equal(left, ident1.Path);
         BinaryOperationExpressionNode op2 = Assert.IsType<BinaryOperationExpressionNode>(op.Right);
-        Assert.Equal(innerOp, op2.Operator);
+        Assert.Equal(innerOp, op2.Operator.GetSymbol());
         IdentifierExpressionNode ident2 = Assert.IsType<IdentifierExpressionNode>(op2.Left);
         Assert.Equal(innerLeft, ident2.Path);
         IdentifierExpressionNode ident3 = Assert.IsType<IdentifierExpressionNode>(op2.Right);

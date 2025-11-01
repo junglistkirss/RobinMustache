@@ -1,8 +1,8 @@
 namespace Robin.Contracts.Expressions;
 
-public readonly struct BinaryOperationExpressionNode(IExpressionNode left, string @operator, IExpressionNode right) : IExpressionNode
+public readonly struct BinaryOperationExpressionNode(IExpressionNode left, BinaryOperator @operator, IExpressionNode right) : IExpressionNode
 {
-    public string Operator { get; } = @operator;
+    public BinaryOperator Operator { get; } = @operator;
     public IExpressionNode Left { get; } = left;
     public IExpressionNode Right { get; } = right;
 

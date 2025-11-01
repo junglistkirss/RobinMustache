@@ -1,12 +1,12 @@
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-namespace Robin.tests;
+namespace Robin.MustacheSpecs.Tests;
 
 public sealed record MustacheTestCase(
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("desc")] string Description,
-    [property: JsonPropertyName("data")] JsonObject Data,
+    [property: JsonPropertyName("data")] JsonNode Data,
     [property: JsonPropertyName("template")] string Template,
     [property: JsonPropertyName("expected")] string Expected
 );

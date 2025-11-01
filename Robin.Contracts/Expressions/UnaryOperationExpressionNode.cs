@@ -1,8 +1,8 @@
 namespace Robin.Contracts.Expressions;
 
-public readonly struct UnaryOperationExpressionNode(string @operator, IExpressionNode operand) : IExpressionNode
+public readonly struct UnaryOperationExpressionNode(UnaryOperator @operator, IExpressionNode operand) : IExpressionNode
 {
-    public string Operator { get; } = @operator;
+    public UnaryOperator Operator { get; } = @operator;
     public IExpressionNode Operand { get; } = operand;
 
     public TOut Accept<TOut, TArgs>(IExpressionNodeVisitor<TOut, TArgs> visitor, TArgs args)

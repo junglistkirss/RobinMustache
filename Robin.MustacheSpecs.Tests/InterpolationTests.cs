@@ -6,11 +6,11 @@ using System.Text.Json;
 
 namespace Robin.MustacheSpecs.Tests;
 
-public class CommentsTests
+public class InterpolationTests
 {
     public static IEnumerable<object[]> GetTestsSpec1_4_3()
     {
-        string path = Path.Combine(AppContext.BaseDirectory, "specs", "1.4.3", "comments.json");
+        string path = Path.Combine(AppContext.BaseDirectory, "specs", "1.4.3", "interpolation.json");
         string json = File.ReadAllText(path);
         var cases = JsonSerializer.Deserialize<MustacheTestFile>(json)!;
         foreach (var test in cases.Tests)
@@ -21,7 +21,7 @@ public class CommentsTests
     }
 
     [Theory]
-    
+
     [MemberData(nameof(GetTestsSpec1_4_3))]
     public void Should_Add_Correctly(MustacheTestCase @case)
     {

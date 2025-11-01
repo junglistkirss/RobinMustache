@@ -8,6 +8,35 @@ public sealed class JsonEvaluator : IEvaluator
 {
     public static readonly JsonEvaluator Instance = new();
 
+    public bool IsTrue(object? value)
+    {
+        if (value is JsonNode node)
+        {
+            switch (node.GetValueKind())
+            {
+                case global::System.Text.Json.JsonValueKind.Undefined:
+                    return false;
+                case global::System.Text.Json.JsonValueKind.Object:
+                    return node.AsObject() is not null;
+                case global::System.Text.Json.JsonValueKind.Array:
+                    return node.AsArray()!.Count > 0;
+                case global::System.Text.Json.JsonValueKind.String:
+                    return !string.IsNullOrEmpty(node.GetValue<string>());
+                case global::System.Text.Json.JsonValueKind.Number:
+                    return true;
+                case global::System.Text.Json.JsonValueKind.True:
+                    return true;
+                case global::System.Text.Json.JsonValueKind.False:
+                    return false;
+                case global::System.Text.Json.JsonValueKind.Null:
+                    return false;
+                default:
+                    break;
+            }
+        }
+        return value is bool b ? b : value is string s ? !string.IsNullOrEmpty(s) : value is not null;
+    }
+
     public bool TryResolve(IExpressionNode expression, object? data, out object? value)
     {
         if (data is JsonNode node)
