@@ -6,6 +6,8 @@ using System.Net;
 
 namespace Robin;
 
+
+
 public class NodeRender : INodeVisitor<RenderResult, RenderContext>
 {
     public readonly static NodeRender Instance = new();
@@ -52,7 +54,7 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
                 {
                     RenderContext itemCtx = context with
                     {
-                        Data = item
+                        Data = context.Data?.Child(item) ?? new DataContext(item, null),
                     };
                     ImmutableArray<INode>.Enumerator enumerator = node.Children.GetEnumerator();
                     while (enumerator.MoveNext())
@@ -67,7 +69,7 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
             {
                 RenderContext innerCtx = context with
                 {
-                    Data = subData
+                    Data = context.Data?.Child(subData) ?? new DataContext(subData, null),
                 };
                 ImmutableArray<INode>.Enumerator enumerator = node.Children.GetEnumerator();
                 while (enumerator.MoveNext())

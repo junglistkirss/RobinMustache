@@ -11,7 +11,7 @@ public static class Renderer
     {
         RenderContext ctx = new()
         {
-            Data = data,
+            Data = new DataContext(data, null),
             Evaluator = evaluator,
             Builder = new StringBuilder()
         };

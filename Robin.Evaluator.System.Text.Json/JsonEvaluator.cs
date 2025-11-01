@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Robin.Contracts.Context;
 using Robin.Contracts.Expressions;
@@ -9,15 +10,17 @@ namespace Robin.Evaluator.System.Text.Json;
 public sealed class JsonEvaluator : IEvaluator
 {
     public static readonly JsonEvaluator Instance = new();
+    private static readonly ExpressionNodeVisitor NodeInstance = new(JsonAccesorVisitor.Instance);
 
     public bool IsCollection(object? value, [NotNullWhen(true)] out IEnumerable? collection)
     {
         if (value is JsonNode node)
         {
-            if (node.GetValueKind() == global::System.Text.Json.JsonValueKind.Array)
+            if (node.GetValueKind() == JsonValueKind.Array)
             {
-                collection = node.AsArray()!;
-                return true;
+                JsonArray jArray = node.AsArray()!;
+                collection = jArray;
+                return jArray.Count > 0;
             }
         }
         else if (value is IEnumerable objects)
@@ -36,21 +39,22 @@ public sealed class JsonEvaluator : IEvaluator
         {
             switch (node.GetValueKind())
             {
-                case global::System.Text.Json.JsonValueKind.Undefined:
+                case JsonValueKind.Undefined:
                     return false;
-                case global::System.Text.Json.JsonValueKind.Object:
-                    return node.AsObject() is not null;
-                case global::System.Text.Json.JsonValueKind.Array:
-                    return node.AsArray()!.Count > 0;
-                case global::System.Text.Json.JsonValueKind.String:
+                case JsonValueKind.Object:
+                    var obj = node.AsObject();
+                    return obj is not null;
+                case JsonValueKind.Array:
+                    JsonArray? jArray = node.AsArray();
+                    return jArray is not null && jArray.Count > 0;
+                case JsonValueKind.String:
                     return !string.IsNullOrEmpty(node.GetValue<string>());
-                case global::System.Text.Json.JsonValueKind.Number:
+                case JsonValueKind.Number:
                     return true;
-                case global::System.Text.Json.JsonValueKind.True:
+                case JsonValueKind.True:
                     return true;
-                case global::System.Text.Json.JsonValueKind.False:
-                    return false;
-                case global::System.Text.Json.JsonValueKind.Null:
+                case JsonValueKind.False:
+                case JsonValueKind.Null:
                     return false;
                 default:
                     break;
@@ -59,15 +63,21 @@ public sealed class JsonEvaluator : IEvaluator
         return value is bool b ? b : value is string s ? !string.IsNullOrEmpty(s) : value is not null;
     }
 
-    public bool TryResolve(IExpressionNode expression, object? data, out object? value)
+    public bool TryResolve(IExpressionNode expression, DataContext? data, out object? value)
     {
-        if (data is JsonNode node)
+        if (data is null)
         {
-            value = expression.Accept(JsonObjectExpressionNodeVisitor.Instance, node);
-            return true;
+            value = null;
+            return false;
         }
-        value = null;
-        return false;
+
+        EvaluationResult result = expression.Accept(NodeInstance, data);
+
+        if (!result.Found && data.Previsous is not null)
+            result = expression.Accept(NodeInstance, data.Previsous);
+
+        value = result.Value;
+        return result.Found;
     }
 }
 

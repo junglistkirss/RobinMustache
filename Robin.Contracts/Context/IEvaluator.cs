@@ -10,7 +10,7 @@ namespace Robin.Contracts.Context;
 
 public interface IEvaluator
 {
-    bool TryResolve(IExpressionNode expression, object? data, out object? value);
+    bool TryResolve(IExpressionNode expression, DataContext? data, out object? value);
     bool IsCollection(object? value, [NotNullWhen(true)] out IEnumerable? collection);
     bool IsTrue(object? value);
 }
