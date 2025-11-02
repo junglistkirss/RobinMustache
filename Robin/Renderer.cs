@@ -7,7 +7,7 @@ namespace Robin;
 
 public static class Renderer
 {
-    public static string Render(this INodeVisitor<RenderResult, RenderContext> visitor, IEvaluator evaluator, ImmutableArray<INode> template, object? data)
+    public static string Render(this INodeVisitor<NoValue, RenderContext> visitor, IEvaluator evaluator, ImmutableArray<INode> template, object? data)
     {
         RenderContext ctx = new()
         {
@@ -18,11 +18,7 @@ public static class Renderer
         ImmutableArray<INode>.Enumerator enumerator = template.GetEnumerator();
         while (enumerator.MoveNext())
         {
-            RenderResult result = enumerator.Current.Accept(visitor, ctx);
-            if (!result.IsComplete && result.Exception is not null)
-            {
-                throw result.Exception;
-            }
+            _ = enumerator.Current.Accept(visitor, ctx);
         }
         return ctx.Builder.ToString();
     }

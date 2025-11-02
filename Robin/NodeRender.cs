@@ -8,26 +8,26 @@ namespace Robin;
 
 
 
-public class NodeRender : INodeVisitor<RenderResult, RenderContext>
+public class NodeRender : INodeVisitor<NoValue, RenderContext>
 {
     public readonly static NodeRender Instance = new();
 
-    public RenderResult VisitText(TextNode node, RenderContext context)
+    public NoValue VisitText(TextNode node, RenderContext context)
     {
         context.Builder.Append(node.Text);
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
-    public RenderResult VisitComment(CommentNode node, RenderContext context)
+    public NoValue VisitComment(CommentNode node, RenderContext context)
     {
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
 
-    public RenderResult VisitPartial(PartialDefineNode node, RenderContext context)
+    public NoValue VisitPartial(PartialDefineNode node, RenderContext context)
     {
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
 
-    public RenderResult VisitVariable(VariableNode node, RenderContext context)
+    public NoValue VisitVariable(VariableNode node, RenderContext context)
     {
         if (context.Evaluator.TryResolve(node.Expression, context.Data, out object? value))
         {
@@ -35,12 +35,12 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
                 context.Builder.Append(value?.ToString());
             else
                 context.Builder.Append(WebUtility.HtmlEncode(value?.ToString()));
-            return RenderResult.Complete;
+            return NoValue.Instance;
         }
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
 
-    public RenderResult VisitSection(SectionNode node, RenderContext context)
+    public NoValue VisitSection(SectionNode node, RenderContext context)
     {
         object? subData = context.Evaluator.TryResolve(node.Expression, context.Data, out object? value) ? value : null;
         bool thruly = context.Evaluator.IsTrue(subData);
@@ -49,10 +49,10 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
         {
             return RenderTree(context, subData, node.Children);
         }
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
 
-    public RenderResult VisitPartialCall(PartialCallNode node, RenderContext context)
+    public NoValue VisitPartialCall(PartialCallNode node, RenderContext context)
     {
         object? subData = context.Evaluator.TryResolve(node.Expression, context.Data, out object? value) ? value : null;
         bool thruly = context.Evaluator.IsTrue(subData);
@@ -61,10 +61,10 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
             return RenderTree(context, subData, partialTemplate);
 
         }
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
 
-    private RenderResult RenderTree(RenderContext context, object? subData, ImmutableArray<INode> partialTemplate)
+    private NoValue RenderTree(RenderContext context, object? subData, ImmutableArray<INode> partialTemplate)
     {
         if (context.Evaluator.IsCollection(subData, out IEnumerable? collection))
         {
@@ -77,11 +77,7 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
                 ImmutableArray<INode>.Enumerator enumerator = partialTemplate.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
-                    RenderResult result = enumerator.Current.Accept(this, itemCtx);
-                    if (!result.IsComplete)
-                    {
-                        return result;
-                    }
+                    _ = enumerator.Current.Accept(this, itemCtx);
                 }
             }
         }
@@ -94,19 +90,17 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
             ImmutableArray<INode>.Enumerator enumerator = partialTemplate.GetEnumerator();
             while (enumerator.MoveNext())
             {
-                RenderResult result = enumerator.Current.Accept(this, innerCtx);
-                if (!result.IsComplete)
-                    return result;
+                _ = enumerator.Current.Accept(this, innerCtx);
             }
         }
 
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
 
-    public RenderResult VisitLineBreak(LineBreakNode node, RenderContext context)
+    public NoValue VisitLineBreak(LineBreakNode node, RenderContext context)
     {
         for (int i = 0; i < node.Count; i++)
             context.Builder.AppendLine();
-        return RenderResult.Complete;
+        return NoValue.Instance;
     }
 }
