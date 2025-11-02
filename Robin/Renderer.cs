@@ -15,16 +15,13 @@ public static class Renderer
             Evaluator = evaluator,
             Builder = new StringBuilder()
         };
-        foreach (INode node in template)
+        ImmutableArray<INode>.Enumerator enumerator = template.GetEnumerator();
+        while (enumerator.MoveNext())
         {
-            RenderResult result = node.Accept(visitor, ctx);
-            if (!result.IsComplete)
+            RenderResult result = enumerator.Current.Accept(visitor, ctx);
+            if (!result.IsComplete && result.Exception is not null)
             {
-                if (result.Exception is not null)
-                {
-                    throw result.Exception;
-                }
-                //break;
+                throw result.Exception;
             }
         }
         return ctx.Builder.ToString();
