@@ -7,7 +7,7 @@ public static class VariablePathExtensions
 {
     public static EvaluationResult Evaluate(this VariablePath path, IAccessorVisitor<EvaluationResult, DataContext> visitor, DataContext args, bool useParentFallback = true)
     {
-        EvaluationResult result = new(ResoltionState.NotFound, null);
+        EvaluationResult result = new(ResoltionState.NotFound, Facades.Null);
         DataContext ctx = args;
         ImmutableArray<IAccessor>.Enumerator enumerator = path.Segments.GetEnumerator();
         if (enumerator.MoveNext())
@@ -15,7 +15,7 @@ public static class VariablePathExtensions
             result = enumerator.Current.Accept(visitor, ctx);
             while (result.Status == ResoltionState.Found && enumerator.MoveNext())
             {
-                ctx = ctx.Child(result.Value);
+                ctx = ctx.Child(result.Value?.RawValue);
                 IAccessor item = enumerator.Current;
                 EvaluationResult res = item.Accept(visitor, ctx);
                 if (res.Status == ResoltionState.Found)

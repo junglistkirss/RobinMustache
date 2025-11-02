@@ -1,18 +1,15 @@
 using Robin.Contracts.Expressions;
-using Robin.Contracts.Nodes;
 using System.Collections;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace Robin.Abstractions;
 
 
 public interface IEvaluator
 {
-    bool TryResolve(IExpressionNode expression, DataContext? data, out object? value);
-    bool IsCollection(object? value, [NotNullWhen(true)] out IEnumerable? collection);
-    bool IsTrue(object? value);
+    IDataFacade Resolve(IExpressionNode expression, DataContext? data);
+    //bool IsCollection(object? value, [NotNullWhen(true)] out IEnumerable? collection);
+    //bool IsTrue(object? value);
 }
 
 

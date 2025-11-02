@@ -1,7 +1,6 @@
-using Robin.MustacheSpecs.Tests;
 using System.Text.Json.Serialization;
 
-namespace Robin.tests;
+namespace Robin.MustacheSpecs.Tests;
 
 public sealed record MustacheTestFile(
     [property: JsonPropertyName("overview")] string Overview,

@@ -1,7 +1,6 @@
 using Robin.Contracts.Expressions;
 using Robin.Contracts.Nodes;
 using System.Collections.Immutable;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Robin.tests;
 

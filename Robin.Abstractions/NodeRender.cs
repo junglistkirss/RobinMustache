@@ -1,12 +1,9 @@
-using Robin.Abstractions;
 using Robin.Contracts.Nodes;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Net;
 
-namespace Robin;
-
-
+namespace Robin.Abstractions;
 
 public class NodeRender : INodeVisitor<NoValue, RenderContext>
 {
@@ -29,44 +26,44 @@ public class NodeRender : INodeVisitor<NoValue, RenderContext>
 
     public NoValue VisitVariable(VariableNode node, RenderContext context)
     {
-        if (context.Evaluator.TryResolve(node.Expression, context.Data, out object? value))
-        {
+        IDataFacade value = context.Evaluator.Resolve(node.Expression, context.Data);
+        if (value.IsTrue()){
             if (node.IsUnescaped)
-                context.Builder.Append(value?.ToString());
+                context.Builder.Append(value.RawValue?.ToString());
             else
-                context.Builder.Append(WebUtility.HtmlEncode(value?.ToString()));
-            return NoValue.Instance;
+                context.Builder.Append(WebUtility.HtmlEncode(value.RawValue?.ToString()));
         }
         return NoValue.Instance;
     }
 
     public NoValue VisitSection(SectionNode node, RenderContext context)
     {
-        object? subData = context.Evaluator.TryResolve(node.Expression, context.Data, out object? value) ? value : null;
-        bool thruly = context.Evaluator.IsTrue(subData);
+        IDataFacade value = context.Evaluator.Resolve(node.Expression, context.Data);
+        bool thruly = value.IsTrue();
 
         if ((!node.Inverted && thruly) || (node.Inverted && !thruly))
         {
-            return RenderTree(context, subData, node.Children);
+            return RenderTree(context, value, node.Children);
         }
+
         return NoValue.Instance;
     }
 
     public NoValue VisitPartialCall(PartialCallNode node, RenderContext context)
     {
-        object? subData = context.Evaluator.TryResolve(node.Expression, context.Data, out object? value) ? value : null;
-        bool thruly = context.Evaluator.IsTrue(subData);
-        if (context.Partials.TryGetValue(node.PartialName, out ImmutableArray<INode> partialTemplate) && thruly)
+        IDataFacade value = context.Evaluator.Resolve(node.Expression, context.Data);
+
+        if (value.IsTrue() && context.Partials.TryGetValue(node.PartialName, out ImmutableArray<INode> partialTemplate))
         {
-            return RenderTree(context, subData, partialTemplate);
+            return RenderTree(context, value, partialTemplate);
 
         }
         return NoValue.Instance;
     }
 
-    private NoValue RenderTree(RenderContext context, object? subData, ImmutableArray<INode> partialTemplate)
+    private NoValue RenderTree(RenderContext context, IDataFacade facade, ImmutableArray<INode> partialTemplate)
     {
-        if (context.Evaluator.IsCollection(subData, out IEnumerable? collection))
+        if (facade.IsCollection(out IEnumerable? collection))
         {
             foreach (object? item in collection)
             {
@@ -85,7 +82,7 @@ public class NodeRender : INodeVisitor<NoValue, RenderContext>
         {
             RenderContext innerCtx = context with
             {
-                Data = context.Data?.Child(subData) ?? new DataContext(subData, null),
+                Data = context.Data?.Child(facade.RawValue) ?? new DataContext(facade.RawValue, null),
             };
             ImmutableArray<INode>.Enumerator enumerator = partialTemplate.GetEnumerator();
             while (enumerator.MoveNext())

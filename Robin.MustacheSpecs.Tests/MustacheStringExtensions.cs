@@ -4,7 +4,7 @@ namespace Robin.MustacheSpecs.Tests;
 
 internal static partial class MustacheStringExtensions
 {
-   public static bool EqualsIgnoringWhitespace(this string a, string b)
+    public static bool EqualsIgnoringWhitespace(this string a, string b)
     {
         string normA = Spaces().Replace(a ?? "", "");
         string normB = Spaces().Replace(b ?? "", "");
