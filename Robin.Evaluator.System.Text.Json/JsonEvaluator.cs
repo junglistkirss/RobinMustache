@@ -2,7 +2,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Robin.Contracts.Context;
+using Robin.Abstractions;
 using Robin.Contracts.Expressions;
 
 namespace Robin.Evaluator.System.Text.Json;
@@ -73,8 +73,8 @@ public sealed class JsonEvaluator : IEvaluator
 
         EvaluationResult result = expression.Accept(NodeInstance, data);
 
-        if (result.Status == ResoltionState.NotFound && data.Previous is not null)
-            result = expression.Accept(NodeInstance, data.Previous);
+        if (result.Status == ResoltionState.NotFound && data.Parent is not null)
+            result = expression.Accept(NodeInstance, data.Parent);
 
         value = result.Value;
         return result.Status == ResoltionState.Found;

@@ -38,6 +38,21 @@ public ref struct NodeLexer
             return false;
         }
 
+        // Détection du retour à la ligne avant tout
+        if (_source[pos] == '\r' || _source[pos] == '\n')
+        {
+            int start = pos;
+
+            // Gérer \r\n comme un seul token
+            if (_source[pos] == '\r' && pos + 1 < _source.Length && _source[pos + 1] == '\n')
+                pos += 2;
+            else
+                pos++;
+
+            token = new Token(TokenType.LineBreak, start, pos - start);
+            return true;
+        }
+
         // Look for opening delimiter
         int delimiterPos = IndexOf(_source[pos..], OpenDelimiter);
 
@@ -55,8 +70,46 @@ public ref struct NodeLexer
         if (delimiterPos > 0)
         {
             int start = pos;
-            pos += delimiterPos;
+            int lastIndex = pos + delimiterPos - 1; // dernier caractère du texte avant le délimiteur
+
+            // Vérifier si le texte se termine par \r ou \n
+            if (_source[lastIndex] == '\n')
+            {
+                // Cas \r\n
+                if (lastIndex - 1 >= pos && _source[lastIndex - 1] == '\r')
+                {
+                    // On ne retourne pas encore le line break : juste le texte avant
+                    int textLength = delimiterPos - 2;
+                    if (textLength > 0)
+                    {
+                        token = new Token(TokenType.Text, start, textLength);
+                        pos += textLength;
+                        return true;
+                    }
+
+                    // sinon, pas de texte, on retournera le line break maintenant
+                    token = new Token(TokenType.LineBreak, lastIndex - 1, 2);
+                    pos += 2;
+                    return true;
+                }
+
+                // Cas \n seul
+                int textLength2 = delimiterPos - 1;
+                if (textLength2 > 0)
+                {
+                    token = new Token(TokenType.Text, start, textLength2);
+                    pos += textLength2;
+                    return true;
+                }
+
+                token = new Token(TokenType.LineBreak, lastIndex, 1);
+                pos += 1;
+                return true;
+            }
+
+            // Pas de line break : tout le bloc est du texte
             token = new Token(TokenType.Text, start, delimiterPos);
+            pos += delimiterPos;
             return true;
         }
 
@@ -114,12 +167,12 @@ public ref struct NodeLexer
                 pos++;
                 contentStart = pos;
                 break;
-            case '<': // Partial {{> partial}}
+            case '<': // Partial define {{< partial}}
                 tokenType = TokenType.PartialDefine;
                 pos++;
                 contentStart = pos;
                 break;
-            case '>': // Partial {{> partial}}
+            case '>': // Partial call {{> partial}}
                 tokenType = TokenType.PartialCall;
                 pos++;
                 contentStart = pos;
@@ -145,17 +198,24 @@ public ref struct NodeLexer
             return true;
         }
 
-        // Skip whitespace around content
         int contentEnd = pos + closePos;
-        while (contentStart < contentEnd && char.IsWhiteSpace(_source[contentStart]))
+        if (tokenType == TokenType.Comment)
         {
-            contentStart++;
+            while (contentStart < contentEnd && char.IsWhiteSpace(_source[contentStart]) && _source[contentStart] != '\r' && _source[contentStart] != '\n')
+                contentStart++;
+            while (contentEnd > contentStart && char.IsWhiteSpace(_source[contentEnd - 1]) && _source[contentEnd - 1] != '\r' && _source[contentEnd - 1] != '\n')
+                contentEnd--;
         }
-        while (contentEnd > contentStart && char.IsWhiteSpace(_source[contentEnd - 1]))
+        else
         {
-            contentEnd--;
-        }
+            while (contentStart < contentEnd && char.IsWhiteSpace(_source[contentStart]))
+                contentStart++;
 
+            while (contentEnd > contentStart && char.IsWhiteSpace(_source[contentEnd - 1]))
+                contentEnd--;
+            // Skip only spaces and tabs, but keep line breaks
+
+        }
         pos += closePos + closingDelim.Length;
 
         token = new Token(tokenType, contentStart, contentEnd - contentStart);
@@ -187,6 +247,4 @@ public ref struct NodeLexer
         ReadOnlySpan<char> x = _source.Slice(token.Start, token.Length);
         return x.ToString();
     }
-    // Convenience method to tokenize entire input
-
 }

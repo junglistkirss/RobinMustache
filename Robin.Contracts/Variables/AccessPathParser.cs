@@ -4,7 +4,7 @@ namespace Robin.Contracts.Variables;
 
 public static class AccessPathParser
 {
-    public static bool TryParse(this string path, [NotNullWhen(true)] out AccesorPath? accesorPath)
+    public static bool TryParse(this string path, [NotNullWhen(true)] out VariablePath? accesorPath)
     {
         try
         {
@@ -18,10 +18,10 @@ public static class AccessPathParser
         }
     }
 
-    public static AccesorPath Parse(this string path)
+    public static VariablePath Parse(this string path)
     {
         if (string.IsNullOrEmpty(path))
-            return new AccesorPath([]);
+            return new VariablePath([]);
 
         List<IAccessor> segments = [];
         int i = 0;
@@ -77,7 +77,7 @@ public static class AccessPathParser
                 else
                 {
                     // Parse as chain path key
-                    AccesorPath chainPath = Parse(content);
+                    VariablePath chainPath = Parse(content);
                     segments.Add(new KeyAccessor(chainPath));
                 }
 
@@ -99,6 +99,6 @@ public static class AccessPathParser
             }
         }
 
-        return new AccesorPath([.. segments]);
+        return new VariablePath([.. segments]);
     }
 }

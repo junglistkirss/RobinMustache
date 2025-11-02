@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Robin.Contracts.Context;
+namespace Robin.Abstractions;
 
 
 public interface IEvaluator

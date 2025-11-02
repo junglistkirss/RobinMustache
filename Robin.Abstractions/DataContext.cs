@@ -1,8 +1,8 @@
 using System.Diagnostics.Contracts;
 
-namespace Robin.Contracts.Context;
+namespace Robin.Abstractions;
 
-public record class DataContext(object? Data, DataContext? Previous = null)
+public record class DataContext(object? Data, DataContext? Parent = null)
 {
     [Pure]
     public DataContext Child(object? data) => new(data, this);

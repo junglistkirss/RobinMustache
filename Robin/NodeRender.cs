@@ -1,4 +1,4 @@
-using Robin.Contracts.Context;
+using Robin.Abstractions;
 using Robin.Contracts.Nodes;
 using System.Collections;
 using System.Collections.Immutable;
@@ -58,13 +58,13 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
         bool thruly = context.Evaluator.IsTrue(subData);
         if (context.Partials.TryGetValue(node.PartialName, out ImmutableArray<INode> partialTemplate) && thruly)
         {
-            return  RenderTree(context, subData, partialTemplate);
+            return RenderTree(context, subData, partialTemplate);
 
         }
         return RenderResult.Complete;
     }
 
-    private  RenderResult  RenderTree(RenderContext context, object? subData, ImmutableArray<INode> partialTemplate)
+    private RenderResult RenderTree(RenderContext context, object? subData, ImmutableArray<INode> partialTemplate)
     {
         if (context.Evaluator.IsCollection(subData, out IEnumerable? collection))
         {
@@ -100,6 +100,13 @@ public class NodeRender : INodeVisitor<RenderResult, RenderContext>
             }
         }
 
+        return RenderResult.Complete;
+    }
+
+    public RenderResult VisitLineBreak(LineBreakNode node, RenderContext context)
+    {
+        for (int i = 0; i < node.Count; i++)
+            context.Builder.AppendLine();
         return RenderResult.Complete;
     }
 }

@@ -3,6 +3,7 @@ namespace Robin.Nodes;
 public enum TokenType
 {
     Text,
+    LineBreak,
     Variable,           // {{variable}}
     UnescapedVariable,  // {{{variable}}} or {{&variable}}
     SectionOpen,        // {{#section}}

@@ -9,4 +9,3 @@ public readonly struct TextNode(string text) : INode
         return visitor.VisitText(this, args);
     }
 }
-

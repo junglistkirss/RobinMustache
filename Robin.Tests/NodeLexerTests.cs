@@ -17,16 +17,16 @@ public class NodeLexerTests
         Token[] tokens = Tokenizer.Tokenize(source);
         Assert.NotEmpty(tokens);
 
+        Token[] br = [.. tokens.Where(x => x.Type == TokenType.LineBreak)];
+        Assert.Equal(5, br.Length);
+
         Token[] txt = [.. tokens.Where(x => x.Type == TokenType.Text)];
-        Assert.Equal(8, txt.Length);
+        Assert.Equal(5, txt.Length);
         Assert.Equal("Hello ", txt[0].GetValue(source));
-        Assert.Equal($"!{Environment.NewLine}", txt[1].GetValue(source));
-        Assert.Equal($"{Environment.NewLine}  - ", txt[2].GetValue(source));
+        Assert.Equal($"!", txt[1].GetValue(source));
+        Assert.Equal($"  - ", txt[2].GetValue(source));
         Assert.Equal(": ", txt[3].GetValue(source));
-        Assert.Equal(Environment.NewLine, txt[4].GetValue(source));
-        Assert.Equal(Environment.NewLine, txt[5].GetValue(source));
-        Assert.Equal("Missing item", txt[6].GetValue(source));
-        Assert.Equal(Environment.NewLine, txt[7].GetValue(source));
+        Assert.Equal("Missing item", txt[4].GetValue(source));
 
         Token[] vars = [.. tokens.Where(x => x.Type == TokenType.Variable)];
         Assert.Equal(2, vars.Length);

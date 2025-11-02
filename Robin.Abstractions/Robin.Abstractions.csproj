@@ -4,11 +4,10 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\Robin.Abstractions\Robin.Abstractions.csproj" />
+    <ProjectReference Include="..\Robin.Contracts\Robin.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

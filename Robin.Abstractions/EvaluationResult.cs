@@ -1,4 +1,4 @@
-namespace Robin.Contracts.Context;
+namespace Robin.Abstractions;
 
 public enum ResoltionState
 {

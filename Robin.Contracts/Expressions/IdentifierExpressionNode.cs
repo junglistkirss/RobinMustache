@@ -2,9 +2,9 @@ using Robin.Contracts.Variables;
 
 namespace Robin.Contracts.Expressions;
 
-public readonly struct IdentifierExpressionNode(AccesorPath path) : IExpressionNode
+public readonly struct IdentifierExpressionNode(VariablePath path) : IExpressionNode
 {
-    public AccesorPath Path { get; } = path;
+    public VariablePath Path { get; } = path;
 
     public TOut Accept<TOut, TArgs>(IExpressionNodeVisitor<TOut, TArgs> visitor, TArgs args)
     {

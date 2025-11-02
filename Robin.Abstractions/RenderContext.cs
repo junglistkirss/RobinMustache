@@ -3,7 +3,7 @@ using Robin.Contracts.Nodes;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Robin.Contracts.Context;
+namespace Robin.Abstractions;
 
 public record class RenderContext
 {
@@ -18,7 +18,7 @@ public record class RenderContext
             value = null;
             return false;
         }
-        return (Evaluator.TryResolve(expression, Data, out value));
+        return Evaluator.TryResolve(expression, Data, out value);
     }
 }
 

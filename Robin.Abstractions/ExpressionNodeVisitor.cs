@@ -1,8 +1,7 @@
-using Robin.Contracts.Context;
 using Robin.Contracts.Expressions;
 using Robin.Contracts.Variables;
 
-namespace Robin;
+namespace Robin.Abstractions;
 
 public sealed class ExpressionNodeVisitor(IAccessorVisitor<EvaluationResult, DataContext> accessorVisitor) : IExpressionNodeVisitor<EvaluationResult, DataContext>
 {
@@ -54,10 +53,10 @@ public sealed class ExpressionNodeVisitor(IAccessorVisitor<EvaluationResult, Dat
 
     public EvaluationResult VisitIdenitifer(IdentifierExpressionNode node, DataContext args)
     {
-        EvaluationResult result = node.Path.Accept(accessorVisitor, args);
-        if(result.Status == ResoltionState.NotFound && args.Previous is not null)
+        EvaluationResult result = node.Path.Evaluate(accessorVisitor, args);
+        if(result.Status == ResoltionState.NotFound && args.Parent is not null)
         {
-            EvaluationResult prevResult = node.Path.Accept(accessorVisitor, args.Previous);
+            EvaluationResult prevResult = node.Path.Evaluate(accessorVisitor, args.Parent);
             result = prevResult;
         }
         return result;
@@ -75,6 +74,7 @@ public sealed class ExpressionNodeVisitor(IAccessorVisitor<EvaluationResult, Dat
 
     public EvaluationResult VisitUnaryOperation(UnaryOperationExpressionNode node, DataContext args)
     {
+        object? operand = node.Operand.Accept(this, args);
         throw new NotImplementedException();
     }
 }

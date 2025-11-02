@@ -1,5 +1,5 @@
 using System.Text.Json.Nodes;
-using Robin.Contracts.Context;
+using Robin.Abstractions;
 using Robin.Contracts.Expressions;
 using Robin.Contracts.Variables;
 using Robin.Evaluator.System.Text.Json;
@@ -13,7 +13,7 @@ public class JsonEvaluatorTests
     public void ResolveThis()
     {
         JsonObject json = [];
-        AccesorPath path = AccessPathParser.Parse(".");
+        VariablePath path = AccessPathParser.Parse(".");
         Assert.IsType<ThisAccessor>(Assert.Single(path.Segments));
         IExpressionNode expression = new IdentifierExpressionNode(path);
         DataContext context = new(json, null);
@@ -135,11 +135,12 @@ public class JsonEvaluatorTests
     [Fact]
     public void ResolveParent()
     {
+        JsonObject jsonParent = [];
         JsonObject json = [];
         IExpressionNode that = new IdentifierExpressionNode(AccessPathParser.Parse("~"));
-        DataContext context = new(json, null);
+        DataContext context = new(json, new(jsonParent, null));
         bool resolved = JsonEvaluator.Instance.TryResolve(that, context, out object? found);
-        Assert.False(resolved);
-        Assert.Null(found);
+        Assert.True(resolved);
+        Assert.Same(jsonParent, found);
     }
 }
