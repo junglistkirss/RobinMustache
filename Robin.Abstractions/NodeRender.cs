@@ -27,7 +27,8 @@ public class NodeRender : INodeVisitor<NoValue, RenderContext>
     public NoValue VisitVariable(VariableNode node, RenderContext context)
     {
         IDataFacade value = context.Evaluator.Resolve(node.Expression, context.Data);
-        if (value.IsTrue()){
+        if (value.IsTrue())
+        {
             if (node.IsUnescaped)
                 context.Builder.Append(value.RawValue?.ToString());
             else
