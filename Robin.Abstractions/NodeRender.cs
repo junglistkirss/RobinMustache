@@ -1,12 +1,9 @@
-using Robin.Abstractions;
 using Robin.Contracts.Nodes;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Net;
 
-namespace Robin;
-
-
+namespace Robin.Abstractions;
 
 public class NodeRender : INodeVisitor<NoValue, RenderContext>
 {
@@ -45,7 +42,7 @@ public class NodeRender : INodeVisitor<NoValue, RenderContext>
         object? subData = context.Evaluator.TryResolve(node.Expression, context.Data, out object? value) ? value : null;
         bool thruly = context.Evaluator.IsTrue(subData);
 
-        if ((!node.Inverted && thruly) || (node.Inverted && !thruly))
+        if (!node.Inverted && thruly || node.Inverted && !thruly)
         {
             return RenderTree(context, subData, node.Children);
         }

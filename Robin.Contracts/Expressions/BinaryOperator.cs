@@ -11,7 +11,7 @@ public enum BinaryOperator
     [Symbol("&")][Symbol("&&")] And,
     [Symbol("|")][Symbol("`||")] Or,
     [Symbol("==")] Equal,
-    [Symbol("!=")]NotEqual,
+    [Symbol("!=")] NotEqual,
     [Symbol(">")] GreaterThan,
     [Symbol("<")] LessThan,
     [Symbol(">=")] GreaterThanOrEqual,

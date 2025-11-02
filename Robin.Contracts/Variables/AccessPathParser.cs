@@ -30,14 +30,14 @@ public static class AccessPathParser
         {
             if (path[i] == '.')
             {
-                if (i == 0) 
-                segments.Add(ThisAccessor.Instance);
+                if (i == 0)
+                    segments.Add(ThisAccessor.Instance);
                 i++; // skip '.'
             }
             else if (path[i] == '~')
             {
-                if (i == 0) 
-                segments.Add(ParentAccessor.Instance);
+                if (i == 0)
+                    segments.Add(ParentAccessor.Instance);
                 i++; // skip '.'
             }
             else if (path[i] == '[')

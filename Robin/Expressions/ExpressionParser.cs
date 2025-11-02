@@ -1,5 +1,5 @@
-using Robin.Contracts.Variables;
 using Robin.Contracts.Expressions;
+using Robin.Contracts.Variables;
 using System.Globalization;
 
 namespace Robin.Expressions;
@@ -53,7 +53,7 @@ public static class ExpressionParser
             if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
                 throw new Exception("Opérande attendu après opérateur");
 
-            if(!op.TryParse(out BinaryOperator binaryOp))
+            if (!op.TryParse(out BinaryOperator binaryOp))
                 throw new Exception($"Opérateur inconnu: {op}");
 
             IExpressionNode right = ParseTerm(ref lexer, rightToken.Value);
@@ -108,10 +108,10 @@ public static class ExpressionParser
 
                     if (!lexer.TryGetNextToken(out ExpressionToken? rightToken))
                         throw new Exception("Opérande attendu après opérateur");
-                    
+
                     if (!op.TryParse(out BinaryOperator binaryOp))
                         throw new Exception($"Opérateur inconnu: {op}");
-                    
+
                     IExpressionNode right = ParsePower(ref lexer, rightToken.Value);
                     return new BinaryOperationExpressionNode(left, binaryOp, right);
                 }
@@ -131,7 +131,7 @@ public static class ExpressionParser
             {
                 if (!lexer.TryGetNextToken(out ExpressionToken? operandToken))
                     throw new Exception("Opérande attendu après opérateur unaire");
-                
+
                 if (!op.TryParse(out UnaryOperator unaryOp))
                     throw new Exception($"Opérateur inconnu: {op}");
 

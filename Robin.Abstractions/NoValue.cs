@@ -1,4 +1,4 @@
-namespace Robin;
+namespace Robin.Abstractions;
 
 public record NoValue
 {
