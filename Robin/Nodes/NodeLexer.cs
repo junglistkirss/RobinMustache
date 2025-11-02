@@ -39,12 +39,12 @@ public ref struct NodeLexer
         }
 
         // Détection du retour à la ligne avant tout
-        if (_source[pos] == '\r' || _source[pos] == '\n')
+        if (_source[pos] is '\r' or '\n')
         {
             int start = pos;
 
             // Gérer \r\n comme un seul token
-            if (_source[pos] == '\r' && pos + 1 < _source.Length && _source[pos + 1] == '\n')
+            if (_source[pos] is '\r' && pos + 1 < _source.Length && _source[pos + 1] is '\n')
                 pos += 2;
             else
                 pos++;
@@ -70,42 +70,9 @@ public ref struct NodeLexer
         if (delimiterPos > 0)
         {
             int start = pos;
-            int lastIndex = pos + delimiterPos - 1; // dernier caractère du texte avant le délimiteur
-
-            // Vérifier si le texte se termine par \r ou \n
-            if (_source[lastIndex] == '\n')
-            {
-                // Cas \r\n
-                if (lastIndex - 1 >= pos && _source[lastIndex - 1] == '\r')
-                {
-                    // On ne retourne pas encore le line break : juste le texte avant
-                    int textLength = delimiterPos - 2;
-                    if (textLength > 0)
-                    {
-                        token = new Token(TokenType.Text, start, textLength);
-                        pos += textLength;
-                        return true;
-                    }
-
-                    // sinon, pas de texte, on retournera le line break maintenant
-                    token = new Token(TokenType.LineBreak, lastIndex - 1, 2);
-                    pos += 2;
-                    return true;
-                }
-
-                // Cas \n seul
-                int textLength2 = delimiterPos - 1;
-                if (textLength2 > 0)
-                {
-                    token = new Token(TokenType.Text, start, textLength2);
-                    pos += textLength2;
-                    return true;
-                }
-
-                token = new Token(TokenType.LineBreak, lastIndex, 1);
-                pos += 1;
+            int lastIndex = pos + delimiterPos; // dernier caractère du texte avant le délimiteur
+            if (TrimLineBreaksBounds(ref pos, start, delimiterPos, out token))
                 return true;
-            }
 
             // Pas de line break : tout le bloc est du texte
             token = new Token(TokenType.Text, start, delimiterPos);
@@ -115,6 +82,29 @@ public ref struct NodeLexer
 
         // Parse the mustache tag
         return TryParseMustacheTag(out token, ref pos);
+    }
+
+    private readonly bool TrimLineBreaksBounds(ref int pos, int start, int lastIndex, [NotNullWhen(true)] out Token? token)
+    {
+        // Position de fin effective
+        int end = start + lastIndex;
+
+        // Vérifie si le texte se termine par un saut de ligne
+        if (end > start && _source[end - 1] is '\n' or '\r')
+        {
+            int i = end;
+            // Remonte tant qu'on trouve des \r ou \n
+            while (i > start && _source[i - 1] is '\n' or '\r')
+                i--;
+
+            int length = i - start;
+            token = new Token(TokenType.Text, start, length);
+            pos += length;
+            return true;
+        }
+
+        token = null;
+        return false;
     }
 
     private readonly bool TryParseMustacheTag([NotNullWhen(true)] out Token? token, ref int pos)
@@ -129,7 +119,7 @@ public ref struct NodeLexer
         }
 
         // Check for triple braces {{{var}}}
-        bool isTripleBrace = _source[pos] == '{';
+        bool isTripleBrace = _source[pos] is '{';
         if (isTripleBrace)
         {
             pos++;
@@ -201,9 +191,9 @@ public ref struct NodeLexer
         int contentEnd = pos + closePos;
         if (tokenType == TokenType.Comment)
         {
-            while (contentStart < contentEnd && char.IsWhiteSpace(_source[contentStart]) && _source[contentStart] != '\r' && _source[contentStart] != '\n')
+            while (contentStart < contentEnd && char.IsWhiteSpace(_source[contentStart]) && _source[contentStart] is not ('\r' or '\n'))
                 contentStart++;
-            while (contentEnd > contentStart && char.IsWhiteSpace(_source[contentEnd - 1]) && _source[contentEnd - 1] != '\r' && _source[contentEnd - 1] != '\n')
+            while (contentEnd > contentStart && char.IsWhiteSpace(_source[contentEnd - 1]) && _source[contentStart] is not ('\r' or '\n'))
                 contentEnd--;
         }
         else

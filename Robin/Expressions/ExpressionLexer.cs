@@ -48,29 +48,29 @@ public ref struct ExpressionLexer
 
         char current = _source[pos];
 
-        if (current == '(')
+        if (current is '(')
         {
             token = new ExpressionToken(ExpressionType.LeftParenthesis, pos, 1);
             pos++;
             return true;
         }
-        else if (current == ')')
+        else if (current is ')')
         {
             token = new ExpressionToken(ExpressionType.RightParenthesis, pos, 1);
             pos++;
             return true;
         }
-        else if (current == '+' || current == '-' || current == '/' || current == '*' || current == '%' || current == '^')
+        else if (current is '+' or '-' or '/' or '*' or '%' or '^')
         {
             token = new ExpressionToken(ExpressionType.Operator, pos, 1);
             pos++;
             return true;
         }
-        else if (current == '>' || current == '<')
+        else if (current is '>' or '<')
         {
             int operatorStart = pos;
             pos++;
-            if (_source[pos] == '=')
+            if (_source[pos] is '=')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
                 pos++;
@@ -79,11 +79,11 @@ public ref struct ExpressionLexer
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 1);
             return true;
         }
-        else if (current == '=')
+        else if (current is '=')
         {
             int operatorStart = pos;
             pos++;
-            if (_source[pos] == '=')
+            if (_source[pos] is '=')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
                 pos++;
@@ -92,11 +92,11 @@ public ref struct ExpressionLexer
                 throw new InvalidOperationException($"Invalid assign '=', assignation are not supported");
             return true;
         }
-        else if (current == '&')
+        else if (current is '&')
         {
             int operatorStart = pos;
             pos++;
-            if (_source[pos] == '&')
+            if (_source[pos] is '&')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
                 pos++;
@@ -105,11 +105,11 @@ public ref struct ExpressionLexer
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 1);
             return true;
         }
-        else if (current == '|')
+        else if (current is '|')
         {
             int operatorStart = pos;
             pos++;
-            if (_source[pos] == '|')
+            if (_source[pos] is '|')
             {
                 token = new ExpressionToken(ExpressionType.Operator, operatorStart, 2);
                 pos++;
@@ -121,22 +121,22 @@ public ref struct ExpressionLexer
         else
         {
             int start = pos;
-            if (_source[pos] == '"')
+            if (_source[pos] is '"')
             {
                 pos++;
                 start++;
-                while (pos < _source.Length && _source[pos] != '"')
+                while (pos < _source.Length && _source[pos] is not '"')
                 {
                     pos++;
                 }
                 token = new ExpressionToken(ExpressionType.Literal, start, pos - start);
                 pos++;
             }
-            else if (_source[pos] == '\'')
+            else if (_source[pos] is '\'')
             {
                 pos++;
                 start++;
-                while (pos < _source.Length && _source[pos] != '\'')
+                while (pos < _source.Length && _source[pos] is not '\'')
                 {
                     pos++;
                 }
@@ -146,7 +146,7 @@ public ref struct ExpressionLexer
             else
             {
                 bool isOnlyDigits = char.IsDigit(_source[pos]);
-                while (pos < _source.Length && (char.IsLetterOrDigit(_source[pos]) || _source[pos] == '_' || _source[pos] == '.' || _source[pos] == '[' || _source[pos] == ']' || _source[pos] == '.' || _source[pos] == '~'))
+                while (pos < _source.Length && (char.IsLetterOrDigit(_source[pos]) || _source[pos] is '_' or '.' or '[' or ']' or '.' or '~'))
                 {
                     isOnlyDigits = isOnlyDigits && (char.IsDigit(_source[pos]) || _source[pos] == '.');
                     pos++;
