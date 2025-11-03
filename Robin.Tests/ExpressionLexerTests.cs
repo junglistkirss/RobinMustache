@@ -134,4 +134,19 @@ public class ExpressionLexerTests
         ExpressionToken secOpen = Assert.Single(tokens, x => x.Type == ExpressionType.Identifier);
         Assert.Equal("test", secOpen.GetValue(source));
     }
+
+    [Theory]
+    [InlineData("~")]
+    [InlineData("#")]
+    [InlineData("^")]
+    [InlineData(">")]
+    [InlineData("<")]
+    [InlineData("+")]
+    [InlineData("-")]
+    [InlineData("*")]
+    [InlineData("/")]
+    public void Invalid(string dat)
+    {
+        Assert.Throws<InvalidTokenException>(() => Tokenizer.TokenizeExpression(dat));
+    }
 }
