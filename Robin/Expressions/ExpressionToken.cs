@@ -14,7 +14,7 @@ public readonly struct ExpressionToken(ExpressionType type, int start, int lengt
     {
         return source.Slice(Start, Length);
     }
-    
+
     [ExcludeFromCodeCoverage]
     private string GetDebuggerDisplay()
     {

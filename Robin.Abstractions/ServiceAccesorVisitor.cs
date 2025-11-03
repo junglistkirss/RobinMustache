@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Facades;
 using Robin.Contracts.Variables;
@@ -38,7 +37,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
         }
         Type type = typeof(IIndexAccessor<>).MakeGenericType(data.GetType());
         accessor = (IIndexAccessor?)serviceProvider.GetService(type);
-        
+
         if (accessor is not null)
             return true;
 

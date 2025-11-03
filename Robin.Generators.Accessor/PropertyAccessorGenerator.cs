@@ -1,7 +1,7 @@
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using System.Text;
 
 namespace Robin.Generators.Accessor
 {
