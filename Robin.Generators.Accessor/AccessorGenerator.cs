@@ -7,7 +7,7 @@ namespace Robin.Generators.Accessor
 {
 
     [Generator]
-    public class PropertyAccessorIncrementalGenerator : IIncrementalGenerator
+    public class AccessorGenerator : IIncrementalGenerator
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
@@ -86,7 +86,8 @@ namespace Robin.Generators.Accessor
                     }
                     else
                     {
-                        sb.AppendLineIndented(3, "default: throw new ArgumentException($\"Unknown property '{propertyName}'\");");
+                        sb.AppendLineIndented(4, "default:");
+                        sb.AppendLineIndented(5, "throw new ArgumentException($\"Source has no properties : '{propertyName}'\");");
                     }
 
                     sb.AppendLineIndented(3, "}");

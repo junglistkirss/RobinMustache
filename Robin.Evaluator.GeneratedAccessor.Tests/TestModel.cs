@@ -32,3 +32,8 @@ public struct ImplicitKey(string value)
     public static implicit operator string(ImplicitKey key) => key.Value;
     public static implicit operator ImplicitKey(string key) => new(key);
 }
+
+[GenerateAccessor]
+public struct Test
+{
+}
