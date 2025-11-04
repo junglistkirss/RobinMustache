@@ -35,11 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="datasets\*.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Robin.Generators.Accessor\Robin.Generators.Accessor.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+    <!--<ProjectReference Include="..\Robin.Generators.Accessor\Robin.Generators.Accessor.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />-->
     <ProjectReference Include="..\Robin\Robin.csproj" />
   </ItemGroup>
 
