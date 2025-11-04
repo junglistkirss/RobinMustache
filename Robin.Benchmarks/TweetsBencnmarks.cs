@@ -55,7 +55,9 @@ public class AutoBenchmarkConfig : ManualConfig
                 .WithLaunchCount(1)
                 .WithId(FAST_MODE));
         }
-
+#if WINDOWS
+        AddDiagnoser(new BenchmarkDotNet.Diagnostics.Windows.EtwProfiler());
+#endif
         // AddDiagnoser(MemoryDiagnoser.Default);
         // AddExporter(MarkdownExporter.GitHub);
     }
@@ -64,6 +66,7 @@ public class AutoBenchmarkConfig : ManualConfig
 [Config(typeof(AutoBenchmarkConfig))]
 [MemoryDiagnoser]
 [MarkdownExporter]
+
 public class TweetsBencnmarks
 {
     private readonly IServiceProvider serviceProvider;
