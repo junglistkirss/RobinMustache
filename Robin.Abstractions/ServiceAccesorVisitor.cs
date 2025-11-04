@@ -60,7 +60,8 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
 
     public EvaluationResult VisitMember(MemberSegment segment, object? args)
     {
-        if (args is not null && TryGetMemberAccessor(args, out IMemberAccessor? typedAccessor) && typedAccessor.TryGetMember(args, segment.MemberName, out object? value))
+        if (args is not null && TryGetMemberAccessor(args, out IMemberAccessor? typedAccessor) 
+            && typedAccessor.TryGetMember(args, segment.MemberName, out object? value))
 
             return new EvaluationResult(true, value);
 

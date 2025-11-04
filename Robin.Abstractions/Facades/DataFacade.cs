@@ -48,13 +48,17 @@ public static class DataFacade
             case TimeOnly: return StructDataFacade.Instance;
             case TimeSpan: return StructDataFacade.Instance;
             // collection
-            case IDictionary: return DictionaryDataFacade.Instance;
-            case IList: return ListDataFacade.Instance;
-            case IEnumerator: return EnumeratorDataFacade.Instance;
+
             default:
                 if (_facadeFactories.TryGetValue(obj.GetType(), out DataFacadeFactory? factory) && factory is not null)
                     return factory(obj);
-                return ObjectDataFacade.Instance;
+                switch (obj)
+                {
+                    case IDictionary: return DictionaryDataFacade.Instance;
+                    case IList: return ListDataFacade.Instance;
+                    case IEnumerator: return EnumeratorDataFacade.Instance;
+                    default: return ObjectDataFacade.Instance;
+                }
         }
     }
 }

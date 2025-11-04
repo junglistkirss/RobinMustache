@@ -44,7 +44,7 @@ public sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Strin
     public NoValue VisitSection(SectionNode node, RenderContext<StringBuilder> context)
     {
         object?  value = context.Evaluator.Resolve(node.Expression, context.Data, out IDataFacade facade);
-        bool thruly = facade.IsTrue(facade);
+        bool thruly = facade.IsTrue(value);
 
         if ((!node.Inverted && thruly) || (node.Inverted && !thruly))
         {

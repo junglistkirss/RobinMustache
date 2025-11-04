@@ -16,21 +16,21 @@ public static class RobinExtensions
 
     public static bool Evaluate(this VariablePath path, IVariableSegmentVisitor<EvaluationResult, object?> visitor, DataContext args, out object? value, bool useParentFallback = true)
     {
+        bool shouldFallbackOnParentContext = useParentFallback;
         DataContext ctx = args;
         ImmutableArray<IVariableSegment>.Enumerator enumerator = path.Segments.GetEnumerator();
         if (enumerator.MoveNext())
         {
             EvaluationResult result = enumerator.Current.Accept(visitor, ctx.Data);
-            if (!result.IsResolved)
-            {
-                value = null;
-                return false;
-            }
             while (result.IsResolved && enumerator.MoveNext())
             {
                 ctx = ctx.Child(result.Value);
                 IVariableSegment item = enumerator.Current;
                 result = item.Accept(visitor, ctx.Data);
+                if (!result.IsResolved)
+                {
+                    shouldFallbackOnParentContext = false;
+                }
             }
             if (result.IsResolved)
             {
@@ -38,7 +38,7 @@ public static class RobinExtensions
                 return true;
             }
         }
-        if (useParentFallback && args.Parent is not null)
+        if (shouldFallbackOnParentContext && args.Parent is not null)
             return path.Evaluate(visitor, args.Parent, out value, useParentFallback);
         value = null;
         return false;
