@@ -1,5 +1,9 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Robin.Expressions;
 
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly struct ExpressionToken(ExpressionType type, int start, int length)
 {
     public ExpressionType Type => type;
@@ -11,7 +15,8 @@ public readonly struct ExpressionToken(ExpressionType type, int start, int lengt
         return source.Slice(Start, Length);
     }
 
-    public override string ToString()
+    [ExcludeFromCodeCoverage]
+    private string GetDebuggerDisplay()
     {
         return $"{Type} [{Start}..{Start + Length})";
     }

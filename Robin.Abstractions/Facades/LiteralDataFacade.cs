@@ -9,7 +9,7 @@ internal sealed class LiteralDataFacade(string value) : IDataFacade
 
     public bool IsCollection() => false;
     public bool IsTrue() => !string.IsNullOrEmpty(value);
-    public bool IsCollection([NotNullWhen(true)] out IEnumerable? collection)
+    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
     {
         collection = null;
         return false;

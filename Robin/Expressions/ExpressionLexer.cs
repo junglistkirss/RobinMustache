@@ -12,6 +12,7 @@ public ref struct ExpressionLexer
         _source = source;
         _position = 0;
     }
+
     private readonly void SkipWhitespace(ref int pos)
     {
         while (pos < _source.Length && char.IsWhiteSpace(_source[pos]))
@@ -19,6 +20,7 @@ public ref struct ExpressionLexer
             pos++;
         }
     }
+
     public void AdvanceTo(int position)
     {
         _position = position;
@@ -60,47 +62,43 @@ public ref struct ExpressionLexer
             pos++;
             return true;
         }
-        else
+
+        int start = pos;
+        if (_source[pos] is '"' or '\'' or '`')
         {
-            int start = pos;
-            if (_source[pos] is '"' or '\'' or '`')
+            char quote = _source[pos];
+            pos++;
+            start++;
+            while (pos < _source.Length && _source[pos] != quote)
             {
-                char quote = _source[pos];
-                pos++;
-                start++;
-                while (pos < _source.Length && _source[pos] != quote)
-                {
-                    pos++;
-                }
-                token = new ExpressionToken(ExpressionType.Literal, start, pos - start);
                 pos++;
             }
-            else
-            {
-                bool isOnlyDigits = char.IsDigit(_source[pos]);
-                while (pos < _source.Length && (char.IsLetterOrDigit(_source[pos]) || _source[pos] is '_' or '.' or '[' or ']' or '.' or '~'))
-                {
-                    isOnlyDigits = isOnlyDigits && (char.IsDigit(_source[pos]) || _source[pos] is '.');
-                    pos++;
-                }
-                if (isOnlyDigits)
-                {
-                    token = new ExpressionToken(ExpressionType.Number, start, pos - start);
-                    return true;
-                }
-                token = new ExpressionToken(ExpressionType.Identifier, start, pos - start);
-            }
+            token = new ExpressionToken(ExpressionType.Literal, start, pos - start);
+            pos++;
             return true;
         }
+        else if (char.IsLetterOrDigit(_source[pos]) || _source[pos] is '_' or '.' or '[' or ']' or '.')
+        {
+            bool isOnlyDigits = char.IsDigit(_source[pos]);
+            while (pos < _source.Length && (char.IsLetterOrDigit(_source[pos]) || _source[pos] is '_' or '.' or '[' or ']' or '.'))
+            {
+                isOnlyDigits = isOnlyDigits && (char.IsDigit(_source[pos]));
+                pos++;
+            }
+            if (isOnlyDigits)
+            {
+                token = new ExpressionToken(ExpressionType.Number, start, pos - start);
+                return true;
+            }
+            token = new ExpressionToken(ExpressionType.Identifier, start, pos - start);
+            return true;
+        }
+        throw new InvalidTokenException($"Invalid expression token found : \"{_source[pos]}\"");
     }
-
-
 
     public readonly string GetValue(ExpressionToken token)
     {
         ReadOnlySpan<char> x = _source.Slice(token.Start, token.Length);
         return x.ToString();
     }
-    // Convenience method to tokenize entire input
-
 }

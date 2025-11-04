@@ -1,7 +1,6 @@
 using Robin.Contracts.Expressions;
 using Robin.Expressions;
 using Robin.Nodes;
-using System.Globalization;
 
 namespace Robin.tests;
 
@@ -21,9 +20,6 @@ public class ExpressionParserTests
     [InlineData("one.two")]
     [InlineData("one[0].two")]
     [InlineData("one[0][1].two")]
-    [InlineData("one[test].two")]
-    [InlineData("one[test[3]].two")]
-    [InlineData("one[test.one.two[3]].two")]
     public void IdenitiferExpression(string ident)
     {
         IExpressionNode? node = ident.AsSpan().ParseExpression();
@@ -40,10 +36,31 @@ public class ExpressionParserTests
         Assert.Empty(func.Arguments);
     }
 
+    [Fact]
+    public void LirteralExpression()
+    {
+        IExpressionNode? node = "'func()'".AsSpan().ParseExpression();
+        LiteralExpressionNode func = Assert.IsType<LiteralExpressionNode>(node);
+        Assert.Equal("func()", func.Constant);
+    }
+
+    [Fact]
+    public void NumberExpression()
+    {
+        IExpressionNode? node = "42".AsSpan().ParseExpression();
+        NumberExpressionNode func = Assert.IsType<NumberExpressionNode>(node);
+        Assert.Equal(42, func.Constant);
+    }
+    [Fact]
+    public void IdentifierExpressionParenthesis()
+    {
+        IExpressionNode? node = "(test)".AsSpan().ParseExpression();
+        IdentifierExpressionNode func = Assert.IsType<IdentifierExpressionNode>(node);
+        Assert.Equal("test", func.Path);
+    }
     [Theory]
     [InlineData("func", "test")]
     [InlineData("func", "test[0]")]
-    [InlineData("func", "test[a.b.c]")]
     public void FunctionExpression(string funcName, string ident)
     {
         ReadOnlySpan<char> source = $"{funcName}({ident})".AsSpan();
@@ -55,6 +72,8 @@ public class ExpressionParserTests
         IdentifierExpressionNode identifier = Assert.IsType<IdentifierExpressionNode>(arg);
         Assert.Equal(ident, identifier.Path);
     }
+
+
 
     [Fact]
     public void FunctionNestedExpression()

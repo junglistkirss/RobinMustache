@@ -3,7 +3,6 @@ using Robin.Contracts.Nodes;
 using System.Collections.Immutable;
 
 namespace Robin.tests;
-
 public class NodeParserTests
 {
 
@@ -113,7 +112,7 @@ public class NodeParserTests
         ImmutableArray<INode> nodes = source.Parse();
         INode node = Assert.Single(nodes);
         PartialDefineNode partial = Assert.IsType<PartialDefineNode>(node);
-        Assert.Equal("partial", partial.Name);
+        Assert.Equal("partial", partial.PartialName);
         Assert.Empty(partial.Children);
     }
 
@@ -124,7 +123,7 @@ public class NodeParserTests
         ImmutableArray<INode> nodes = source.Parse();
         INode node = Assert.Single(nodes);
         PartialDefineNode partial = Assert.IsType<PartialDefineNode>(node);
-        Assert.Equal("block", partial.Name);
+        Assert.Equal("block", partial.PartialName);
         INode content = Assert.Single(partial.Children);
         TextNode contentText = Assert.IsType<TextNode>(content);
         Assert.Equal("content", contentText.Text);
