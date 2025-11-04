@@ -3,14 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
 
-internal sealed class NumericDataFacade<T>(T value) : IDataFacade
-    where T : unmanaged
+internal sealed class NumericDataFacade : IDataFacade
 {
-    public object? RawValue => value;
-
-    public bool IsCollection() => false;
-    public bool IsTrue() => value is float f ? f is not float.NaN : value is double d ? d is not double.NaN : true;
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public readonly static NumericDataFacade Instance = new();
+    private NumericDataFacade() { }
+    public bool IsTrue(object? obj) => obj is float f ? f is not float.NaN : obj is not double d || d is not double.NaN;
+    public bool IsCollection(object? _, [NotNullWhen(true)] out IEnumerator? collection)
     {
         collection = null;
         return false;

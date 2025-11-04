@@ -8,7 +8,7 @@ public static class DataFacade
 
 
 
-    public static readonly IDataFacade Null = new NullDataFacade();
+    public static readonly IDataFacade Null = NullDataFacade.Instance;
 
     private readonly static HierarchicalTypeDictionary<DataFacadeFactory> _facadeFactories = new();
 
@@ -25,36 +25,36 @@ public static class DataFacade
         switch (obj)
         {
             // primitives
-            case bool v: return new BooleanDataFacade(v);
-            case byte v: return new NumericDataFacade<byte>(v);
-            case sbyte v: return new NumericDataFacade<sbyte>(v);
-            case decimal v: return new NumericDataFacade<decimal>(v);
-            case double v: return new NumericDataFacade<double>(v);
-            case float v: return new NumericDataFacade<float>(v);
-            case int v: return new NumericDataFacade<int>(v);
-            case uint v: return new NumericDataFacade<uint>(v);
-            case nint v: return new NumericDataFacade<nint>(v);
-            case long v: return new NumericDataFacade<long>(v);
-            case ulong v: return new NumericDataFacade<ulong>(v);
-            case short v: return new NumericDataFacade<short>(v);
-            case ushort v: return new NumericDataFacade<ushort>(v);
+            case bool: return BooleanDataFacade.Instance;
+            case byte: return NumericDataFacade.Instance;
+            case sbyte: return NumericDataFacade.Instance;
+            case decimal: return NumericDataFacade.Instance;
+            case double: return NumericDataFacade.Instance;
+            case float: return NumericDataFacade.Instance;
+            case int: return NumericDataFacade.Instance;
+            case uint: return NumericDataFacade.Instance;
+            case nint: return NumericDataFacade.Instance;
+            case long: return NumericDataFacade.Instance;
+            case ulong: return NumericDataFacade.Instance;
+            case short: return NumericDataFacade.Instance;
+            case ushort: return NumericDataFacade.Instance;
             // commons types
-            case string v: return new LiteralDataFacade(v);
-            case char v: return new CharDataFacade(v);
-            case Guid v: return new StructDataFacade<Guid>(v);
-            case DateTime v: return new StructDataFacade<DateTime>(v);
-            case DateTimeOffset v: return new StructDataFacade<DateTimeOffset>(v);
-            case DateOnly v: return new StructDataFacade<DateOnly>(v);
-            case TimeOnly v: return new StructDataFacade<TimeOnly>(v);
-            case TimeSpan v: return new StructDataFacade<TimeSpan>(v);
+            case string: return LiteralDataFacade.Instance;
+            case char: return CharDataFacade.Instance;
+            case Guid: return StructDataFacade.Instance;
+            case DateTime: return StructDataFacade.Instance;
+            case DateTimeOffset: return StructDataFacade.Instance;
+            case DateOnly: return StructDataFacade.Instance;
+            case TimeOnly: return StructDataFacade.Instance;
+            case TimeSpan: return StructDataFacade.Instance;
             // collection
-            case IDictionary v: return new DictionaryDataFacade(v);
-            case IList v: return new ListDataFacade(v);
-            case IEnumerator v: return new EnumeratorDataFacade(v);
+            case IDictionary: return DictionaryDataFacade.Instance;
+            case IList: return ListDataFacade.Instance;
+            case IEnumerator: return EnumeratorDataFacade.Instance;
             default:
                 if (_facadeFactories.TryGetValue(obj.GetType(), out DataFacadeFactory? factory) && factory is not null)
                     return factory(obj);
-                return new ObjectDataFacade(obj);
+                return ObjectDataFacade.Instance;
         }
     }
 }

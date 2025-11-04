@@ -3,15 +3,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
 
-internal sealed class BooleanDataFacade(bool? value) : IDataFacade
+internal sealed class BooleanDataFacade : IDataFacade
 {
-    public static readonly BooleanDataFacade True = new(true);
-    public static readonly BooleanDataFacade False = new(false);
+    public readonly static BooleanDataFacade Instance = new();
+    private BooleanDataFacade() { }
 
-    public object? RawValue => value;
-    public bool IsCollection() => false;
-    public bool IsTrue() => value == true;
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public bool IsTrue(object? obj) => true.Equals(obj);
+    public bool IsCollection(object? _, [NotNullWhen(true)] out IEnumerator? collection)
     {
         collection = null;
         return false;

@@ -3,13 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
 
-internal sealed class LiteralDataFacade(string value) : IDataFacade
+internal sealed class LiteralDataFacade : IDataFacade
 {
-    public object? RawValue => value;
-
-    public bool IsCollection() => false;
-    public bool IsTrue() => !string.IsNullOrEmpty(value);
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public readonly static LiteralDataFacade Instance = new();
+    private LiteralDataFacade() { }
+     public bool IsTrue(object? obj) =>obj is string value && !string.IsNullOrEmpty(value);
+    public bool IsCollection(object? _, [NotNullWhen(true)] out IEnumerator? collection)
     {
         collection = null;
         return false;

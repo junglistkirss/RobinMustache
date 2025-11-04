@@ -3,14 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
 
-internal sealed class StructDataFacade<T>(T value) : IDataFacade
-    where T : struct
+internal sealed class StructDataFacade : IDataFacade
 {
-    public object? RawValue => value;
-
-    public bool IsCollection() => false;
-    public bool IsTrue() => true;
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public readonly static StructDataFacade Instance = new();
+    private StructDataFacade() { }
+    public bool IsTrue(object? _) => true;
+    public bool IsCollection(object? _, [NotNullWhen(true)] out IEnumerator? collection)
     {
         collection = null;
         return false;

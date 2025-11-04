@@ -3,15 +3,19 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
 
-internal sealed class ListDataFacade(IList value) : IDataFacade
+internal sealed class ListDataFacade : IDataFacade
 {
-    public object? RawValue => value;
-
-    public bool IsCollection() => true;
-    public bool IsTrue() => value.Count > 0;
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public readonly static ListDataFacade Instance = new();
+    private ListDataFacade() { }
+    public bool IsTrue(object? obj) => obj is IList list && list.Count > 0;
+    public bool IsCollection(object? obj, [NotNullWhen(true)] out IEnumerator? collection)
     {
-        collection = value.GetEnumerator();
-        return value.Count > 0;
+        if (obj is IList list)
+        {
+            collection = list.GetEnumerator();
+            return list.Count > 0;
+        }
+        collection = null;
+        return false;
     }
 }

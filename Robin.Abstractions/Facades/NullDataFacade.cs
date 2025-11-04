@@ -5,15 +5,13 @@ namespace Robin.Abstractions.Facades;
 
 internal sealed class NullDataFacade : IDataFacade
 {
-    public object? RawValue => null;
-
-    public bool IsCollection() => false;
-
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public readonly static NullDataFacade Instance = new();
+    private NullDataFacade() { }
+    public bool IsCollection(object? _, [NotNullWhen(true)] out IEnumerator? collection)
     {
         collection = null;
         return false;
     }
 
-    public bool IsTrue() => false;
+    public bool IsTrue(object? _) => false;
 }

@@ -3,15 +3,19 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
 
-internal sealed class DictionaryDataFacade(IDictionary value) : IDataFacade
+internal sealed class DictionaryDataFacade : IDataFacade
 {
-    public object? RawValue => value;
-
-    public bool IsCollection() => true;
-    public bool IsTrue() => value.Count > 0;
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public readonly static DictionaryDataFacade Instance = new();
+    private DictionaryDataFacade() { }
+    public bool IsTrue(object? obj) => obj is IDictionary value && value.Count > 0;
+    public bool IsCollection(object? obj, [NotNullWhen(true)] out IEnumerator? collection)
     {
-        collection = value.GetEnumerator();
-        return value.Count > 0;
+        if (obj is IDictionary value)
+        {
+            collection = value.GetEnumerator();
+            return value.Count > 0;
+        }
+        collection = null;
+        return false;
     }
 }

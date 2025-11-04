@@ -5,7 +5,6 @@ namespace Robin.Abstractions.Facades;
 
 public interface IDataFacade
 {
-    bool IsTrue();
-    bool IsCollection([NotNullWhen(true)] out IEnumerator? collection);
-    object? RawValue { get; }
+    bool IsTrue(object? obj);
+    bool IsCollection(object? obj, [NotNullWhen(true)] out IEnumerator? collection);
 }

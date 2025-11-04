@@ -3,13 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
 
-internal sealed class CharDataFacade(char value) : IDataFacade
+internal sealed class CharDataFacade : IDataFacade
 {
-    public object? RawValue => value;
-
-    public bool IsCollection() => false;
-    public bool IsTrue() => value is not '\0';
-    public bool IsCollection([NotNullWhen(true)] out IEnumerator? collection)
+    public readonly static CharDataFacade Instance = new();
+    private CharDataFacade() { }
+    public bool IsTrue(object? obj) => obj is not '\0';
+    public bool IsCollection(object? _, [NotNullWhen(true)] out IEnumerator? collection)
     {
         collection = null;
         return false;
