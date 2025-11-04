@@ -22,7 +22,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
 
         if (data is IDictionary)
         {
-            accessor = new DictionaryMemberAccessor();
+            accessor = DictionaryMemberAccessor.Instance;
             return true;
         }
         return false;
@@ -43,7 +43,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
 
         if (data is IList)
         {
-            accessor = new ListIndexAccessor();
+            accessor = ListIndexAccessor.Instance;
             return true;
         }
         return false;
@@ -53,23 +53,23 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
     {
         if (args is not null && TryGetIndexAccessor(args, out IIndexAccessor? typedAccessor) && typedAccessor.TryGetIndex(args, segment.Index, out object? value))
 
-            return new EvaluationResult(ResoltionState.Found, value.AsFacade());
+            return new EvaluationResult(ResoltionState.Found, value, value.AsFacade());
 
-        return new(ResoltionState.NotFound, DataFacade.Null);
+        return new(ResoltionState.NotFound, null, DataFacade.Null);
     }
 
     public EvaluationResult VisitMember(MemberSegment segment, object? args)
     {
         if (args is not null && TryGetMemberAccessor(args, out IMemberAccessor? typedAccessor) && typedAccessor.TryGetMember(args, segment.MemberName, out object? value))
 
-            return new EvaluationResult(ResoltionState.Found, value.AsFacade());
+            return new EvaluationResult(ResoltionState.Found, value, value.AsFacade());
 
 
-        return new(ResoltionState.NotFound, DataFacade.Null);
+        return new(ResoltionState.NotFound, null, DataFacade.Null);
     }
 
     public EvaluationResult VisitThis(ThisSegment segment, object? args)
     {
-        return new(ResoltionState.Found, args.AsFacade());
+        return new(ResoltionState.Found, args, args.AsFacade());
     }
 }

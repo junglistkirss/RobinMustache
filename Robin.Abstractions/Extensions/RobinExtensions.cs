@@ -14,7 +14,7 @@ public static class RobinExtensions
     }
     public static EvaluationResult Evaluate(this VariablePath path, IVariableSegmentVisitor<EvaluationResult, object?> visitor, DataContext args, bool useParentFallback = true)
     {
-        EvaluationResult result = new(ResoltionState.NotFound, DataFacade.Null);
+        EvaluationResult result = new(ResoltionState.NotFound, null, DataFacade.Null);
         DataContext ctx = args;
         ImmutableArray<IVariableSegment>.Enumerator enumerator = path.Segments.GetEnumerator();
         if (enumerator.MoveNext())
@@ -22,7 +22,7 @@ public static class RobinExtensions
             result = enumerator.Current.Accept(visitor, ctx.Data);
             while (result.Status == ResoltionState.Found && enumerator.MoveNext())
             {
-                ctx = ctx.Child(result.Value?.RawValue);
+                ctx = ctx.Child(result.Value);
                 IVariableSegment item = enumerator.Current;
                 EvaluationResult res = item.Accept(visitor, ctx.Data);
                 if (res.Status == ResoltionState.Found)

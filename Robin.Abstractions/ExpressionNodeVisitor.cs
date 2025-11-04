@@ -19,7 +19,7 @@ public sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<EvaluationResu
                 EvaluationResult evalResult = node.Arguments[i].Accept(this, args);
                 if (evalResult.Status == ResoltionState.Found)
                 {
-                    evaluatedArgs[i] = evalResult.Value.RawValue;
+                    evaluatedArgs[i] = evalResult.Value;
                 }
                 else
                 {
@@ -27,9 +27,9 @@ public sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<EvaluationResu
                 }
             }
             object? functionResult = function(evaluatedArgs);
-            return new EvaluationResult(ResoltionState.Found, functionResult.AsFacade());
+            return new EvaluationResult(ResoltionState.Found, functionResult, functionResult.AsFacade());
         }
-        return new EvaluationResult(ResoltionState.NotFound, DataFacade.Null);
+        return new EvaluationResult(ResoltionState.NotFound, null, DataFacade.Null);
     }
 
     public EvaluationResult VisitIdenitifer(IdentifierExpressionNode node, DataContext args)
@@ -40,11 +40,11 @@ public sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<EvaluationResu
 
     public EvaluationResult VisitLiteral(LiteralExpressionNode node, DataContext _)
     {
-        return new EvaluationResult(ResoltionState.Found, node.Constant.AsFacade());
+        return new EvaluationResult(ResoltionState.Found, node.Constant, LiteralDataFacade.Instance);
     }
 
     public EvaluationResult VisitIndex(NumberExpressionNode node, DataContext _)
     {
-        return new EvaluationResult(ResoltionState.Found, node.Constant.AsFacade());
+        return new EvaluationResult(ResoltionState.Found, node.Constant, NumericDataFacade.Instance);
     }
 }

@@ -4,6 +4,8 @@ namespace Robin.Abstractions.Accessors;
 
 internal sealed class ListIndexAccessor : IIndexAccessor
 {
+    public readonly static ListIndexAccessor Instance = new();
+    private ListIndexAccessor(){}
     bool IIndexAccessor.TryGetIndex(object? source, int index, out object? value)
     {
 

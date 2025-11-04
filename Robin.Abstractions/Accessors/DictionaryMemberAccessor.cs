@@ -5,6 +5,8 @@ namespace Robin.Abstractions.Accessors;
 
 internal sealed class DictionaryMemberAccessor : IMemberAccessor
 {
+    public readonly static DictionaryMemberAccessor Instance = new();
+    private DictionaryMemberAccessor(){}
     public bool TryGetMember(object? source, string name, [MaybeNullWhen(false)] out object? value)
     {
         if (source is IDictionary dict && dict.Contains(name))

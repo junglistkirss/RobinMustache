@@ -10,7 +10,17 @@ internal sealed class ObjectDataFacade : IDataFacade
     public bool IsTrue(object? value) => value is not null;
     public bool IsCollection(object? value, [NotNullWhen(true)] out IEnumerator? collection)
     {
-        collection = value as IEnumerator;
-        return collection is not null;
+        if (value is IEnumerator enumerator)
+        {
+            collection = enumerator;
+            return collection is not null;
+        }
+        else if (value is IEnumerable enumerable)
+        {
+            collection = enumerable.GetEnumerator();
+            return collection is not null;
+        }
+        collection = null;
+        return false;
     }
 }

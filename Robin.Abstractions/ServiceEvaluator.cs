@@ -7,11 +7,14 @@ namespace Robin.Abstractions;
 
 public sealed class ServiceEvaluator(IVariableSegmentVisitor<EvaluationResult, object?> accesorVisitor) : IEvaluator
 {
-    public IDataFacade Resolve(IExpressionNode expression, DataContext? data)
+    public object? Resolve(IExpressionNode expression, DataContext? data, out IDataFacade facade)
     {
         var visitor = new ExpressionNodeVisitor(accesorVisitor);
         if (data is null)
-            return DataFacade.Null;
+        {
+            facade = DataFacade.Null;
+            return null;
+        }
 
         EvaluationResult result = expression.Accept(visitor, data);
 
@@ -19,8 +22,11 @@ public sealed class ServiceEvaluator(IVariableSegmentVisitor<EvaluationResult, o
             result = expression.Accept(visitor, data.Parent);
 
         if (result.Status == ResoltionState.Found)
+        {
+            facade = result.Facade;
             return result.Value;
-
-        return DataFacade.Null;
+        }
+        facade = DataFacade.Null;
+        return null;
     }
 }
