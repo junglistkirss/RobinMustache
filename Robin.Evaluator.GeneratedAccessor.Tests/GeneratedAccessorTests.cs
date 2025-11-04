@@ -173,7 +173,7 @@ public class GeneratedAccessorTests
         IExpressionNode expression = new IdentifierExpressionNode(path);
         DataContext context = new(model, null);
         object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
+        Assert.NotNull(rawValue);
         Assert.False(facade.IsTrue(rawValue));
         Assert.False(facade.IsCollection(rawValue, out _));
         char resolved = Assert.IsType<char>(rawValue);

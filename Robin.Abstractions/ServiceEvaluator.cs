@@ -9,22 +9,19 @@ public sealed class ServiceEvaluator(IVariableSegmentVisitor<EvaluationResult, o
 {
     public object? Resolve(IExpressionNode expression, DataContext? data, out IDataFacade facade)
     {
-        var visitor = new ExpressionNodeVisitor(accesorVisitor);
-        if (data is null)
+        ExpressionNodeVisitor visitor = new(accesorVisitor);
+        if (data is not null)
         {
-            facade = DataFacade.Null;
-            return null;
-        }
+            EvaluationResult result = expression.Accept(visitor, data);
 
-        EvaluationResult result = expression.Accept(visitor, data);
+            if (!result.IsResolved && data.Parent is not null)
+                result = expression.Accept(visitor, data.Parent);
 
-        if (!result.IsResolved && data.Parent is not null)
-            result = expression.Accept(visitor, data.Parent);
-
-        if (result.IsResolved)
-        {
-            facade = result.AsFacade();
-            return result.Value;
+            if (result.IsResolved)
+            {
+                facade = result.Value.GetFacade();
+                return result.Value;
+            }
         }
         facade = DataFacade.Null;
         return null;

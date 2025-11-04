@@ -17,7 +17,7 @@ public static class DataFacade
         return _facadeFactories.TryAdd<T>(factory);
     }
 
-    public static IDataFacade AsFacade(this object? obj)
+    public static IDataFacade GetFacade(this object? obj)
     {
         if (obj is null)
             return Null;

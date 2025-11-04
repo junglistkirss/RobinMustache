@@ -15,7 +15,7 @@ public sealed class JsonEvaluator : IEvaluator
     public object? Resolve(IExpressionNode expression, DataContext? data, out IDataFacade facade)
     {
         object? value = BaseEvaluator.Resolve(expression, data, out IDataFacade baseFacade);
-        facade = data.AsJsonFacade(baseFacade);
+        facade = value.AsJsonFacade(baseFacade);
         return value;
     }
 }
