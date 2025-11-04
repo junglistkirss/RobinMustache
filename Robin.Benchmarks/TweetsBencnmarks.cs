@@ -50,8 +50,8 @@ public class AutoBenchmarkConfig : ManualConfig
         else
         {
             AddJob(Job.Default
-                .WithWarmupCount(8)
-                .WithIterationCount(32)
+                .WithWarmupCount(2)
+                .WithIterationCount(8)
                 .WithLaunchCount(1)
                 .WithId(FAST_MODE));
         }
@@ -63,7 +63,6 @@ public class AutoBenchmarkConfig : ManualConfig
 
 [Config(typeof(AutoBenchmarkConfig))]
 [MemoryDiagnoser]
-[DisassemblyDiagnoser]
 [MarkdownExporter]
 public class TweetsBencnmarks
 {
