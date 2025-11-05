@@ -16,7 +16,7 @@ public record struct VariablePath(ImmutableArray<IVariableSegment> segments)
             {
                 IndexSegment segment => $"[{segment.Index}]",
                 ThisSegment segment => ".",
-                MemberSegment segment => $"{sb.Length > 0:'.':''}{segment.MemberName}",
+                MemberSegment segment => $"{(sb.Length > 0 ? "." : "")}{segment.MemberName}",
                 _ => ""
             });
         }

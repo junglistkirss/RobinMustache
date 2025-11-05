@@ -39,10 +39,11 @@ public static class EvaluatorExtensions
 
     public static IServiceCollection AddServiceEvaluator(this IServiceCollection services)
     {
-        services.AddMemoryCache();
-        services.AddSingleton<ServiceEvaluator>();
-        services.AddSingleton<IEvaluator, ServiceEvaluator>();
-        services.AddSingleton<IVariableSegmentVisitor<Type>, ServiceAccesorVisitor>();
-        return services;
+        return services
+            .AddMemoryCache()
+            .AddSingleton<ServiceEvaluator>()
+            .AddSingleton<ExpressionNodeVisitor>()
+            .AddSingleton<IEvaluator, ServiceEvaluator>()
+            .AddSingleton<IVariableSegmentVisitor<Type>, ServiceAccesorVisitor>();
     }
 }
