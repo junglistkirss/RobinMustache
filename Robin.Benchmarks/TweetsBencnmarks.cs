@@ -42,9 +42,6 @@ public class AutoBenchmarkConfig : ManualConfig
         if (string.Equals(mode, DEBUG_MODE, StringComparison.OrdinalIgnoreCase))
         {
             AddJob(Job.Dry
-                .WithWarmupCount(1)
-                .WithIterationCount(3)
-                .WithLaunchCount(1)
                 .WithId(DEBUG_MODE));
         }
         else
@@ -93,7 +90,27 @@ public class TweetsBencnmarks
 
     }
 
+
     [Benchmark]
-    public string RenderTweets() => renderer.Render(template, tweets);
+    public string RenderSingleTweets() => renderer.Render(template, tweets[0]);
+
+    [Benchmark]
+    public string RenderTake5TweetsAsArray() => renderer.Render(template, tweets.Take(5).ToArray());
+
+    [Benchmark]
+    public string RenderTake50Tweets() => renderer.Render(template, tweets.Take(50));
+
+    [Benchmark]
+    public string RenderEmptyTweets() => renderer.Render(template, Array.Empty<Tweet>());
+
+    [Benchmark]
+    public string RenderEnumerableTweets() => renderer.Render(template, Enumerable.Empty<Tweet>());
+
+    [Benchmark]
+    public string RenderTakeAllTweets() => renderer.Render(template, tweets.Take(100));
+
+    [Benchmark]
+    public string RenderAllTweets() => renderer.Render(template, tweets);
+
 
 }
