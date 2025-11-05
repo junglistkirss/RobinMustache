@@ -4,5 +4,5 @@ using Robin.Abstractions.Facades;
 
 namespace Robin.Abstractions;
 
-public record struct  EvaluationResult(bool IsResolved, object? Value);
+public record class  EvaluationResult(bool IsResolved, object? Value);
 
