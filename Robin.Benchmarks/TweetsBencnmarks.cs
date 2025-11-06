@@ -21,7 +21,7 @@ public class TweetsBencnmarks
     private IStringRenderer renderer = default!;
 
 [GlobalSetup]
-    public Setup()
+    public void Setup()
     {
 
         ServiceCollection services = [];
