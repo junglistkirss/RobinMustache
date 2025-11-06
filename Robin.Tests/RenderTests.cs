@@ -21,7 +21,7 @@ public class RenderTests
                 {
                     "Name" => (Func<TestSample, string?>)(x => x.Name),
                     "Age" => (Func<TestSample, int>)(x => x.Age),
-                    _ => (Func<TestSample, object?>)(_ => null),
+                    _ => throw new InvalidDataException("Member does not exists"),
                 };
                 return true;
             })
@@ -31,7 +31,7 @@ public class RenderTests
                 {
                     "alias" => (Func<ParentTestSample, string?>)(x => x.Alias),
                     "nested" => (Func<ParentTestSample, TestSample?>)(x => x.Nested),
-                    _ => (Func<ParentTestSample, object?>)(_ => null),
+                    _ => throw new InvalidDataException("Member does not exists"),
                 };
                 return true;
             });
@@ -57,7 +57,7 @@ public class RenderTests
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
         var sample = new TestSample { Name = "Alice", Age = 30 };
-        var parent = new ParentTestSample { Alias= "Bob", Nested = sample };
+        var parent = new ParentTestSample { Alias = "Bob", Nested = sample };
         ImmutableArray<INode> template = "Name: {{ Alias }}, Nested: {{ nested.Name }}".AsSpan().Parse();
         string result = renderer.Render(template, parent);
         Assert.Equal("Name: Bob, Nested: Alice", result);

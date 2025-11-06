@@ -50,7 +50,8 @@ public class AutoBenchmarkConfig : ManualConfig
                 .WithWarmupCount(2)
                 .WithIterationCount(8)
                 .WithLaunchCount(1)
-                .WithId(FAST_MODE));
+                .WithId(FAST_MODE)
+                );
         }
 #if WINDOWS
         AddDiagnoser(new BenchmarkDotNet.Diagnostics.Windows.EtwProfiler());
