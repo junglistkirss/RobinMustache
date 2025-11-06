@@ -1,3 +1,4 @@
+using Robin.Abstractions;
 using Robin.Abstractions.Context;
 using Robin.Abstractions.Extensions;
 using Robin.Abstractions.Facades;
@@ -7,7 +8,7 @@ using System.Collections.Immutable;
 using System.Net;
 using System.Text;
 
-namespace Robin.Abstractions;
+namespace Robin.Internals;
 
 internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<StringBuilder>>
 {
@@ -46,7 +47,7 @@ internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Str
         object? value = context.Evaluator.Resolve(node.Expression, context.Data, out IDataFacade facade);
         bool thruly = facade.IsTrue(value);
 
-        if ((!node.Inverted && thruly) || (node.Inverted && !thruly))
+        if (!node.Inverted && thruly || node.Inverted && !thruly)
         {
             return RenderTree(context, value, facade, node.Children);
         }

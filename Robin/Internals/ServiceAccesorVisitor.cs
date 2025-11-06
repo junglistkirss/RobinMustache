@@ -5,51 +5,42 @@ using Robin.Contracts.Variables;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Robin.Abstractions;
+namespace Robin.Internals;
 
 internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider, IMemoryCache cache) : IVariableSegmentVisitor<Type>
 {
     private bool TryGetMemberAccessor(Type dataType, [NotNullWhen(true)] out IMemberAccessor? accessor)
     {
-        if (dataType == typeof(IDictionary))
+
+        accessor = cache.GetOrCreate(dataType, (entry) =>
         {
-            accessor = DictionaryMemberAccessor.Instance;
-        }
-        else
-        {
-            accessor = cache.GetOrCreate(dataType, (t) =>
-            {
-                IMemberAccessor? memberAccessor = serviceProvider.GetKeyedService<IMemberAccessor>(t.Key);
-                if (memberAccessor is not null)
-                    return memberAccessor;
-
-
-                return memberAccessor;
-            });
-        }
-
+            IMemberAccessor? memberAccessor = serviceProvider.GetKeyedService<IMemberAccessor>(entry.Key);
+            if (memberAccessor is null && entry.Key is Type type
+                && (
+                    type.IsAssignableTo(typeof(IDictionary))
+                    || (
+                        type.IsGenericType
+                        && type.GetGenericTypeDefinition().IsAssignableTo(typeof(IDictionary<,>))
+                    )
+                )
+            )
+                memberAccessor = DictionaryMemberAccessor.Instance;
+            return memberAccessor;
+        });
         return accessor is not null;
     }
 
     private bool TryGetIndexAccessor(Type dataType, [NotNullWhen(true)] out IIndexAccessor? accessor)
     {
-        if (dataType == typeof(IList))
+        accessor = cache.GetOrCreate(dataType, (entry) =>
         {
-            accessor = ListIndexAccessor.Instance;
-            return true;
-        }
-        else
-        {
-            accessor = cache.GetOrCreate(dataType, (t) =>
-            {
-                IIndexAccessor? indexAccessor = serviceProvider.GetKeyedService<IIndexAccessor>(t.Key);
-                if (indexAccessor is not null)
-                    return indexAccessor;
+            IIndexAccessor? indexAccessor = serviceProvider.GetKeyedService<IIndexAccessor>(entry.Key);
+            if (indexAccessor is null && entry.Key is Type type && (type.IsAssignableTo(typeof(IList)) || type.IsArray))
+                indexAccessor = ListIndexAccessor.Instance;
 
+            return indexAccessor;
+        });
 
-                return indexAccessor;
-            });
-        }
 
 
         return accessor is not null;
@@ -62,7 +53,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider, IM
             typedAccessor.TryGetIndex(segment.Index, out @delegate);
             return true;
         }
-        @delegate = (Func<object?, object?>)((object? _) => null);
+        @delegate = (Func<object?, object?>)((_) => null);
         return false;
     }
 
@@ -73,7 +64,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider, IM
             typedAccessor.TryGetMember(segment.MemberName, out @delegate);
             return true;
         }
-        @delegate = (Func<object?, object?>)((object? _) => null);
+        @delegate = (Func<object?, object?>)((_) => null);
         return false;
     }
 

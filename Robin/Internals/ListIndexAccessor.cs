@@ -1,7 +1,8 @@
+using Robin.Abstractions.Accessors;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Robin.Abstractions.Accessors;
+namespace Robin.Internals;
 
 internal sealed class ListIndexAccessor : IIndexAccessor
 {

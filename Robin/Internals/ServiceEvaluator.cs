@@ -1,8 +1,9 @@
+using Robin.Abstractions;
 using Robin.Abstractions.Context;
 using Robin.Abstractions.Facades;
 using Robin.Contracts.Expressions;
 
-namespace Robin.Abstractions;
+namespace Robin.Internals;
 
 internal sealed class ServiceEvaluator(IExpressionNodeVisitor<DataContext> visitor) : IEvaluator
 {

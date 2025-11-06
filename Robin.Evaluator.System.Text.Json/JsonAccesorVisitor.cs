@@ -8,23 +8,21 @@ internal sealed class JsonAccesorVisitor : IVariableSegmentVisitor<Type>
     public readonly static JsonAccesorVisitor Instance = new();
     public bool VisitIndex(IndexSegment segment, Type args, out Delegate @delegate)
     {
-        if (args == typeof(JsonArray))
+        if (Nullable.GetUnderlyingType(args) == typeof(JsonArray))
         {
-            @delegate = (Func<JsonArray?, JsonNode?>)((x) => x is not null && segment.Index < x.Count ? x[segment.Index] : null);
-            return true;
+            return JsonAccessorExtensions.TryGetIndexValue(segment.Index, out @delegate);
         }
-        @delegate = (Func<object?, object?>)((object? _) => null);
+        @delegate = (Func<JsonArray?, object?>)(_ => null);
         return false;
     }
 
     public bool VisitMember(MemberSegment segment, Type args, out Delegate @delegate)
     {
-        if (args == typeof(JsonObject))
+        if (Nullable.GetUnderlyingType( args) == typeof(JsonObject))
         {
-            @delegate = (Func<JsonObject, JsonNode?>)(x => x is not null && x.TryGetPropertyValue(segment.MemberName, out JsonNode? node) ? node : null);
-            return true;
+            return JsonAccessorExtensions.TryGetMemberValue(segment.MemberName, out @delegate);
         }
-        @delegate = (Func<object?, object?>)((object? _) => null);
+        @delegate = (Func<JsonObject?, object?>)(_ => null);
         return false;
     }
 

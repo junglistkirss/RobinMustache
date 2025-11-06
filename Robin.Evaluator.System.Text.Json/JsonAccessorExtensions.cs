@@ -14,17 +14,19 @@ public static class JsonAccessorExtensions
             .AddKeyedSingleton<IJsonEvaluator, JsonEvaluator>(JsonEvaluatorKey)
             .AddSingleton<IJsonEvaluator, JsonEvaluator>()
             .AddIndexAccessor<JsonArray>(TryGetIndexValue)
-            .AddMemberAccessor<JsonObject>(TryGetMemberValue);
+            .AddMemberAccessor<JsonObject>(TryGetMemberValue)
+            .AddIndexAccessor<JsonNode>(TryGetIndexValue)
+            .AddMemberAccessor<JsonNode>(TryGetMemberValue);
     }
 
     internal static bool TryGetMemberValue(string member, [NotNull] out Delegate @delegate)
     {
-        @delegate = (Func<JsonObject?, JsonNode?>)(x => x is not null && x.TryGetPropertyValue(member, out JsonNode? node) ? node : null);
+        @delegate = (Func<JsonNode?, JsonNode?>)(x => x is JsonObject  obj && obj.TryGetPropertyValue(member, out JsonNode? node) ? node : null);
         return true;
     }
     internal static bool TryGetIndexValue(int index, [NotNull] out Delegate @delegate)
     {
-        @delegate = (Func<JsonArray?, JsonNode?>)((x) => x is not null && index < x.Count ? x[index] : null);
+        @delegate = (Func<JsonNode?, JsonNode?>)((x) => x is JsonArray arr && index < arr.Count ? arr[index] : null);
         return false;
     }
 }

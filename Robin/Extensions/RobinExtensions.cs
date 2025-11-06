@@ -3,6 +3,7 @@ using Robin.Abstractions.Context;
 using Robin.Contracts.Expressions;
 using Robin.Contracts.Nodes;
 using Robin.Contracts.Variables;
+using Robin.Internals;
 using System.Collections.Immutable;
 
 namespace Robin.Abstractions.Extensions;
