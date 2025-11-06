@@ -4,7 +4,7 @@ internal record LambdaInfo
 {
     public required Type InputType { get; init; }
     public required Type ReturnType { get; init; }
-    public required Delegate Delegate { get; init; }
+    public required ChainableGetter Delegate { get; init; }
 
     public override string ToString()
     {

@@ -29,6 +29,7 @@ public class TweetsBencnmarks
             .AddServiceEvaluator()
             .AddStringRenderer()
             .AddMemberAccessor<Tweet>(TweetAccessor.GetPropertyDelegate);
+            ;
         foreach (var descriptor in services)
         {
             if (descriptor == null)

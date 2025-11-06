@@ -1,20 +1,21 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Accessors;
+using Robin.Abstractions.Extensions;
 using Robin.Contracts.Variables;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Internals;
 
-internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider, IMemoryCache cache) : IVariableSegmentVisitor<Type>
+internal sealed class ServiceAccesorVisitor(/*IServiceProvider serviceProvider, */IMemoryCache cache) : IVariableSegmentVisitor<Type>
 {
     private bool TryGetMemberAccessor(Type dataType, [NotNullWhen(true)] out IMemberAccessor? accessor)
     {
 
         accessor = cache.GetOrCreate(dataType, (entry) =>
         {
-            IMemberAccessor? memberAccessor = serviceProvider.GetKeyedService<IMemberAccessor>(entry.Key);
+            IMemberAccessor? memberAccessor = MemberAccessorRegistry.Get((Type)entry.Key);
             if (memberAccessor is null && entry.Key is Type type
                 && (
                     type.IsAssignableTo(typeof(IDictionary))
@@ -34,7 +35,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider, IM
     {
         accessor = cache.GetOrCreate(dataType, (entry) =>
         {
-            IIndexAccessor? indexAccessor = serviceProvider.GetKeyedService<IIndexAccessor>(entry.Key);
+            IIndexAccessor? indexAccessor = IndexAccessorRegistry.Get((Type)entry.Key);
             if (indexAccessor is null && entry.Key is Type type && (type.IsAssignableTo(typeof(IList)) || type.IsArray))
                 indexAccessor = ListIndexAccessor.Instance;
 

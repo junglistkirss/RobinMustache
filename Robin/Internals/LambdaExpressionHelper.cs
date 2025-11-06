@@ -6,7 +6,7 @@ internal static class LambdaExpressionHelper
     {
         var parameters = lambda.Method.GetParameters();
         if (parameters.Length == 0)
-            throw new ArgumentException("La lambda doit avoir au moins un paramètre");
+            throw new ArgumentException("La lambda doit avoir au moins un paramï¿½tre");
 
         return parameters[0].ParameterType;
     }
@@ -30,7 +30,7 @@ internal static class LambdaExpressionHelper
         {
             InputType = lambda.GetInputType(),
             ReturnType = lambda.GetReturnType(),
-            Delegate = lambda
+            Delegate = lambda.AsChainable()
         };
     }
 }

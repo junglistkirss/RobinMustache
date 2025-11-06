@@ -1,9 +1,41 @@
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Accessors;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Extensions;
+public static class MemberAccessorRegistry
+{
+    private static readonly ConcurrentDictionary<Type, IMemberAccessor> _map
+        = new();
 
+    public static void Add<T>(IMemberAccessor accessor)
+    {
+        if (accessor == null) throw new ArgumentNullException(nameof(accessor));
+        _map[typeof(T)] = accessor;
+    }
+
+    public static IMemberAccessor? Get(Type type)
+        => _map.TryGetValue(type, out var accessor) ? accessor : null;
+
+    public static IMemberAccessor? Get<T>() => Get(typeof(T));
+}
+public static class IndexAccessorRegistry
+{
+    private static readonly ConcurrentDictionary<Type, IIndexAccessor> _map
+        = new();
+
+    public static void Add<T>(IIndexAccessor accessor)
+    {
+        if (accessor == null) throw new ArgumentNullException(nameof(accessor));
+        _map[typeof(T)] = accessor;
+    }
+
+    public static IIndexAccessor? Get(Type type)
+        => _map.TryGetValue(type, out var accessor) ? accessor : null;
+
+    public static IIndexAccessor? Get<T>() => Get(typeof(T));
+}
 public static class AccessorExtensions
 {
 
@@ -14,26 +46,34 @@ public static class AccessorExtensions
     {
         public bool TryGetMember(string name, [NotNull] out Delegate? value)
         {
+            ArgumentNullException.ThrowIfNull(tryGetMemberValue);
             return tryGetMemberValue(name, out value);
         }
     }
-    public static IServiceCollection AddMemberAccessor<T>(this IServiceCollection services, TryGetMemberValue tryGet)
+    public static IServiceCollection AddMemberAccessor<T>(this IServiceCollection services,  TryGetMemberValue tryGet)
     {
-        return services
-            .AddKeyedSingleton<IMemberAccessor>(typeof(T), new DelegatedMemberAccessor(tryGet));
+        ArgumentNullException.ThrowIfNull(tryGet);
+        IMemberAccessor instance = new DelegatedMemberAccessor(tryGet);
+         MemberAccessorRegistry.Add<T>(instance);
+return services;
     }
 
     private sealed class DelegatedIndexAccessor(TryGetIndexValue tryGetIndexValue) : IIndexAccessor
     {
         public bool TryGetIndex(int index, [NotNull] out Delegate value)
         {
+            ArgumentNullException.ThrowIfNull(tryGetIndexValue);
             return tryGetIndexValue(index, out value);
         }
     }
     public static IServiceCollection AddIndexAccessor<T>(this IServiceCollection services, TryGetIndexValue tryGet)
     {
-        return services
-            .AddKeyedSingleton<IIndexAccessor>(typeof(T), new DelegatedIndexAccessor(tryGet));
+        ArgumentNullException.ThrowIfNull(tryGet);
+        IIndexAccessor instance = new DelegatedIndexAccessor(tryGet);
+         IndexAccessorRegistry.Add<T>(instance);
+
+        return services;
+            // .AddKeyedSingleton<IIndexAccessor>(typeof(T), instance);
     }
 
 }

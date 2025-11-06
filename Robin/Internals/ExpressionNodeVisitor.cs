@@ -49,7 +49,7 @@ internal sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<Type> access
         }
 
         Type type = current.GetType();
-        TryDelegateChain? @delegate = cache.GetOrCreate(new CacheKey(type, node.Path), (entry) =>
+        ChainedGetter? @delegate = cache.GetOrCreate(new CacheKey(type, node.Path), (entry) =>
         {
             CacheKey cacheKey = (CacheKey)entry.Key;
             Type currentType = cacheKey.Type;
@@ -61,7 +61,7 @@ internal sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<Type> access
             IVariableSegment current = path.Segments[i];
             bool resolved = current.Accept(accessorVisitor, currentType, out Delegate @delegate);
             if (!resolved)
-                return chain.Fail();
+                return chain.Fail().Compile();
             chain.Push(@delegate);
             i++;
             while (resolved && i < limit)
@@ -70,16 +70,15 @@ internal sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<Type> access
                 current = path.Segments[i]; ;
                 resolved = current.Accept(accessorVisitor, currentType, out @delegate);
                 if (!resolved) // avoid precedence
-                    return chain.Fail();
+                    return chain.Fail().Compile();
                 chain.Push(@delegate);
                 i++;
             }
-
-            return chain;
+            return chain.Compile();
         });
         if (@delegate is not null)
         {
-            bool resolved = @delegate!.Execute(current, out value);
+            bool resolved = @delegate!(current, out value);
             if (resolved)
                 return true;
         }
