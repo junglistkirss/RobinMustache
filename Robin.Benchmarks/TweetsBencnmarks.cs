@@ -20,7 +20,7 @@ public class TweetsBencnmarks
     private ImmutableArray<INode> template = [];
     private IStringRenderer renderer = default!;
 
-[Global setup]
+[GlobalSetup]
     public Setup()
     {
 
