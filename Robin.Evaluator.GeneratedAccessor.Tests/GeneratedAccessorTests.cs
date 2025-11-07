@@ -39,12 +39,14 @@ public class GeneratedAccessorTests
         VariablePath path = VariableParser.Parse(".");
         Assert.IsType<ThisSegment>(Assert.Single(path.Segments));
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        TestModel resolved = Assert.IsType<TestModel>(rawValue);
-        Assert.Same(model, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            TestModel resolved = Assert.IsType<TestModel>(rawValue);
+            Assert.Same(model, resolved);
+        }
     }
 
     [Fact]
@@ -56,13 +58,15 @@ public class GeneratedAccessorTests
         MemberSegment member = Assert.IsType<MemberSegment>(Assert.Single(path.Segments));
         Assert.Equal("IntValue", member.MemberName);
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        int resolved = Assert.IsType<int>(rawValue);
-        Assert.Equal(model.IntValue, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            int resolved = Assert.IsType<int>(rawValue);
+            Assert.Equal(model.IntValue, resolved);
+        }
     }
 
     [Fact]
@@ -75,12 +79,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("BooleanValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.Null(rawValue);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.Null(rawValue);
+        }
     }
 
     [Fact]
@@ -93,13 +99,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("BooleanValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        bool resolved = Assert.IsType<bool>(rawValue);
-        Assert.True(resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            bool resolved = Assert.IsType<bool>(rawValue);
+            Assert.True(resolved);
+        }
     }
 
     [Fact]
@@ -112,13 +120,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("BooleanValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        bool resolved = Assert.IsType<bool>(rawValue);
-        Assert.False(resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            bool resolved = Assert.IsType<bool>(rawValue);
+            Assert.False(resolved);
+        }
     }
 
 
@@ -134,12 +144,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("CharValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.Null(rawValue);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.Null(rawValue);
+        }
     }
 
     [Fact]
@@ -152,13 +164,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("CharValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        char resolved = Assert.IsType<char>(rawValue);
-        Assert.Equal('x', resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            char resolved = Assert.IsType<char>(rawValue);
+            Assert.Equal('x', resolved);
+        }
     }
 
     [Fact]
@@ -171,13 +185,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("CharValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(rawValue);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        char resolved = Assert.IsType<char>(rawValue);
-        Assert.Equal('\0', resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(rawValue);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            char resolved = Assert.IsType<char>(rawValue);
+            Assert.Equal('\0', resolved);
+        }
     }
 
 
@@ -192,13 +208,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("StringValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        string resolved = Assert.IsType<string>(rawValue);
-        Assert.Equal(model.StringValue, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            string resolved = Assert.IsType<string>(rawValue);
+            Assert.Equal(model.StringValue, resolved);
+        }
     }
 
     [Fact]
@@ -211,11 +229,13 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("StringValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.False(facade.IsTrue(rawValue));
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.False(facade.IsTrue(rawValue));
+        }
     }
 
     [Fact]
@@ -228,13 +248,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("DoubleValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        double resolved = Assert.IsType<double>(rawValue);
-        Assert.Equal(1.2, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            double resolved = Assert.IsType<double>(rawValue);
+            Assert.Equal(1.2, resolved);
+        }
     }
 
     [Fact]
@@ -247,13 +269,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("LongValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        long resolved = Assert.IsType<long>(rawValue);
-        Assert.Equal(13, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            long resolved = Assert.IsType<long>(rawValue);
+            Assert.Equal(13, resolved);
+        }
     }
 
     [Fact]
@@ -266,13 +290,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("FloatValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        float resolved = Assert.IsType<float>(rawValue);
-        Assert.Equal(float.Epsilon, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            float resolved = Assert.IsType<float>(rawValue);
+            Assert.Equal(float.Epsilon, resolved);
+        }
     }
 
     [Fact]
@@ -285,13 +311,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("DecimalValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        decimal resolved = Assert.IsType<decimal>(rawValue);
-        Assert.Equal(decimal.MinusOne, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            decimal resolved = Assert.IsType<decimal>(rawValue);
+            Assert.Equal(decimal.MinusOne, resolved);
+        }
     }
 
 
@@ -305,13 +333,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("FloatValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        float resolved = Assert.IsType<float>(rawValue);
-        Assert.Equal(float.NaN, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            float resolved = Assert.IsType<float>(rawValue);
+            Assert.Equal(float.NaN, resolved);
+        }
     }
 
 
@@ -325,13 +355,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("DoubleValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        double resolved = Assert.IsType<double>(rawValue);
-        Assert.Equal(double.NaN, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            double resolved = Assert.IsType<double>(rawValue);
+            Assert.Equal(double.NaN, resolved);
+        }
     }
 
     [Fact]
@@ -345,13 +377,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        TestSubModel resolved = Assert.IsType<TestSubModel>(rawValue);
-        Assert.Same(sub, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            TestSubModel resolved = Assert.IsType<TestSubModel>(rawValue);
+            Assert.Same(sub, resolved);
+        }
     }
 
     [Fact]
@@ -368,13 +402,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DateTimeValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        DateTime resolved = Assert.IsType<DateTime>(rawValue);
-        Assert.Equal(sub.DateTimeValue, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            DateTime resolved = Assert.IsType<DateTime>(rawValue);
+            Assert.Equal(sub.DateTimeValue, resolved);
+        }
     }
 
     [Fact]
@@ -391,12 +427,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.MissingValue");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.Null(rawValue);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.Null(rawValue);
+        }
     }
 
     [Fact]
@@ -414,13 +452,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.StringCollection");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.True(facade.IsCollection(rawValue, out _));
-        string[] resolved = Assert.IsType<string[]>(rawValue);
-        Assert.Same(collection, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.True(facade.IsCollection(rawValue, out _));
+            string[] resolved = Assert.IsType<string[]>(rawValue);
+            Assert.Same(collection, resolved);
+        }
     }
 
     [Fact]
@@ -437,13 +477,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.StringCollection[0]");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        string resolved = Assert.IsType<string>(rawValue);
-        Assert.Equal("test", resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            string resolved = Assert.IsType<string>(rawValue);
+            Assert.Equal("test", resolved);
+        }
     }
 
     [Fact]
@@ -460,12 +502,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.StringCollection[1]");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.Null(rawValue);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.Null(rawValue);
+        }
     }
 
     [Fact]
@@ -482,13 +526,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.StringCollection");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.True(facade.IsCollection(rawValue, out _));
-        string[] resolved = Assert.IsType<string[]>(rawValue);
-        Assert.Empty(resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.True(facade.IsCollection(rawValue, out _));
+            string[] resolved = Assert.IsType<string[]>(rawValue);
+            Assert.Empty(resolved);
+        }
     }
 
 
@@ -510,13 +556,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.True(facade.IsCollection(rawValue, out _));
-        Dictionary<string, object?> resolved = Assert.IsType<Dictionary<string, object?>>(rawValue);
-        Assert.Same(collection, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.True(facade.IsCollection(rawValue, out _));
+            Dictionary<string, object?> resolved = Assert.IsType<Dictionary<string, object?>>(rawValue);
+            Assert.Same(collection, resolved);
+        }
     }
 
     [Fact]
@@ -537,13 +585,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection.test");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        string resolved = Assert.IsType<string>(rawValue);
-        Assert.Equal("test", resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            string resolved = Assert.IsType<string>(rawValue);
+            Assert.Equal("test", resolved);
+        }
     }
 
     [Fact]
@@ -564,12 +614,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection.TEST");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.Null(rawValue);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.Null(rawValue);
+        }
     }
 
     [Fact]
@@ -586,13 +638,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.True(facade.IsCollection(rawValue, out _));
-        ImmutableDictionary<string, object?> resolved = Assert.IsType<ImmutableDictionary<string, object?>>(rawValue);
-        Assert.Empty(resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.True(facade.IsCollection(rawValue, out _));
+            ImmutableDictionary<string, object?> resolved = Assert.IsType<ImmutableDictionary<string, object?>>(rawValue);
+            Assert.Empty(resolved);
+        }
     }
 
 
@@ -617,13 +671,15 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.True(facade.IsCollection(rawValue, out _));
-        Dictionary<ImplicitKey, object?> resolved = Assert.IsType<Dictionary<ImplicitKey, object?>>(rawValue);
-        Assert.Same(collection, resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.True(facade.IsCollection(rawValue, out _));
+            Dictionary<ImplicitKey, object?> resolved = Assert.IsType<Dictionary<ImplicitKey, object?>>(rawValue);
+            Assert.Same(collection, resolved);
+        }
     }
 
     [Fact]
@@ -644,12 +700,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection.test");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.Null(rawValue);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.Null(rawValue);
+        }
     }
 
     [Fact]
@@ -670,12 +728,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection.other");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.False(facade.IsCollection(rawValue, out _));
-        Assert.Null(rawValue);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.False(facade.IsCollection(rawValue, out _));
+            Assert.Null(rawValue);
+        }
     }
 
     [Fact]
@@ -692,12 +752,14 @@ public class GeneratedAccessorTests
         };
         VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection");
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(model, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(facade);
-        Assert.False(facade.IsTrue(rawValue));
-        Assert.True(facade.IsCollection(rawValue, out _));
-        ImmutableDictionary<ImplicitKey, object?> resolved = Assert.IsType<ImmutableDictionary<ImplicitKey, object?>>(rawValue);
-        Assert.Empty(resolved);
+        using (DataContext.Push(model))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(facade);
+            Assert.False(facade.IsTrue(rawValue));
+            Assert.True(facade.IsCollection(rawValue, out _));
+            ImmutableDictionary<ImplicitKey, object?> resolved = Assert.IsType<ImmutableDictionary<ImplicitKey, object?>>(rawValue);
+            Assert.Empty(resolved);
+        }
     }
 }

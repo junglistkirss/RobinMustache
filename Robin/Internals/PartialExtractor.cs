@@ -3,42 +3,43 @@ using System.Collections.Immutable;
 
 namespace Robin.Internals;
 
-internal sealed class PartialExtractor : INodeVisitor<ImmutableDictionary<string, ImmutableArray<INode>>, ImmutableDictionary<string, ImmutableArray<INode>>>
+internal sealed class PartialExtractor : INodeVisitor<Dictionary<string, ImmutableArray<INode>>, Dictionary<string, ImmutableArray<INode>>>
 {
     public readonly static PartialExtractor Instance = new();
-    public ImmutableDictionary<string, ImmutableArray<INode>> VisitComment(CommentNode node, ImmutableDictionary<string, ImmutableArray<INode>> args)
+    public Dictionary<string, ImmutableArray<INode>> VisitComment(CommentNode node, Dictionary<string, ImmutableArray<INode>> args)
     {
         return args;
     }
 
-    public ImmutableDictionary<string, ImmutableArray<INode>> VisitLineBreak(LineBreakNode node, ImmutableDictionary<string, ImmutableArray<INode>> args)
+    public Dictionary<string, ImmutableArray<INode>> VisitLineBreak(LineBreakNode node, Dictionary<string, ImmutableArray<INode>> args)
     {
         return args;
     }
 
-    public ImmutableDictionary<string, ImmutableArray<INode>> VisitPartialDefine(PartialDefineNode node, ImmutableDictionary<string, ImmutableArray<INode>> args)
+    public Dictionary<string, ImmutableArray<INode>> VisitPartialDefine(PartialDefineNode node, Dictionary<string, ImmutableArray<INode>> args)
     {
         if (args.ContainsKey(node.PartialName))
-            args = args.Remove(node.PartialName);
-        return args.Add(node.PartialName, node.Children);
+            args.Remove(node.PartialName);
+        args.Add(node.PartialName, node.Children);
+        return args;
     }
 
-    public ImmutableDictionary<string, ImmutableArray<INode>> VisitPartialCall(PartialCallNode node, ImmutableDictionary<string, ImmutableArray<INode>> args)
+    public Dictionary<string, ImmutableArray<INode>> VisitPartialCall(PartialCallNode node, Dictionary<string, ImmutableArray<INode>> args)
     {
         return args;
     }
 
-    public ImmutableDictionary<string, ImmutableArray<INode>> VisitSection(SectionNode node, ImmutableDictionary<string, ImmutableArray<INode>> args)
+    public Dictionary<string, ImmutableArray<INode>> VisitSection(SectionNode node, Dictionary<string, ImmutableArray<INode>> args)
     {
         return args;
     }
 
-    public ImmutableDictionary<string, ImmutableArray<INode>> VisitText(TextNode node, ImmutableDictionary<string, ImmutableArray<INode>> args)
+    public Dictionary<string, ImmutableArray<INode>> VisitText(TextNode node, Dictionary<string, ImmutableArray<INode>> args)
     {
         return args;
     }
 
-    public ImmutableDictionary<string, ImmutableArray<INode>> VisitVariable(VariableNode node, ImmutableDictionary<string, ImmutableArray<INode>> args)
+    public Dictionary<string, ImmutableArray<INode>> VisitVariable(VariableNode node, Dictionary<string, ImmutableArray<INode>> args)
     {
         return args;
     }

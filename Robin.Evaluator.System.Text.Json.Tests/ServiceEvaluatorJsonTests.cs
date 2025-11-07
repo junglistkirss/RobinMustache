@@ -41,12 +41,14 @@ public class ServiceEvaluatorJsonTests
         VariablePath path = VariableParser.Parse(".");
         Assert.IsType<ThisSegment>(Assert.Single(path.Segments));
         IExpressionNode expression = new IdentifierExpressionNode(path);
-        DataContext context = new(json, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(rawValue);
-        Assert.True(facade.IsTrue(rawValue));
-        JsonObject rawValuejson = Assert.IsType<JsonObject>(rawValue);
-        Assert.Same(json, rawValuejson);
+        using (DataContext.Push(json))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(rawValue);
+            Assert.True(facade.IsTrue(rawValue));
+            JsonObject rawValuejson = Assert.IsType<JsonObject>(rawValue);
+            Assert.Same(json, rawValuejson);
+        }
     }
 
     [Fact]
@@ -55,11 +57,13 @@ public class ServiceEvaluatorJsonTests
         IEvaluator eval = ServiceProvider.GetRequiredService<IEvaluator>();
         JsonObject json = [];
         IExpressionNode expression = new IndexExpressionNode(42);
-        DataContext context = new(json, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(rawValue);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.Equal(42, rawValue);
+        using (DataContext.Push(json))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(rawValue);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.Equal(42, rawValue);
+        }
     }
 
     [Fact]
@@ -68,11 +72,13 @@ public class ServiceEvaluatorJsonTests
         IEvaluator eval = ServiceProvider.GetRequiredService<IEvaluator>();
         JsonObject json = [];
         IExpressionNode expression = new LiteralExpressionNode("test");
-        DataContext context = new(json, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(rawValue);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.Equal("test", rawValue);
+        using (DataContext.Push(json))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(rawValue);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.Equal("test", rawValue);
+        }
     }
 
     [Fact]
@@ -84,11 +90,13 @@ public class ServiceEvaluatorJsonTests
             ["prop"] = "test"
         };
         IExpressionNode expression = new IdentifierExpressionNode(VariableParser.Parse("prop"));
-        DataContext context = new(json, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(rawValue);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.Equal("test", rawValue?.ToString());
+        using (DataContext.Push(json))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(rawValue);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.Equal("test", rawValue?.ToString());
+        }
     }
 
 
@@ -101,11 +109,13 @@ public class ServiceEvaluatorJsonTests
             ["prop"] = new JsonArray { "test", "test2" }
         };
         IExpressionNode expression = new IdentifierExpressionNode(VariableParser.Parse("prop[1]"));
-        DataContext context = new(json, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(rawValue);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.Equal("test2", rawValue?.ToString());
+        using (DataContext.Push(json))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(rawValue);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.Equal("test2", rawValue?.ToString());
+        }
     }
 
     [Fact]
@@ -120,10 +130,12 @@ public class ServiceEvaluatorJsonTests
             }
         };
         IExpressionNode expression = new IdentifierExpressionNode(VariableParser.Parse("prop.inner"));
-        DataContext context = new(json, null);
-        object? rawValue = eval.Resolve(expression, context, out IDataFacade facade);
-        Assert.NotNull(rawValue);
-        Assert.True(facade.IsTrue(rawValue));
-        Assert.Equal("inner test", rawValue?.ToString());
+        using (DataContext.Push(json))
+        {
+            object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
+            Assert.NotNull(rawValue);
+            Assert.True(facade.IsTrue(rawValue));
+            Assert.Equal("inner test", rawValue?.ToString());
+        }
     }
 }

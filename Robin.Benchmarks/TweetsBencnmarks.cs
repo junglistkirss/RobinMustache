@@ -30,19 +30,6 @@ public class TweetsBencnmarks
             .AddStringRenderer()
             .AddMemberAccessor<Tweet>(TweetAccessor.GetPropertyDelegate);
 
-        foreach (var descriptor in services)
-        {
-            if (descriptor == null)
-                throw new InvalidOperationException("Un service descriptor est null");
-
-            if (descriptor.ImplementationInstance is Delegate del && del.Target == null)
-                Console.WriteLine($"⚠️ Delegate sans cible : {del.Method.Name}");
-
-            if (descriptor.ImplementationFactory == null &&
-                descriptor.ImplementationInstance == null &&
-                descriptor.ImplementationType == null)
-                Console.WriteLine($"⚠️ ServiceDescriptor incomplet : {descriptor.ServiceType}");
-        }
         serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = false,
@@ -55,7 +42,8 @@ public class TweetsBencnmarks
         renderer = serviceProvider.GetRequiredService<IStringRenderer>();
         
     }
-
+// [Benchmark]
+//     public INode[] ParseTweetsTemplate() => TweetsTemplates.List.AsSpan().Parse();
 
     [Benchmark(Baseline = true)]
     public string RenderSingleTweets() => renderer.Render(template, tweets[0]);
@@ -72,5 +60,8 @@ public class TweetsBencnmarks
     [Benchmark]
     public string RenderAllTweets() => renderer.Render(template, tweets);
 
+
+    [Benchmark]
+    public string RenderNullTweets() => renderer.Render(template, Enumerable.Repeat<Tweet>(null!, 1000).ToArray());
 
 }

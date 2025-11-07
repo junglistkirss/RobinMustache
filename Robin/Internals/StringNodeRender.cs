@@ -6,6 +6,7 @@ using Robin.Abstractions.Facades;
 using Robin.Contracts.Nodes;
 using System.Collections;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Text;
 
@@ -32,7 +33,7 @@ internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Str
 
     public NoValue VisitVariable(VariableNode node, RenderContext<StringBuilder> context)
     {
-        object? value = context.Evaluator.Resolve(node.Expression, context.Data, out IDataFacade facade);
+        object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         if (facade.IsTrue(value))
         {
             if (node.IsUnescaped)
@@ -45,7 +46,7 @@ internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Str
 
     public NoValue VisitSection(SectionNode node, RenderContext<StringBuilder> context)
     {
-        object? value = context.Evaluator.Resolve(node.Expression, context.Data, out IDataFacade facade);
+        object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         bool thruly = facade.IsTrue(value);
 
         if (!node.Inverted && thruly || node.Inverted && !thruly)
@@ -58,15 +59,18 @@ internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Str
 
     public NoValue VisitPartialCall(PartialCallNode node, RenderContext<StringBuilder> context)
     {
-        object? value = context.Evaluator.Resolve(node.Expression, context.Data, out IDataFacade facade);
+        object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
 
-        if (facade.IsTrue(value) && context.Partials.TryGetValue(node.PartialName, out ImmutableArray<INode> partialTemplate))
+        if (facade.IsTrue(value) && context.Partials is not null && context.Partials.TryGetValue(node.PartialName, out ImmutableArray<INode> partialTemplate))
         {
-            context = context with
+            ReadOnlyDictionary<string, ImmutableArray<INode>> tempPartials = partialTemplate.ExtractsPartials(context.Partials).AsReadOnly();
+
+            using (new PartialsScope<StringBuilder>(context, tempPartials))
             {
-                Partials = partialTemplate.ExtractsPartials(context.Partials)
-            };
-            return RenderTree(context, value, facade, partialTemplate);
+                // Ici context.Partials == tempPartials
+                // tu peux faire ton rendu spécifique
+                return RenderTree(context, value, facade, partialTemplate);
+            }
 
         }
         return NoValue.Instance;
@@ -76,13 +80,13 @@ internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Str
     {
         void action(object? o)
         {
-            RenderContext<StringBuilder> itemCtx = context with
+            using (DataContext.Push(o))
             {
-                Data = context.Data?.Child(o) ?? new DataContext(o, null),
-            };
-            foreach (var node in partialTemplate)
-            {
-                node.Accept(this, itemCtx);
+
+                foreach (var node in partialTemplate)
+                {
+                    node.Accept(this, context);
+                }
             }
         }
 
