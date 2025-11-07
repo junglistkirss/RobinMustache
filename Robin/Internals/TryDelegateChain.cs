@@ -80,6 +80,7 @@ internal static class DelegateHelper
 
         UnaryExpression incrementLevel = Expression.PostIncrementAssign(levelParam);
         var body = Expression.Block(incrementLevel, convertedResult);
+        // Console.WriteLine(convertedResult);
 
         var exceptionVariable = Expression.Variable(typeof(Exception), "ex");
         var tryCatch = Expression.TryCatch(
@@ -99,6 +100,7 @@ internal static class DelegateHelper
         // Conversion du résultat en object
 
         var lambda = Expression.Lambda<ChainableGetter>(tryCatch, inputParam, levelParam);
+        // Console.WriteLine(lambda);
         return lambda.Compile();
     }
 

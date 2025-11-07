@@ -6,7 +6,7 @@ namespace Robin.Benchmarks;
 public class AutoBenchmarkConfig : ManualConfig
 {
     public AutoBenchmarkConfig()
-    {
+    {WithOptions(ConfigOptions.DisableOptimizationsValidator);
         // Choisit la configuration adaptée
         #if DEBUG
             // AddJob(Job.Dry);

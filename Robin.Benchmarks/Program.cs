@@ -2,4 +2,5 @@
 using BenchmarkDotNet.Running;
 using Robin.Benchmarks;
 
-var summary = BenchmarkRunner.Run<TweetsBencnmarks>();
+var summaryEvaluator = BenchmarkRunner.Run<EvaluatorBenchmarks>();
+var summaryTweets = BenchmarkRunner.Run<TweetsBencnmarks>();
