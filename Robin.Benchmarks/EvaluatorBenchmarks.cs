@@ -45,23 +45,7 @@ public class EvaluatorBenchmarks
         evaluator = serviceProvider.GetRequiredService<IEvaluator>();
 
     }
-    // [Benchmark]
-    //     public INode[] ParseTweetsTemplate() => TweetsTemplates.List.AsSpan().Parse();
-    [Benchmark]
-    public List<object?> ResolveNative()
-    {
-        List<object?> r = [];
-        int i = 0;
-        while (i < 100)
-        {
-            object? t = (object?)tweets[i];
-            object? c = (object?)((Tweet)(object)tweets[i]).Content;
-            r.Add(t);
-            r.Add(c);
-        }
-        i++;
-        return r;
-    }
+   
     [Benchmark(Baseline = true)]
     public void ResolveEntireCollection()
     {

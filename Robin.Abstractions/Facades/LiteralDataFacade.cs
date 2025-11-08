@@ -8,7 +8,7 @@ internal sealed class LiteralDataFacade : IDataFacade
 {
     public readonly static LiteralDataFacade Instance = new();
     private LiteralDataFacade() { }
-    public bool IsTrue(object? obj) => obj is string value && !string.IsNullOrEmpty(value);
+    public bool IsTrue([NotNullWhen(true)] object? obj) => obj is string value && !string.IsNullOrEmpty(value);
     public bool IsCollection(object? _, [NotNullWhen(true)] out IIterator? collection)
     {
         collection = null;

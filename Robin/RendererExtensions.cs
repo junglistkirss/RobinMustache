@@ -13,7 +13,7 @@ public static class RendererExtensions
     public static IRenderer<TOut> ToRenderer<T, TOut>(
         this T builder,
         Func<T, TOut> output,
-        INodeVisitor<NoValue, RenderContext<T>> visitor,
+        INodeVisitor<RenderContext<T>> visitor,
         IEvaluator evaluator,
         Action<Helper>? helperConfig = null)
         where T : class
@@ -45,7 +45,7 @@ public static class RendererExtensions
         Func<IServiceProvider, T> builderFactory,
         Func<T, TOut> output,
         Func<IServiceProvider, IEvaluator> evaluatorProvider,
-        Func<IServiceProvider, INodeVisitor<NoValue, RenderContext<T>>> visitorProvider,
+        Func<IServiceProvider, INodeVisitor<RenderContext<T>>> visitorProvider,
         Action<Helper>? helperConfig = null,
         ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         where T : class
@@ -54,7 +54,7 @@ public static class RendererExtensions
         {
             T builder = builderFactory(sp);
             IEvaluator evaluator = evaluatorProvider(sp);
-            INodeVisitor<NoValue, RenderContext<T>> visitor = visitorProvider(sp);
+            INodeVisitor<RenderContext<T>> visitor = visitorProvider(sp);
             return builder.ToRenderer(output, visitor, evaluator, helperConfig);
         }, serviceLifetime));
         return services;
@@ -66,7 +66,7 @@ public static class RendererExtensions
         Func<IServiceProvider, object?, T> builderFactory,
         Func<T, TOut> output,
        Func<IServiceProvider, object?, IEvaluator> evaluatorProvider,
-       Func<IServiceProvider, object?, INodeVisitor<NoValue, RenderContext<T>>> visitorProvider,
+       Func<IServiceProvider, object?, INodeVisitor< RenderContext<T>>> visitorProvider,
        Action<Helper>? helperConfig = null,
        ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         where T : class
@@ -75,7 +75,7 @@ public static class RendererExtensions
         {
             T builder = builderFactory(sp, k);
             IEvaluator evaluator = evaluatorProvider(sp, k);
-            INodeVisitor<NoValue, RenderContext<T>> visitor = visitorProvider(sp, k);
+            INodeVisitor< RenderContext<T>> visitor = visitorProvider(sp, k);
             return builder.ToRenderer(output, visitor, evaluator, helperConfig);
         }, serviceLifetime));
         return services;

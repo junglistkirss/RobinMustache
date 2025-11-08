@@ -7,57 +7,62 @@ using Robin.Contracts.Nodes;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Net;
 using System.Text;
 
 namespace Robin.Internals;
 
-internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<StringBuilder>>
+internal sealed class StringNodeRender : INodeVisitor<RenderContext<StringBuilder>>
 {
     public readonly static StringNodeRender Instance = new();
 
-    public NoValue VisitText(TextNode node, RenderContext<StringBuilder> context)
+    public void VisitText(TextNode node, RenderContext<StringBuilder> context)
     {
         context.Builder.Append(node.Text);
-        return NoValue.Instance;
     }
-    public NoValue VisitComment(CommentNode node, RenderContext<StringBuilder> context)
+    public void VisitComment(CommentNode node, RenderContext<StringBuilder> context)
     {
-        return NoValue.Instance;
     }
 
-    public NoValue VisitPartialDefine(PartialDefineNode node, RenderContext<StringBuilder> context)
+    public void VisitPartialDefine(PartialDefineNode node, RenderContext<StringBuilder> context)
     {
-        return NoValue.Instance;
     }
 
-    public NoValue VisitVariable(VariableNode node, RenderContext<StringBuilder> context)
+    public void VisitVariable(VariableNode node, RenderContext<StringBuilder> context)
     {
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         if (facade.IsTrue(value))
         {
-            if (node.IsUnescaped)
-                context.Builder.Append(value);
+            string? str;
+            if (value is string s)
+                str = s;
             else
-                context.Builder.Append(WebUtility.HtmlEncode($"{value}"));
+                str = value.ToString();
+            if (str is not null)
+            {
+                if (node.IsUnescaped)
+                    context.Builder.Append(str);
+                else
+                    context.Builder.Append(str.Escape());
+            }
+
         }
-        return NoValue.Instance;
     }
 
-    public NoValue VisitSection(SectionNode node, RenderContext<StringBuilder> context)
+    public void VisitSection(SectionNode node, RenderContext<StringBuilder> context)
     {
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         bool thruly = facade.IsTrue(value);
 
         if (!node.Inverted && thruly || node.Inverted && !thruly)
         {
-            return RenderTree(context, value, facade, node.Children);
+            RenderTree(context, value, facade, node.Children);
         }
 
-        return NoValue.Instance;
     }
 
-    public NoValue VisitPartialCall(PartialCallNode node, RenderContext<StringBuilder> context)
+    public void VisitPartialCall(PartialCallNode node, RenderContext<StringBuilder> context)
     {
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
 
@@ -69,14 +74,13 @@ internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Str
             {
                 // Ici context.Partials == tempPartials
                 // tu peux faire ton rendu spécifique
-                return RenderTree(context, value, facade, partialTemplate);
+                RenderTree(context, value, facade, partialTemplate);
             }
 
         }
-        return NoValue.Instance;
     }
 
-    private NoValue RenderTree(RenderContext<StringBuilder> context, object? value, IDataFacade facade, ImmutableArray<INode> partialTemplate)
+    private void RenderTree(RenderContext<StringBuilder> context, object? value, IDataFacade facade, ImmutableArray<INode> partialTemplate)
     {
         void action(object? o)
         {
@@ -95,13 +99,11 @@ internal sealed class StringNodeRender : INodeVisitor<NoValue, RenderContext<Str
         else
             action(value);
 
-        return NoValue.Instance;
     }
 
-    public NoValue VisitLineBreak(LineBreakNode node, RenderContext<StringBuilder> context)
+    public void VisitLineBreak(LineBreakNode node, RenderContext<StringBuilder> context)
     {
         for (int i = 0; i < node.Count; i++)
             context.Builder.AppendLine();
-        return NoValue.Instance;
     }
 }

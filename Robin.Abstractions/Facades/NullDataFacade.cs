@@ -14,5 +14,5 @@ internal sealed class NullDataFacade : IDataFacade
         return false;
     }
 
-    public bool IsTrue(object? _) => false;
+    public bool IsTrue([NotNullWhen(true)] object? _) => false;
 }

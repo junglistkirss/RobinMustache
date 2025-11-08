@@ -7,9 +7,9 @@ using System.Collections.Immutable;
 namespace Robin.Internals;
 
 internal sealed class RendererImpl<T, TOut>(
-    T defaultBuilder,
+    T builder,
     Func<T, TOut> output,
-    INodeVisitor<NoValue, RenderContext<T>> visitor,
+    INodeVisitor<RenderContext<T>> visitor,
     IEvaluator evaluator,
     Action<Helper>? helperConfig = null
     ) : IRenderer<TOut>
@@ -17,7 +17,7 @@ internal sealed class RendererImpl<T, TOut>(
 {
     public TOut Render(ImmutableArray<INode> template, object? data)
     {
-        T result = defaultBuilder.Render(visitor, evaluator, template, data, helperConfig);
-        return output(result);
+        builder.Render(visitor, evaluator, template, data, helperConfig);
+        return output(builder);
     }
 }
