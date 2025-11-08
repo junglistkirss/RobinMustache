@@ -1,6 +1,5 @@
 using Robin.Abstractions.Accessors;
 using Robin.Contracts.Variables;
-using System;
 using System.Text.Json.Nodes;
 
 namespace Robin.Evaluator.System.Text.Json;
@@ -19,12 +18,7 @@ internal sealed class JsonAccesorVisitor : BaseAccessorVisitor
             });
             return true;
         }
-        getter = new ChainableGetter((object? _, out object? value) =>
-        {
-
-            value = null;
-            return false;
-        });
+        getter = ChainableGetters.ReturnNull;
         return false;
     }
 
@@ -39,12 +33,7 @@ internal sealed class JsonAccesorVisitor : BaseAccessorVisitor
             });
             return true;
         }
-        getter = new ChainableGetter((object? _, out object? value) =>
-        {
-
-            value = null;
-            return false;
-        });
+        getter = ChainableGetters.ReturnNull;
         return false;
     }
 

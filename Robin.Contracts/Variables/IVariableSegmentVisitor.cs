@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Robin.Contracts.Variables;
 
 public interface IVariableSegmentVisitor<in TArgs, TOut>

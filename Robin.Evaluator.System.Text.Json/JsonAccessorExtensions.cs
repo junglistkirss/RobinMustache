@@ -1,7 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Extensions;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
 using System.Text.Json.Nodes;
 
 namespace Robin.Evaluator.System.Text.Json;
@@ -20,9 +18,9 @@ public static class JsonAccessorExtensions
             .AddMemberObjectAccessor<JsonNode>(TryGetMemberValue);
     }
 
-    internal static bool TryGetMemberValue(this object? obj, string member,   out object? value)
+    internal static bool TryGetMemberValue(this object? obj, string member, out object? value)
     {
-        if( obj is JsonObject jObject && jObject.TryGetPropertyValue(member, out JsonNode? node))
+        if (obj is JsonObject jObject && jObject.TryGetPropertyValue(member, out JsonNode? node))
         {
             value = node;
             return true;

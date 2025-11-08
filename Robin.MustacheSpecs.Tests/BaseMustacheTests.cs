@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Robin.Abstractions.Extensions;
 using Robin.Evaluator.System.Text.Json;
+using Robin.Extensions;
 
 namespace Robin.MustacheSpecs.Tests;
 

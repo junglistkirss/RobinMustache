@@ -66,7 +66,7 @@ public static class RendererExtensions
         Func<IServiceProvider, object?, T> builderFactory,
         Func<T, TOut> output,
        Func<IServiceProvider, object?, IEvaluator> evaluatorProvider,
-       Func<IServiceProvider, object?, INodeVisitor< RenderContext<T>>> visitorProvider,
+       Func<IServiceProvider, object?, INodeVisitor<RenderContext<T>>> visitorProvider,
        Action<Helper>? helperConfig = null,
        ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         where T : class
@@ -75,7 +75,7 @@ public static class RendererExtensions
         {
             T builder = builderFactory(sp, k);
             IEvaluator evaluator = evaluatorProvider(sp, k);
-            INodeVisitor< RenderContext<T>> visitor = visitorProvider(sp, k);
+            INodeVisitor<RenderContext<T>> visitor = visitorProvider(sp, k);
             return builder.ToRenderer(output, visitor, evaluator, helperConfig);
         }, serviceLifetime));
         return services;

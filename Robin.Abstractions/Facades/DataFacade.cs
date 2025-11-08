@@ -2,11 +2,6 @@ using System.Collections;
 
 namespace Robin.Abstractions.Facades;
 
-public interface IDataFacadeResolver
-{
-    IDataFacade ResolveDataFacade(object? data);
-}
-
 public static class DataFacade
 {
     public delegate IDataFacade DataFacadeFactory(object? data);
@@ -18,36 +13,36 @@ public static class DataFacade
         if (obj is null)
             return Null;
 
-        switch (obj)
+        return obj switch
         {
             // primitives
-            case bool: return BooleanDataFacade.Instance;
-            case byte: return NumericDataFacade.Instance;
-            case sbyte: return NumericDataFacade.Instance;
-            case decimal: return NumericDataFacade.Instance;
-            case double: return NumericDataFacade.Instance;
-            case float: return NumericDataFacade.Instance;
-            case int: return NumericDataFacade.Instance;
-            case uint: return NumericDataFacade.Instance;
-            case nint: return NumericDataFacade.Instance;
-            case long: return NumericDataFacade.Instance;
-            case ulong: return NumericDataFacade.Instance;
-            case short: return NumericDataFacade.Instance;
-            case ushort: return NumericDataFacade.Instance;
+            bool => BooleanDataFacade.Instance,
+            byte => NumericDataFacade.Instance,
+            sbyte => NumericDataFacade.Instance,
+            decimal => NumericDataFacade.Instance,
+            double => NumericDataFacade.Instance,
+            float => NumericDataFacade.Instance,
+            int => NumericDataFacade.Instance,
+            uint => NumericDataFacade.Instance,
+            nint => NumericDataFacade.Instance,
+            long => NumericDataFacade.Instance,
+            ulong => NumericDataFacade.Instance,
+            short => NumericDataFacade.Instance,
+            ushort => NumericDataFacade.Instance,
             // commons types
-            case string: return LiteralDataFacade.Instance;
-            case char: return CharDataFacade.Instance;
-            case Guid: return StructDataFacade.Instance;
-            case DateTime: return StructDataFacade.Instance;
-            case DateTimeOffset: return StructDataFacade.Instance;
-            case DateOnly: return StructDataFacade.Instance;
-            case TimeOnly: return StructDataFacade.Instance;
-            case TimeSpan: return StructDataFacade.Instance;
+            string => LiteralDataFacade.Instance,
+            char => CharDataFacade.Instance,
+            Guid => StructDataFacade.Instance,
+            DateTime => StructDataFacade.Instance,
+            DateTimeOffset => StructDataFacade.Instance,
+            DateOnly => StructDataFacade.Instance,
+            TimeOnly => StructDataFacade.Instance,
+            TimeSpan => StructDataFacade.Instance,
             // collection
-            case IDictionary: return DictionaryDataFacade.Instance;
-            case IList: return IListDataFacade.Instance;
-            case IEnumerator: return EnumeratorDataFacade.Instance;
-            default: return ObjectDataFacade.Instance;
-        }
+            IDictionary => DictionaryDataFacade.Instance,
+            IList => IListDataFacade.Instance,
+            IEnumerator => EnumeratorDataFacade.Instance,
+            _ => ObjectDataFacade.Instance,
+        };
     }
 }

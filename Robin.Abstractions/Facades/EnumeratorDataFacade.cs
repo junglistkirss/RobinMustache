@@ -1,17 +1,9 @@
 using Robin.Abstractions.Accessors;
+using Robin.Abstractions.Iterators;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;
-
-internal sealed class IEnumeratorIterator(IEnumerator enumerator) : IIterator
-{
-    public void Iterate(Action<object?> action)
-    {
-        while (enumerator.MoveNext()) 
-            action(enumerator.Current);
-    }
-}
 
 internal sealed class EnumeratorDataFacade : IDataFacade
 {

@@ -3,7 +3,6 @@ using Robin.Contracts.Variables;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Metrics;
 
 namespace Robin.Internals;
 
@@ -60,12 +59,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
             });
             return true;
         }
-        getter = new ChainableGetter((object? _, out object? value) =>
-        {
-
-            value = null;
-            return false;
-        });
+        getter = ChainableGetters.ReturnNull;
         return false;
     }
 
@@ -86,12 +80,7 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
             });
             return true;
         }
-        getter = new ChainableGetter((object? _, out object? value) =>
-        {
-
-            value = null;
-            return false;
-        });
+        getter = ChainableGetters.ReturnNull;
         return false;
     }
 }

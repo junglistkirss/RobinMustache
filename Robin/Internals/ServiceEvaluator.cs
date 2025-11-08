@@ -2,33 +2,8 @@ using Robin.Abstractions;
 using Robin.Abstractions.Context;
 using Robin.Abstractions.Facades;
 using Robin.Contracts.Expressions;
-using System.Collections.Concurrent;
 
 namespace Robin.Internals;
-
-internal sealed class DataFacadeResolver(IServiceProvider provider) : IDataFacadeResolver
-{
-
-    private readonly ConcurrentDictionary<Type, IDataFacade?> cache = new();
-
-    public IDataFacade ResolveDataFacade(object? data)
-    {
-        if (data is null)
-        {
-            return DataFacade.Null;
-        }
-        Type type = data.GetType();
-        return cache.GetOrAdd(type, (_) =>
-        {
-            Type genType = typeof(IDataFacade<>).MakeGenericType(type);
-            IDataFacade ? facade = (IDataFacade?)provider.GetService(genType);
-            if(facade is not null) return facade;
-            return data.GetFacade()!;
-        }) ?? data.GetFacade();
-
-
-    }
-}
 
 internal sealed class ServiceEvaluator(IExpressionNodeVisitor<DataContext> visitor, IDataFacadeResolver facadeResolver) : IEvaluator
 {
@@ -42,13 +17,12 @@ internal sealed class ServiceEvaluator(IExpressionNodeVisitor<DataContext> visit
                 facade = facadeResolver.ResolveDataFacade(value);
                 return value;
             }
-
-            if (!resolved && data.Parent is not null)
+            else if (data.Parent is not null)
             {
                 resolved = expression.Accept(visitor, data.Parent, out object? parentValue);
                 if (resolved)
                 {
-                    facade = parentValue.GetFacade();
+                    facade = facadeResolver.ResolveDataFacade(parentValue);
                     return parentValue;
                 }
             }

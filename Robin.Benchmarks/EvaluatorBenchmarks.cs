@@ -7,9 +7,8 @@ using Robin.Abstractions.Context;
 using Robin.Abstractions.Extensions;
 using Robin.Abstractions.Facades;
 using Robin.Contracts.Expressions;
-using Robin.Contracts.Nodes;
 using Robin.Contracts.Variables;
-using System.Collections.Immutable;
+using Robin.Extensions;
 using System.Text.Json;
 
 namespace Robin.Benchmarks;
@@ -45,11 +44,11 @@ public class EvaluatorBenchmarks
         evaluator = serviceProvider.GetRequiredService<IEvaluator>();
 
     }
-   
+
     [Benchmark(Baseline = true)]
     public void ResolveEntireCollection()
     {
-        IdentifierExpressionNode node = new IdentifierExpressionNode(new VariablePath([ThisSegment.Instance]));
+        IdentifierExpressionNode node = new(new VariablePath([ThisSegment.Instance]));
         using (DataContext.Push(tweets))
             evaluator.Resolve(node, DataContext.Current, out IDataFacade facade);
     }
@@ -57,7 +56,7 @@ public class EvaluatorBenchmarks
     public void ResolveUniqueItem()
     {
         int i = 0;
-        IdentifierExpressionNode node = new IdentifierExpressionNode($"[{i}]".Parse());
+        IdentifierExpressionNode node = new($"[{i}]".Parse());
         using (DataContext.Push(tweets))
             evaluator.Resolve(node, DataContext.Current, out IDataFacade facade);
     }
@@ -69,7 +68,7 @@ public class EvaluatorBenchmarks
         using (DataContext.Push(tweets))
             while (i < 100)
             {
-                IdentifierExpressionNode node = new IdentifierExpressionNode($"[{i}]".Parse());
+                IdentifierExpressionNode node = new($"[{i}]".Parse());
                 evaluator.Resolve(node, DataContext.Current, out IDataFacade facade);
                 i++;
             }
@@ -85,7 +84,7 @@ public class EvaluatorBenchmarks
                 int i = 0;
                 while (i < 100)
                 {
-                    IdentifierExpressionNode node = new IdentifierExpressionNode($"[{i}]".Parse());
+                    IdentifierExpressionNode node = new($"[{i}]".Parse());
                     evaluator.Resolve(node, DataContext.Current, out IDataFacade facade);
                     i++;
                 }
@@ -101,7 +100,7 @@ public class EvaluatorBenchmarks
         using (DataContext.Push(tweets))
             while (i < 100)
             {
-                IdentifierExpressionNode node = new IdentifierExpressionNode($"[{i}].content".Parse());
+                IdentifierExpressionNode node = new($"[{i}].content".Parse());
                 evaluator.Resolve(node, DataContext.Current, out IDataFacade facade);
                 i++;
             }
@@ -117,7 +116,7 @@ public class EvaluatorBenchmarks
                 int i = 0;
                 while (i < 100)
                 {
-                    IdentifierExpressionNode node = new IdentifierExpressionNode($"[{i}].content".Parse());
+                    IdentifierExpressionNode node = new($"[{i}].content".Parse());
                     evaluator.Resolve(node, DataContext.Current, out IDataFacade facade);
                     i++;
                 }
@@ -130,7 +129,7 @@ public class EvaluatorBenchmarks
     {
 
         int i = 0;
-        IdentifierExpressionNode node = new IdentifierExpressionNode($"[{i}].content".Parse());
+        IdentifierExpressionNode node = new($"[{i}].content".Parse());
         using (DataContext.Push(tweets))
             evaluator.Resolve(node, DataContext.Current, out IDataFacade facade);
     }

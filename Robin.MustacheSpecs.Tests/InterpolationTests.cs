@@ -8,20 +8,15 @@ namespace Robin.MustacheSpecs.Tests;
 
 public class InterpolationTests : BaseMustacheTests
 {
-    public static IEnumerable<object[]> GetTestsSpec1_4_3()
+    public static TheoryData<MustacheTestCase> GetTestsSpec1_4_3()
     {
         string path = Path.Combine(AppContext.BaseDirectory, "specs", "1.4.3", "interpolation.json");
         string json = File.ReadAllText(path);
-        var cases = JsonSerializer.Deserialize<MustacheTestFile>(json)!;
-        foreach (var test in cases.Tests)
-            yield return new MustacheTestCase[]
-            {
-                test
-            };
+        MustacheTestFile cases = JsonSerializer.Deserialize<MustacheTestFile>(json)!;
+        return [.. cases.Tests];
     }
 
     [Theory]
-
     [MemberData(nameof(GetTestsSpec1_4_3))]
     public void Should_Add_Correctly(MustacheTestCase @case)
     {

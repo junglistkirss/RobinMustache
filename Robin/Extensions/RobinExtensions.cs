@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Robin.Abstractions;
 using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Context;
 using Robin.Abstractions.Facades;
@@ -9,7 +10,7 @@ using Robin.Internals;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 
-namespace Robin.Abstractions.Extensions;
+namespace Robin.Extensions;
 
 public static class RobinExtensions
 {

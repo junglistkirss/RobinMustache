@@ -4,6 +4,7 @@ using BenchmarkDotNet.Exporters;
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Extensions;
 using Robin.Contracts.Nodes;
+using Robin.Extensions;
 using System.Collections.Immutable;
 using System.Text.Json;
 
@@ -20,7 +21,7 @@ public class TweetsBencnmarks
     private ImmutableArray<INode> template = [];
     private IStringRenderer renderer = default!;
 
-[GlobalSetup]
+    [GlobalSetup]
     public void Setup()
     {
 
@@ -40,14 +41,14 @@ public class TweetsBencnmarks
         tweets = JsonSerializer.Deserialize<Tweet[]>(json)!;
         template = TweetsTemplates.List.AsSpan().Parse();
         renderer = serviceProvider.GetRequiredService<IStringRenderer>();
-        
+
     }
-// [Benchmark]
-//     public INode[] ParseTweetsTemplate() => TweetsTemplates.List.AsSpan().Parse();
+    // [Benchmark]
+    //     public INode[] ParseTweetsTemplate() => TweetsTemplates.List.AsSpan().Parse();
 
     [Benchmark(Baseline = true)]
     public string RenderSingleTweets() => renderer.Render(template, tweets[0]);
-    
+
     [Benchmark]
     public string RenderEmptyTweets() => renderer.Render(template, Array.Empty<Tweet>());
 

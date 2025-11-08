@@ -2,5 +2,11 @@
 using BenchmarkDotNet.Running;
 using Robin.Benchmarks;
 
-var summaryEvaluator = BenchmarkRunner.Run<EvaluatorBenchmarks>();
-var summaryTweets = BenchmarkRunner.Run<TweetsBencnmarks>();
+
+Type[] benchmarks =
+[
+    typeof(EvaluatorBenchmarks),
+    typeof(TweetsBencnmarks)
+];
+
+BenchmarkSwitcher.FromTypes(benchmarks).Run(args);

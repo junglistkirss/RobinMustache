@@ -11,7 +11,7 @@ public sealed class LineBreakNode(int count) : INode
     {
         return visitor.VisitLineBreak(this, args);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Accept<TArgs>(INodeVisitor<TArgs> visitor, TArgs args)
     {

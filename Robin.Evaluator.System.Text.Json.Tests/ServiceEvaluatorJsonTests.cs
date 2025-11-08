@@ -5,6 +5,7 @@ using Robin.Abstractions.Extensions;
 using Robin.Abstractions.Facades;
 using Robin.Contracts.Expressions;
 using Robin.Contracts.Variables;
+using Robin.Extensions;
 using System.Text.Json.Nodes;
 
 namespace Robin.Evaluator.System.Text.Json.tests;

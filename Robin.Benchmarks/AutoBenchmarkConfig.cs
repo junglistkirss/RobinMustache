@@ -6,17 +6,18 @@ namespace Robin.Benchmarks;
 public class AutoBenchmarkConfig : ManualConfig
 {
     public AutoBenchmarkConfig()
-    {WithOptions(ConfigOptions.DisableOptimizationsValidator);
+    {
+        WithOptions(ConfigOptions.DisableOptimizationsValidator);
         // Choisit la configuration adaptée
-        #if DEBUG
-            // AddJob(Job.Dry);
-        #else
-        #endif
-            AddJob(Job.Default
-                .WithWarmupCount(2)
-                .WithIterationCount(8)
-                .WithLaunchCount(1)
-                );
+#if DEBUG
+        // AddJob(Job.Dry);
+#else
+#endif
+        AddJob(Job.Default
+            .WithWarmupCount(2)
+            .WithIterationCount(8)
+            .WithLaunchCount(1)
+            );
 #if WINDOWS
         AddDiagnoser(new BenchmarkDotNet.Diagnostics.Windows.EtwProfiler());
 #endif

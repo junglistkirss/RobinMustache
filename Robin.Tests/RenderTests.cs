@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Extensions;
 using Robin.Contracts.Nodes;
+using Robin.Extensions;
 using System.Collections.Immutable;
 
 namespace Robin.tests;

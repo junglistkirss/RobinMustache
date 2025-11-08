@@ -8,16 +8,12 @@ namespace Robin.MustacheSpecs.Tests;
 
 public class InvertedTests : BaseMustacheTests
 {
-    public static IEnumerable<object[]> GetTestsSpec1_4_3()
+    public static TheoryData<MustacheTestCase> GetTestsSpec1_4_3()
     {
         string path = Path.Combine(AppContext.BaseDirectory, "specs", "1.4.3", "inverted.json");
         string json = File.ReadAllText(path);
-        var cases = JsonSerializer.Deserialize<MustacheTestFile>(json)!;
-        foreach (var test in cases.Tests)
-            yield return new MustacheTestCase[]
-            {
-                test
-            };
+        MustacheTestFile cases = JsonSerializer.Deserialize<MustacheTestFile>(json)!;
+        return [.. cases.Tests];
     }
 
     [Theory]

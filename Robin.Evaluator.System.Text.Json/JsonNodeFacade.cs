@@ -1,6 +1,5 @@
 using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Facades;
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -60,6 +59,6 @@ internal sealed class JsonNodeFacade : IDataFacade
             }
         return false;
     }
-    
+
 }
 

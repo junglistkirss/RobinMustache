@@ -1,39 +1,36 @@
 using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Context;
+using Robin.Abstractions.Helpers;
 using Robin.Contracts.Expressions;
 using Robin.Contracts.Variables;
 using System.Collections.Concurrent;
-using System.Diagnostics.Metrics;
 
 namespace Robin.Internals;
 
 internal sealed class ExpressionNodeVisitor(IEnumerable<IVariableSegmentVisitor<Type, ChainableGetter>> accessorVisitors) : IExpressionNodeVisitor<DataContext>
 {
-
-
     private readonly ConcurrentDictionary<CacheKey, ChainableGetter> cache = new();
     private record struct CacheKey(Type Type, IVariableSegment Segment);
 
     public bool VisitFunctionCall(FunctionCallNode node, DataContext args, out object? value)
     {
-        //if (args.Helper.TryGetFunction(node.FunctionName, out Helper.Function? function) && function is not null)
-        //{
-        //    object?[] evaluatedArgs = new object?[node.Arguments.Length];
-        //    for (int i = 0; i < node.Arguments.Length; i++)
-        //    {
-        //        EvaluationResult evalResult = node.Arguments[i].Accept(this, args);
-        //        if (evalResult.IsResolved)
-        //        {
-        //            evaluatedArgs[i] = evalResult.Value;
-        //        }
-        //        else
-        //        {
-        //            evaluatedArgs[i] = null;
-        //        }
-        //    }
-        //    object? functionResult = function(evaluatedArgs);
-        //    return new EvaluationResult(true, functionResult);
-        //}
+        if (args.Helper.TryGetFunction(node.FunctionName, out Helper.Function? function) && function is not null)
+        {
+            object?[] evaluatedArgs = new object?[node.Arguments.Length];
+            for (int i = 0; i < node.Arguments.Length; i++)
+            {
+                if (node.Arguments[i].Accept(this, args, out object? argValue))
+                {
+                    evaluatedArgs[i] = argValue;
+                }
+                else
+                {
+                    evaluatedArgs[i] = null;
+                }
+            }
+            value = function(evaluatedArgs);
+            return true;
+        }
         value = null;
         return false;
     }
@@ -48,11 +45,7 @@ internal sealed class ExpressionNodeVisitor(IEnumerable<IVariableSegmentVisitor<
             if (getterResolved)
                 return getterInfo;
         }
-        return new ChainableGetter((object? input, out object? output) =>
-        {
-            output = null;
-            return false;
-        });
+        return ChainableGetters.ReturnNull;
     }
 
     public bool VisitIdenitifer(IdentifierExpressionNode node, DataContext args, out object? value)

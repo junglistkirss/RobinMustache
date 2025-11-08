@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Accessors;
 using Robin.Contracts.Variables;
 using System.Collections;
@@ -49,12 +48,7 @@ internal sealed class ServiceDelegateAccesorVisitor(IServiceProvider serviceProv
             getter = @delegate.AsChainable();
             return true;
         }
-        getter = new ChainableGetter((object? _, out object? value) =>
-        {
-
-            value = null;
-            return false;
-        });
+        getter = ChainableGetters.ReturnNull;
         return false;
     }
 
@@ -65,12 +59,7 @@ internal sealed class ServiceDelegateAccesorVisitor(IServiceProvider serviceProv
             getter = @delegate.AsChainable();
             return true;
         }
-        getter = new ChainableGetter((object? _, out object? value) =>
-        {
-
-            value = null;
-            return false;
-        });
+        getter = ChainableGetters.ReturnNull;
         return false;
     }
 }
