@@ -1,10 +1,11 @@
 using Robin.Abstractions.Accessors;
+using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Internals;
 
-internal sealed class ListIndexAccessor : IIndexAccessor
+internal sealed class ListIndexAccessor : IIndexDelegateAccessor, IIndexAccessor<IList>
 {
     public readonly static ListIndexAccessor Instance = new();
     private ListIndexAccessor() { }
@@ -19,5 +20,16 @@ internal sealed class ListIndexAccessor : IIndexAccessor
             return null;
         };
         return true;
+    }
+
+    public bool TryGetIndex(IList obj, int index, out object? value)
+    {
+        if (obj is not null && index >= 0 && index < obj.Count)
+        {
+            value = obj[index];
+            return true;
+        }
+        value = null;
+        return false;
     }
 }

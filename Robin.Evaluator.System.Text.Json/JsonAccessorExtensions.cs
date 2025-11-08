@@ -14,20 +14,30 @@ public static class JsonAccessorExtensions
         return services
             .AddKeyedSingleton<IJsonEvaluator, JsonEvaluator>(JsonEvaluatorKey)
             .AddSingleton<IJsonEvaluator, JsonEvaluator>()
-            .AddIndexAccessor<JsonArray>(TryGetIndexValue)
-            .AddMemberAccessor<JsonObject>(TryGetMemberValue)
-            .AddIndexAccessor<JsonNode>(TryGetIndexValue)
-            .AddMemberAccessor<JsonNode>(TryGetMemberValue);
+            .AddIndexObjectAccessor<JsonArray>(TryGetIndexValue)
+            .AddMemberObjectAccessor<JsonObject>(TryGetMemberValue)
+            .AddIndexObjectAccessor<JsonNode>(TryGetIndexValue)
+            .AddMemberObjectAccessor<JsonNode>(TryGetMemberValue);
     }
 
-    internal static bool TryGetMemberValue(string member, [NotNull] out Delegate @delegate)
+    internal static bool TryGetMemberValue(this object? obj, string member,   out object? value)
     {
-        @delegate = (Func<JsonNode?, JsonNode?>)(x => x is JsonObject obj && obj.TryGetPropertyValue(member, out JsonNode? node) ? node : throw new Exception("Bad type or missing proppoerty"));
-        return true;
+        if( obj is JsonObject jObject && jObject.TryGetPropertyValue(member, out JsonNode? node))
+        {
+            value = node;
+            return true;
+        }
+        value = null;
+        return false;
     }
-    internal static bool TryGetIndexValue(int index, [NotNull] out Delegate @delegate)
+    internal static bool TryGetIndexValue(this object? obj, int index, out object? value)
     {
-        @delegate = (Func<JsonNode?, JsonNode?>)((x) => x is JsonArray arr && index < arr.Count ? arr[index] : throw new Exception("Bad type or index out of range"));
+        if (obj is JsonArray jArray && index < jArray.Count)
+        {
+            value = jArray[index];
+            return true;
+        }
+        value = null;
         return false;
     }
 }

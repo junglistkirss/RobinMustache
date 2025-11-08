@@ -15,23 +15,23 @@ public class RenderTests
         services
             .AddServiceEvaluator()
             .AddStringRenderer()
-            .AddMemberAccessor<TestSample>(static (string member, out Delegate value) =>
+            .AddMemberDelegateAccessor<TestSample>(static (string member, out Delegate value) =>
             {
                 value = member switch
                 {
                     "Name" => (Func<TestSample, string?>)(x => x.Name),
                     "Age" => (Func<TestSample, int>)(x => x.Age),
-                    _ => throw new InvalidDataException("Member does not exists"),
+                    _ => throw new InvalidDataException($"Member does not exists : {member}"),
                 };
                 return true;
             })
-            .AddMemberAccessor<ParentTestSample>(static (string member, out Delegate value) =>
+            .AddMemberDelegateAccessor<ParentTestSample>(static (string member, out Delegate value) =>
             {
                 value = member.ToLowerInvariant() switch
                 {
                     "alias" => (Func<ParentTestSample, string?>)(x => x.Alias),
                     "nested" => (Func<ParentTestSample, TestSample?>)(x => x.Nested),
-                    _ => throw new InvalidDataException("Member does not exists"),
+                    _ => throw new InvalidDataException($"Member does not exists : {member}"),
                 };
                 return true;
             });
@@ -56,8 +56,7 @@ public class RenderTests
     public void ParentTest_Render_SimpleTemplate()
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
-        var sample = new TestSample { Name = "Alice", Age = 30 };
-        var parent = new ParentTestSample { Alias = "Bob", Nested = sample };
+        var parent = new ParentTestSample { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = 30 } };
         ImmutableArray<INode> template = "Name: {{ Alias }}, Nested: {{ nested.Name }}".AsSpan().Parse();
         string result = renderer.Render(template, parent);
         Assert.Equal("Name: Bob, Nested: Alice", result);

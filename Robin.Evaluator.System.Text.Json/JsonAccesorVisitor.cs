@@ -1,35 +1,52 @@
+using Robin.Abstractions.Accessors;
 using Robin.Contracts.Variables;
+using System;
 using System.Text.Json.Nodes;
 
 namespace Robin.Evaluator.System.Text.Json;
 
-internal sealed class JsonAccesorVisitor : IVariableSegmentVisitor<Type>
+internal sealed class JsonAccesorVisitor : BaseAccessorVisitor
 {
     public readonly static JsonAccesorVisitor Instance = new();
-    public bool VisitIndex(IndexSegment segment, Type args, out Delegate @delegate)
+    public override bool VisitIndex(IndexSegment segment, Type args, out ChainableGetter getter)
     {
         if (Nullable.GetUnderlyingType(args) == typeof(JsonArray))
         {
-            return JsonAccessorExtensions.TryGetIndexValue(segment.Index, out @delegate);
+            int index = segment.Index;
+            getter = new ChainableGetter((object? input, out object? value) =>
+            {
+                return input.TryGetIndexValue(index, out value);
+            });
+            return true;
         }
-        @delegate = (Func<JsonArray?, object?>)(_ => null);
+        getter = new ChainableGetter((object? _, out object? value) =>
+        {
+
+            value = null;
+            return false;
+        });
         return false;
     }
 
-    public bool VisitMember(MemberSegment segment, Type args, out Delegate @delegate)
+    public override bool VisitMember(MemberSegment segment, Type args, out ChainableGetter getter)
     {
         if (Nullable.GetUnderlyingType(args) == typeof(JsonObject))
         {
-            return JsonAccessorExtensions.TryGetMemberValue(segment.MemberName, out @delegate);
+            string memberName = segment.MemberName;
+            getter = new ChainableGetter((object? input, out object? value) =>
+            {
+                return input.TryGetMemberValue(memberName, out value);
+            });
+            return true;
         }
-        @delegate = (Func<JsonObject?, object?>)(_ => null);
+        getter = new ChainableGetter((object? _, out object? value) =>
+        {
+
+            value = null;
+            return false;
+        });
         return false;
     }
 
-    public bool VisitThis(ThisSegment segment, Type args, out Delegate @delegate)
-    {
-        @delegate = (Func<object?, object?>)(x => x);
-        return true;
-    }
 }
 

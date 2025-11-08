@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Internals;
 
-internal sealed class DictionaryMemberAccessor : IMemberAccessor
+internal sealed class DictionaryMemberAccessor : IMemberDelegateAccessor, IMemberAccessor<IDictionary>
 {
     public readonly static DictionaryMemberAccessor Instance = new();
     private DictionaryMemberAccessor() { }
@@ -19,5 +19,16 @@ internal sealed class DictionaryMemberAccessor : IMemberAccessor
             return null;
         };
         return true; ;
+    }
+
+    public bool TryGetMember(IDictionary obj, string name, out object? value)
+    {
+        if (obj is not null && obj.Contains(name))
+        {
+            value = obj[name];
+            return true;
+        }
+        value = null;
+        return true;
     }
 }

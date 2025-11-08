@@ -2,9 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Contracts.Variables;
 
-public interface IVariableSegmentVisitor<in TArgs>
+public interface IVariableSegmentVisitor<in TArgs, TOut>
 {
-    bool VisitThis(ThisSegment accessor, TArgs args, [NotNull] out Delegate @delegate);
-    bool VisitMember(MemberSegment accessor, TArgs args, [NotNull] out Delegate @delegate);
-    bool VisitIndex(IndexSegment accessor, TArgs args, [NotNull] out Delegate @delegate);
+    bool VisitThis(ThisSegment accessor, TArgs args, out TOut result);
+    bool VisitMember(MemberSegment accessor, TArgs args, out TOut result);
+    bool VisitIndex(IndexSegment accessor, TArgs args, out TOut result);
 }

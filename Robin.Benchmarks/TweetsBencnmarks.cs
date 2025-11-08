@@ -28,7 +28,7 @@ public class TweetsBencnmarks
         services
             .AddServiceEvaluator()
             .AddStringRenderer()
-            .AddMemberAccessor<Tweet>(TweetAccessor.GetPropertyDelegate);
+            .AddMemberObjectAccessor<Tweet>(TweetAccessor.GetNamedProperty);
 
         serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {

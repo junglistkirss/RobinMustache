@@ -1,13 +1,14 @@
-using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Accessors;
 using Robin.Contracts.Variables;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Metrics;
 
 namespace Robin.Internals;
 
-internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : IVariableSegmentVisitor<Type>
+
+internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : BaseAccessorVisitor
 {
     private readonly ConcurrentDictionary<Type, IMemberAccessor?> memberCache = new();
     private readonly ConcurrentDictionary<Type, IIndexAccessor?> indexCache = new();
@@ -42,31 +43,55 @@ internal sealed class ServiceAccesorVisitor(IServiceProvider serviceProvider) : 
         return accessor is not null;
     }
 
-    public bool VisitIndex(IndexSegment segment, Type args, [NotNull] out Delegate @delegate)
+    public override bool VisitIndex(IndexSegment segment, Type args, out ChainableGetter getter)
     {
         if (TryGetIndexAccessor(args, out IIndexAccessor? typedAccessor))
         {
-            typedAccessor.TryGetIndex(segment.Index, out @delegate);
+            int index = segment.Index;
+            getter = new ChainableGetter((object? input, out object? value) =>
+            {
+                if (typedAccessor.TryGetIndex(input, index, out object? indexValue))
+                {
+                    value = indexValue;
+                    return true;
+                }
+                value = null;
+                return false;
+            });
             return true;
         }
-        @delegate = (Func<object?, object?>)((_) => null);
+        getter = new ChainableGetter((object? _, out object? value) =>
+        {
+
+            value = null;
+            return false;
+        });
         return false;
     }
 
-    public bool VisitMember(MemberSegment segment, Type args, [NotNull] out Delegate @delegate)
+    public override bool VisitMember(MemberSegment segment, Type args, out ChainableGetter getter)
     {
         if (TryGetMemberAccessor(args, out IMemberAccessor? typedAccessor))
         {
-            typedAccessor.TryGetMember(segment.MemberName, out @delegate);
+            string memberName = segment.MemberName;
+            getter = new ChainableGetter((object? input, out object? value) =>
+            {
+                if (typedAccessor.TryGetMember(input, memberName, out object? memberValue))
+                {
+                    value = memberValue;
+                    return true;
+                }
+                value = null;
+                return false;
+            });
             return true;
         }
-        @delegate = (Func<object?, object?>)((_) => null);
-        return false;
-    }
+        getter = new ChainableGetter((object? _, out object? value) =>
+        {
 
-    public bool VisitThis(ThisSegment segment, Type _, [NotNull] out Delegate @delegate)
-    {
-        @delegate = (Func<object?, object?>)(x => x);
-        return true;
+            value = null;
+            return false;
+        });
+        return false;
     }
 }

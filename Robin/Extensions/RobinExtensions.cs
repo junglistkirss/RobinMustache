@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Context;
 using Robin.Abstractions.Facades;
 using Robin.Contracts.Expressions;
@@ -29,7 +30,8 @@ public static class RobinExtensions
             // .AddKeyedSingleton<IEvaluator, ServiceEvaluator>(BaseEvaluatorKey)
             .AddSingleton<IDataFacadeResolver, DataFacadeResolver>()
             .AddSingleton<IEvaluator, ServiceEvaluator>()
-            .AddSingleton<IVariableSegmentVisitor<Type>, ServiceAccesorVisitor>();
+            .AddSingleton<IVariableSegmentVisitor<Type, ChainableGetter>, ServiceAccesorVisitor>()
+            .AddSingleton<IVariableSegmentVisitor<Type, ChainableGetter>, ServiceDelegateAccesorVisitor>();
     }
 }
 

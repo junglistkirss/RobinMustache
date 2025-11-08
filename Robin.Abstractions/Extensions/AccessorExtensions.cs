@@ -33,10 +33,13 @@ public static class DataFacadeExtensions
 }
 public static class AccessorExtensions
 {
-    public delegate bool TryGetMemberValue<T>(string member, [NotNull] out Delegate value);
-    public delegate bool TryGetIndexValue<T>(int index, [NotNull] out Delegate value);
+    public delegate bool TryGetMemberDelegateAccessor<T>(string member, [NotNull] out Delegate value);
+    public delegate bool TryGetIndexDelegateAccessor<T>(int index, [NotNull] out Delegate value);
 
-    private sealed class DelegatedMemberAccessor<T>(TryGetMemberValue<T> tryGetMemberValue) : IMemberAccessor<T>
+    public delegate bool TryGetMemberObjectAccessor<T>(T obj, string member, out object? value);
+    public delegate bool TryGetIndexObjectAccessor<T>(T obj, int index, out object? value);
+
+    private sealed class DelegatedMemberAccessor<T>(TryGetMemberDelegateAccessor<T> tryGetMemberValue) : IMemberDelegateAccessor<T>
     {
         public bool TryGetMember(string name, [NotNull] out Delegate value)
         {
@@ -44,13 +47,13 @@ public static class AccessorExtensions
             return tryGetMemberValue(name, out value);
         }
     }
-    public static IServiceCollection AddMemberAccessor<T>(this IServiceCollection services, TryGetMemberValue<T> tryGet)
+    public static IServiceCollection AddMemberDelegateAccessor<T>(this IServiceCollection services, TryGetMemberDelegateAccessor<T> tryGet)
     {
         ArgumentNullException.ThrowIfNull(tryGet);
-        return services.AddSingleton<IMemberAccessor<T>>(new DelegatedMemberAccessor<T>(tryGet));
+        return services.AddSingleton<IMemberDelegateAccessor<T>>(new DelegatedMemberAccessor<T>(tryGet));
     }
 
-    private sealed class DelegatedIndexAccessor<T>(TryGetIndexValue<T> tryGetIndexValue) : IIndexAccessor<T>
+    private sealed class DelegatedIndexAccessor<T>(TryGetIndexDelegateAccessor<T> tryGetIndexValue) : IIndexDelegateAccessor<T>
     {
         public bool TryGetIndex(int index, [NotNull] out Delegate value)
         {
@@ -58,9 +61,40 @@ public static class AccessorExtensions
             return tryGetIndexValue(index, out value);
         }
     }
-    public static IServiceCollection AddIndexAccessor<T>(this IServiceCollection services, TryGetIndexValue<T> tryGet)
+    public static IServiceCollection AddIndexAccessorDelegate<T>(this IServiceCollection services, TryGetIndexDelegateAccessor<T> tryGet)
     {
         ArgumentNullException.ThrowIfNull(tryGet);
-        return services.AddSingleton<IIndexAccessor<T>>(new DelegatedIndexAccessor<T>(tryGet));
+        return services.AddSingleton<IIndexDelegateAccessor<T>>(new DelegatedIndexAccessor<T>(tryGet));
+    }
+
+
+
+
+    private sealed class ObjectMemberAccessor<T>(TryGetMemberObjectAccessor<T> tryGetMemberValue) : IMemberAccessor<T>
+    {
+        public bool TryGetMember(T obj, string name, out object? value)
+        {
+            ArgumentNullException.ThrowIfNull(tryGetMemberValue);
+            return tryGetMemberValue(obj, name, out value);
+        }
+    }
+    public static IServiceCollection AddMemberObjectAccessor<T>(this IServiceCollection services, TryGetMemberObjectAccessor<T> tryGet)
+    {
+        ArgumentNullException.ThrowIfNull(tryGet);
+        return services.AddSingleton<IMemberAccessor<T>>(new ObjectMemberAccessor<T>(tryGet));
+    }
+
+    private sealed class ObjectIndexAccessor<T>(TryGetIndexObjectAccessor<T> tryGetIndexValue) : IIndexAccessor<T>
+    {
+        public bool TryGetIndex(T obj, int index, out object? value)
+        {
+            ArgumentNullException.ThrowIfNull(tryGetIndexValue);
+            return tryGetIndexValue(obj, index, out value);
+        }
+    }
+    public static IServiceCollection AddIndexObjectAccessor<T>(this IServiceCollection services, TryGetIndexObjectAccessor<T> tryGet)
+    {
+        ArgumentNullException.ThrowIfNull(tryGet);
+        return services.AddSingleton<IIndexAccessor<T>>(new ObjectIndexAccessor<T>(tryGet));
     }
 }

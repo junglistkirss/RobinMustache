@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Robin.Generators.Accessor.Tests;
 
-public class AccessorGeneratorTests
+public class AccessorDelegateGeneratorTests
 {
     [Fact]
     public void TestsStruct()
@@ -15,7 +15,7 @@ using Robin.Generators.Accessor;
 
 namespace TestNamespace
 {
-    [GenerateAccessor]
+    [GenerateAccessor(UseDelegates = true)]
     public struct Test
     {
         public int Value { get; }
@@ -30,7 +30,7 @@ namespace TestNamespace
         Assert.Contains(@"case ""value""", code);
         Assert.Contains("return true;", code);
         Assert.Contains("default:", code);
-        Assert.Contains("value = null;", code);
+        Assert.Contains("value = (Func<TestNamespace.Test, object>)(_ => null);", code);
         Assert.Contains("return false;", code);
     }
 
@@ -43,7 +43,7 @@ using Robin.Generators.Accessor;
 
 namespace TestNamespace
 {
-    [GenerateAccessor]
+    [GenerateAccessor(UseDelegates = true)]
     public class Test
     {
         public int Value { get; }
@@ -58,7 +58,7 @@ namespace TestNamespace
         Assert.Contains(@"case ""value""", code);
         Assert.Contains("return true;", code);
         Assert.Contains("default:", code);
-        Assert.Contains("value = null;", code);
+        Assert.Contains("value = (Func<TestNamespace.Test, object>)(_ => null);", code);
         Assert.Contains("return false;", code);
     }
 
@@ -72,7 +72,7 @@ using Robin.Generators.Accessor;
 
 namespace TestNamespace
 {
-    [GenerateAccessor]
+    [GenerateAccessor(UseDelegates = true)]
     public class Test
     {
     }
@@ -96,7 +96,7 @@ using Robin.Generators.Accessor;
 
 namespace TestNamespace
 {
-    [GenerateAccessor]
+    [GenerateAccessor(UseDelegates = true)]
     internal class Test
     {
     }
@@ -119,7 +119,7 @@ using Robin.Generators.Accessor;
 
 namespace TestNamespace
 {
-    [GenerateAccessor]
+    [GenerateAccessor(UseDelegates = true)]
     internal abstract class Test
     {
         public int Value { get; }
@@ -133,7 +133,7 @@ namespace TestNamespace
         Assert.Contains(@"case ""value""", code);
         Assert.Contains("return true;", code);
         Assert.Contains("default:", code);
-        Assert.Contains("value = null;", code);
+        Assert.Contains("value = (Func<TestNamespace.Test, object>)(_ => null);", code);
         Assert.Contains("return false;", code);
     }
     private static string GenerateTestCode(string source)

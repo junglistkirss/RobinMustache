@@ -18,8 +18,8 @@ public class GeneratedAccessorTests
         ServiceCollection services = [];
         services
             .AddServiceEvaluator()
-            .AddMemberAccessor<TestModel>(TestModelAccessor.GetPropertyDelegate)
-            .AddMemberAccessor<TestSubModel>(TestSubModelAccessor.GetPropertyDelegate);
+            .AddMemberObjectAccessor<TestModel>(TestModelAccessor.GetNamedProperty)
+            .AddMemberObjectAccessor<TestSubModel>(TestSubModelAccessor.GetNamedProperty);
         ServiceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,

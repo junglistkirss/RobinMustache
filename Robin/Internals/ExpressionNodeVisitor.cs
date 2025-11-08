@@ -1,16 +1,18 @@
+using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Context;
 using Robin.Contracts.Expressions;
 using Robin.Contracts.Variables;
 using System.Collections.Concurrent;
+using System.Diagnostics.Metrics;
 
 namespace Robin.Internals;
 
-internal sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<Type> accessorVisitor) : IExpressionNodeVisitor<DataContext>
+internal sealed class ExpressionNodeVisitor(IEnumerable<IVariableSegmentVisitor<Type, ChainableGetter>> accessorVisitors) : IExpressionNodeVisitor<DataContext>
 {
 
 
-    private readonly ConcurrentDictionary<CacheKey, ChainedGetter?> cache = new();
-    private record struct CacheKey(Type Type, VariablePath Path);
+    private readonly ConcurrentDictionary<CacheKey, ChainableGetter> cache = new();
+    private record struct CacheKey(Type Type, IVariableSegment Segment);
 
     public bool VisitFunctionCall(FunctionCallNode node, DataContext args, out object? value)
     {
@@ -36,53 +38,70 @@ internal sealed class ExpressionNodeVisitor(IVariableSegmentVisitor<Type> access
         return false;
     }
 
+    private ChainableGetter BuildGetter(CacheKey cacheKey)
+    {
+        Type currentType = cacheKey.Type;
+        IVariableSegment current = cacheKey.Segment;
+        foreach (IVariableSegmentVisitor<Type, ChainableGetter> accessorVisitor in accessorVisitors)
+        {
+            bool getterResolved = current.Accept(accessorVisitor, currentType, out ChainableGetter getterInfo);
+            if (getterResolved)
+                return getterInfo;
+        }
+        return new ChainableGetter((object? input, out object? output) =>
+        {
+            output = null;
+            return false;
+        });
+    }
+
     public bool VisitIdenitifer(IdentifierExpressionNode node, DataContext args, out object? value)
     {
+        if (args.Data is null)
+        {
+            value = null;
+            return false;
+        }
+        if (node.Path.Length == 0)
+        {
+            value = null;
+            return false;
+        }
+
         object? current = args.Data;
-        if (current is null)
+        bool resolved = true;
+        int i = 0;
+        while (i < node.Path.Length && current is not null && resolved)
         {
-            value = null;
-            return false;
-        }
-        if (node.Path.Segments.Length == 0)
-        {
-            value = null;
-            return false;
-        }
-
-        Type type = current.GetType();
-        ChainedGetter? @delegate = cache.GetOrAdd(new CacheKey(type, node.Path), (cacheKey) =>
-        {
-            Type currentType = cacheKey.Type;
-            VariablePath path = cacheKey.Path;
-
-            TryDelegateChain chain = new(currentType);
-            int limit = cacheKey.Path.Segments.Length;
-            int i = 0;
-            IVariableSegment current = path.Segments[i];
-            bool resolved = current.Accept(accessorVisitor, currentType, out Delegate @delegate);
-            if (!resolved)
-                return chain.Fail().Compile();
-            chain.Push(@delegate);
-            i++;
-            while (resolved && i < limit)
+            IVariableSegment segment = node.Path[i];
+            ChainableGetter getter = cache.GetOrAdd(new CacheKey(current.GetType(), segment), BuildGetter);
+            try
             {
-                currentType = @delegate.GetReturnType();
-                current = path.Segments[i]; ;
-                resolved = current.Accept(accessorVisitor, currentType, out @delegate);
-                if (!resolved) // avoid precedence
-                    return chain.Fail().Compile();
-                chain.Push(@delegate);
+                resolved = getter(current, out object? next);
+                if (!resolved && i > 0)
+                {
+                    value = null;
+                    return true; // avoid precedence here
+                }
+                current = next;
                 i++;
             }
-            return chain.Compile();
-        });
-        if (@delegate is not null)
-        {
-            bool resolved = @delegate!(current, out value);
-            if (resolved)
-                return true;
+            catch (Exception)
+            {
+                resolved = false;
+                if (i > 0)
+                {
+                    value = null;
+                    return false;
+                }
+            }
         }
+        if (resolved)
+        {
+            value = current;
+            return true;
+        }
+
         if (args.Parent is not null)
             return VisitIdenitifer(node, args.Parent, out value);
 

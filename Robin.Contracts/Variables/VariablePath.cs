@@ -7,6 +7,9 @@ public record struct VariablePath(ImmutableArray<IVariableSegment> segments)
 {
     public static implicit operator string(VariablePath value) => value.ToString();
     public ImmutableArray<IVariableSegment> Segments { get; } = segments;
+
+    public int Length => Segments.Length;
+    public IVariableSegment this[int index] => Segments[index];
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
