@@ -10,10 +10,13 @@ public sealed class Helper
 
     public bool TryAddFunction(string name, Function function)
     {
-        return _functions.TryAdd(name, function);
+        if(_functions.ContainsKey(name))
+            return false;
+        _functions.Add(name, function);
+        return true;
     }
 
-    public bool TryGetFunction(string name, [MaybeNullWhen(false)] out Function? function)
+    public bool TryGetFunction(string name, out Function? function)
     {
         return _functions.TryGetValue(name, out function);
     }
