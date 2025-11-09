@@ -4,10 +4,8 @@ using BenchmarkDotNet.Exporters;
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Extensions;
 using Robin.Contracts.Nodes;
-using Robin.Contracts.Variables;
 using Robin.Extensions;
 using System.Collections.Immutable;
-using System.Text.Json;
 
 namespace Robin.Benchmarks;
 

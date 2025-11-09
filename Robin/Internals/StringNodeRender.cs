@@ -66,7 +66,7 @@ internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : IN
         {
             foreach (IPartialLoader loader in loaders)
             {
-                if(loader.Load(node.PartialName, context, out ImmutableArray<INode> partialTemplate))
+                if (loader.Load(node.PartialName, context, out ImmutableArray<INode> partialTemplate))
                 {
                     ReadOnlySpan<INode> span = partialTemplate.AsSpan();
 

@@ -21,7 +21,8 @@ public static class RobinExtensions
         if (baseCollection is not null)
             collection = new(baseCollection);
         else collection = [];
-        foreach (INode node in nodes) {
+        foreach (INode node in nodes)
+        {
             node.Accept(PartialExtractor.Instance, collection);
         }
         return collection;

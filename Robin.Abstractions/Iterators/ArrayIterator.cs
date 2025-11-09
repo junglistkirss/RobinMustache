@@ -1,6 +1,5 @@
 using Robin.Abstractions.Context;
 using Robin.Contracts.Nodes;
-using System.Collections;
 
 namespace Robin.Abstractions.Iterators;
 
