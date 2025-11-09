@@ -22,7 +22,13 @@ public static class DataFacadeExtensions
         }
 
     }
-    public static IServiceCollection AddDataFacade<T>(this IServiceCollection services, DataFacadeFactory factory)
+
+    public static IServiceCollection AddDataFacade<T>(this IServiceCollection services, IDataFacade<T> facade)
+    {
+        ArgumentNullException.ThrowIfNull(facade);
+        return services.AddSingleton<IDataFacade<T>>(facade);
+    }
+    public static IServiceCollection AddDataFacadeFactory<T>(this IServiceCollection services, DataFacadeFactory factory)
     {
         ArgumentNullException.ThrowIfNull(factory);
         return services.AddSingleton<IDataFacade<T>>(new TypedDataFacade<T>(factory));

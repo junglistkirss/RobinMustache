@@ -38,10 +38,10 @@ public static class Renderer
         }
     }
 
-    public static string RenderString(this IEvaluator evaluator, ImmutableArray<INode> template, object? data, Action<Helper>? helperConfig = null)
-    {
-        StringBuilder sb = new();
-        Render(sb, StringNodeRender.Instance, evaluator, template.AsSpan(), data, helperConfig);
-        return sb.ToString();
-    }
+    //public static string RenderString(this IEvaluator evaluator, ImmutableArray<INode> template, object? data, Action<Helper>? helperConfig = null)
+    //{
+    //    StringBuilder sb = new();
+    //    Render(sb, StringNodeRender.Instance, evaluator, template.AsSpan(), data, helperConfig);
+    //    return sb.ToString();
+    //}
 }

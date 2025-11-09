@@ -9,6 +9,7 @@ using Robin.Contracts.Variables;
 using Robin.Internals;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace Robin.Extensions;
 
@@ -32,10 +33,10 @@ public static class RobinExtensions
             // .AddKeyedSingleton<IEvaluator, ServiceEvaluator>(BaseEvaluatorKey)
             .AddSingleton<IDataFacadeResolver, DataFacadeResolver>()
             .AddSingleton<IEvaluator, ServiceEvaluator>()
+            .AddSingleton<IPartialLoader, DefinedPartialLoader>()
+            .AddSingleton<INodeVisitor<RenderContext<StringBuilder>>, StringNodeRender>()
             .AddSingleton<IVariableSegmentVisitor<Type, ChainableGetter>, ServiceAccesorVisitor>()
             .AddSingleton<IVariableSegmentVisitor<Type, ChainableGetter>, ServiceDelegateAccesorVisitor>();
     }
 }
-
-
 

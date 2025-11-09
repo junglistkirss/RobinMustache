@@ -13,7 +13,8 @@ public abstract class BaseMustacheTests
         ServiceCollection services = [];
         services
             .AddServiceEvaluator()
-            .AddJsonAccessors();
+            .AddJsonAccessors()
+            .AddStringRenderer();
         ServiceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,

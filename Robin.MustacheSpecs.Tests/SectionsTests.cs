@@ -21,9 +21,9 @@ public class SectionsTests : BaseMustacheTests
     [MemberData(nameof(GetTestsSpec1_4_3))]
     public void Should_Add_Correctly(MustacheTestCase @case)
     {
-        IJsonEvaluator eval = ServiceProvider.GetRequiredService<IJsonEvaluator>();
+        IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
         ImmutableArray<INode> template = @case.Template.AsSpan().Parse();
-        string result = eval.RenderString(template, @case.Data);
+        string result = renderer.Render(template, @case.Data);
         if (!@case.Expected.EqualsIgnoringWhitespace(result))
         {
             Assert.Fail($"{@case.Name} : {@case.Description}{Environment.NewLine}Excpected: \"{@case.Expected}\"{Environment.NewLine}Actual: \"{result}\"");

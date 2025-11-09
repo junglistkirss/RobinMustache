@@ -1,3 +1,4 @@
+using Robin.Abstractions;
 using Robin.Abstractions.Context;
 using Robin.Abstractions.Facades;
 using Robin.Abstractions.Iterators;
@@ -9,9 +10,8 @@ using System.Text;
 
 namespace Robin.Internals;
 
-internal sealed class StringNodeRender : INodeVisitor<RenderContext<StringBuilder>>
+internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : INodeVisitor<RenderContext<StringBuilder>>
 {
-    public readonly static StringNodeRender Instance = new();
 
     public void VisitText(TextNode node, RenderContext<StringBuilder> context)
     {
@@ -62,14 +62,21 @@ internal sealed class StringNodeRender : INodeVisitor<RenderContext<StringBuilde
     {
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
 
-        if (facade.IsTrue(value) && context.Partials is not null && context.Partials.TryGetValue(node.PartialName, out ImmutableArray<INode> partialTemplate))
+        if (facade.IsTrue(value))
         {
-            ReadOnlySpan<INode> span = partialTemplate.AsSpan();
-
-            ReadOnlyDictionary<string, ImmutableArray<INode>> tempPartials = span.ExtractsPartials(context.Partials).AsReadOnly();
-            using (new PartialsScope<StringBuilder>(context, tempPartials))
+            foreach (IPartialLoader loader in loaders)
             {
-                RenderTree(context, value, facade, span);
+                if(loader.Load(node.PartialName, context, out ImmutableArray<INode> partialTemplate))
+                {
+                    ReadOnlySpan<INode> span = partialTemplate.AsSpan();
+
+                    ReadOnlyDictionary<string, ImmutableArray<INode>> tempPartials = span.ExtractsPartials(context.Partials).AsReadOnly();
+                    using (new PartialsScope<StringBuilder>(context, tempPartials))
+                    {
+                        RenderTree(context, value, facade, span);
+                    }
+                    return;
+                }
             }
         }
     }

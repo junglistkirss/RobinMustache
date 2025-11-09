@@ -4,10 +4,14 @@ using System.Collections.ObjectModel;
 
 namespace Robin.Abstractions.Context;
 
-public sealed class RenderContext<T>
-    where T : class
+public abstract class RenderContext
 {
     public ReadOnlyDictionary<string, ImmutableArray<INode>>? Partials { get; internal set; }
     public IEvaluator Evaluator { get; internal set; } = null!;
+}
+
+public sealed class RenderContext<T> : RenderContext
+    where T : class
+{
     public T Builder { get; internal set; } = null!;
 }

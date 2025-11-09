@@ -8,7 +8,7 @@ public static class DataFacade
 
     public static readonly IDataFacade Null = NullDataFacade.Instance;
 
-    public static IDataFacade GetFacade(this object? obj)
+    public static IDataFacade GetPrimitiveFacade(this object? obj)
     {
         if (obj is null)
             return Null;

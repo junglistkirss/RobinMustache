@@ -1,28 +1,27 @@
 using Robin.Abstractions.Facades;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Internals;
 
 internal sealed class DataFacadeResolver(IServiceProvider provider) : IDataFacadeResolver
 {
-
     private readonly ConcurrentDictionary<Type, IDataFacade?> cache = new();
 
-    public IDataFacade ResolveDataFacade(object? data)
+    public bool ResolveDataFacade(object? data, [NotNullWhen(true)] out IDataFacade? facade)
     {
         if (data is null)
         {
-            return DataFacade.Null;
+            facade = DataFacade.Null;
+            return true;
         }
-        Type type = data.GetType();
-        return cache.GetOrAdd(type, (_) =>
+        Type type = Nullable.GetUnderlyingType(data.GetType()) ?? data.GetType();
+        facade = cache.GetOrAdd(type, (_) =>
         {
             Type genType = typeof(IDataFacade<>).MakeGenericType(type);
-            IDataFacade? facade = (IDataFacade?)provider.GetService(genType);
-            if (facade is not null) return facade;
-            return data.GetFacade()!;
-        }) ?? data.GetFacade();
-
-
+            IDataFacade? cachedFacade = (IDataFacade?)provider.GetService(genType);
+            return cachedFacade;
+        });
+        return facade is not null;
     }
 }

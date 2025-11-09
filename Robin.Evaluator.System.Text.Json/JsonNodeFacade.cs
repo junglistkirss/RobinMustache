@@ -26,50 +26,121 @@ internal sealed class JsonArrayIteraor : BaseIterator
     }
 }
 
-internal sealed class JsonNodeFacade : IDataFacade
+internal sealed class JsonNodeFacade : IDataFacade<JsonNode>
 {
     public readonly static JsonNodeFacade Instance = new();
     private JsonNodeFacade() { }
-    public bool IsCollection(object? obj, [NotNullWhen(true)] out IIterator? collection)
+    public bool IsCollection(JsonNode node, [NotNullWhen(true)] out IIterator? collection)
     {
-        if (obj is JsonNode node)
-            switch (node.GetValueKind())
-            {
-                case JsonValueKind.Array:
-                    JsonArray jArray = node.AsArray()!;
-                    collection = JsonArrayIteraor.Instance;
-                    return jArray.Count > 0;
-                default:
-                    break;
-            }
+        switch (node.GetValueKind())
+        {
+            case JsonValueKind.Array:
+                JsonArray jArray = node.AsArray()!;
+                return JsonArrayFacade.Instance.IsCollection(jArray, out collection);
+            default:
+                break;
+        }
         collection = null;
         return false;
     }
 
-    public bool IsTrue(object? obj)
+    public bool IsTrue([NotNullWhen(true)] JsonNode node)
     {
-        if (obj is JsonNode node)
-            switch (node.GetValueKind())
-            {
-                case JsonValueKind.Undefined:
-                    return false;
-                case JsonValueKind.Object:
-                    JsonObject? jObject = node.AsObject();
-                    return jObject is not null;
-                case JsonValueKind.Array:
-                    JsonArray? jArray = node.AsArray();
-                    return jArray is not null && jArray.Count > 0;
-                case JsonValueKind.String:
-                    return !string.IsNullOrEmpty(node.GetValue<string>());
-                case JsonValueKind.Number:
-                case JsonValueKind.True:
-                    return true;
-                case JsonValueKind.False:
-                case JsonValueKind.Null:
-                    return false;
-            }
+        switch (node.GetValueKind())
+        {
+            case JsonValueKind.Undefined:
+                return false;
+            case JsonValueKind.Object:
+                JsonObject? jObject = node.AsObject();
+                return JsonObjectFacade.Instance.IsTrue(jObject);
+            case JsonValueKind.Array:
+                JsonArray? jArray = node.AsArray();
+                return JsonArrayFacade.Instance.IsTrue(jArray);
+            case JsonValueKind.String:
+                return !string.IsNullOrEmpty(node.GetValue<string>());
+            case JsonValueKind.Number:
+            case JsonValueKind.True:
+                return true;
+            case JsonValueKind.False:
+            case JsonValueKind.Null:
+                return false;
+        }
+        return false;
+    }
+}
+
+internal sealed class JsonValueFacade : IDataFacade<JsonValue>
+{
+    public readonly static JsonValueFacade Instance = new();
+    private JsonValueFacade() { }
+    public bool IsCollection(JsonValue node, [NotNullWhen(true)] out IIterator? collection)
+    {
+        switch (node.GetValueKind())
+        {
+            case JsonValueKind.Array:
+                JsonArray jArray = node.AsArray()!;
+                return JsonArrayFacade.Instance.IsCollection(jArray, out collection);
+            default:
+                break;
+        }
+        collection = null;
         return false;
     }
 
+    public bool IsTrue([NotNullWhen(true)] JsonValue node)
+    {
+        switch (node.GetValueKind())
+        {
+            case JsonValueKind.Undefined:
+                return false;
+            case JsonValueKind.Object:
+                JsonObject? jObject = node.AsObject();
+                return JsonObjectFacade.Instance.IsTrue(jObject);
+            case JsonValueKind.Array:
+                JsonArray? jArray = node.AsArray();
+                return JsonArrayFacade.Instance.IsTrue(jArray);
+            case JsonValueKind.String:
+                return !string.IsNullOrEmpty(node.GetValue<string>());
+            case JsonValueKind.Number:
+            case JsonValueKind.True:
+                return true;
+            case JsonValueKind.False:
+            case JsonValueKind.Null:
+                return false;
+        }
+        return false;
+    }
+}
+internal sealed class JsonArrayFacade : IDataFacade<JsonArray>
+{
+    public readonly static JsonArrayFacade Instance = new();
+    private JsonArrayFacade() { }
+    public bool IsCollection(JsonArray obj, [NotNullWhen(true)] out IIterator? collection)
+    {
+        collection = JsonArrayIteraor.Instance;
+        return obj.Count > 0;
+    }
+    public bool IsTrue([NotNullWhen(true)] JsonArray obj)
+    {
+        return obj is not null && obj.Count > 0;
+    }
+}
+internal sealed class JsonObjectFacade : IDataFacade<JsonObject>
+{
+    public readonly static JsonObjectFacade Instance = new();
+    private JsonObjectFacade() { }
+    public bool IsCollection(JsonObject obj, [NotNullWhen(true)] out IIterator? collection)
+    {
+        collection = null;
+        return false;
+    }
+
+
+
+
+    public bool IsTrue([NotNullWhen(true)] JsonObject obj)
+    {
+        return obj is not null;
+    }
 }
 

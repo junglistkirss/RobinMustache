@@ -23,10 +23,7 @@ public class ServiceEvaluatorJsonTests
         ServiceCollection services = [];
         services
             .AddServiceEvaluator()
-            .AddJsonAccessors()
-            .AddDataFacade<JsonNode>(JsonFacades.FromJsonNode)
-            .AddDataFacade<JsonArray>(JsonFacades.FromJsonNode)
-            .AddDataFacade<JsonObject>(JsonFacades.FromJsonNode);
+            .AddJsonAccessors();
         ServiceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,

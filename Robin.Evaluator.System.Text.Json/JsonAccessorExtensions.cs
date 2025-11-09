@@ -1,21 +1,26 @@
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Extensions;
+using Robin.Abstractions.Facades;
 using System.Text.Json.Nodes;
 
 namespace Robin.Evaluator.System.Text.Json;
 
 public static class JsonAccessorExtensions
 {
-    public const string JsonEvaluatorKey = "json";
     public static IServiceCollection AddJsonAccessors(this IServiceCollection services)
     {
         return services
-            .AddKeyedSingleton<IJsonEvaluator, JsonEvaluator>(JsonEvaluatorKey)
             .AddSingleton<IJsonEvaluator, JsonEvaluator>()
+            .AddSingleton<IDataFacadeResolver, JsonDataFacadeResolver>()
+            .AddDataFacade<JsonNode>(JsonNodeFacade.Instance)
+            .AddDataFacade<JsonValue>(JsonValueFacade.Instance)
+            .AddDataFacade<JsonArray>(JsonArrayFacade.Instance)
+            .AddDataFacade<JsonObject>(JsonObjectFacade.Instance)
             .AddIndexObjectAccessor<JsonArray>(TryGetIndexValue)
             .AddMemberObjectAccessor<JsonObject>(TryGetMemberValue)
             .AddIndexObjectAccessor<JsonNode>(TryGetIndexValue)
-            .AddMemberObjectAccessor<JsonNode>(TryGetMemberValue);
+            .AddMemberObjectAccessor<JsonNode>(TryGetMemberValue)
+            ;
     }
 
     internal static bool TryGetMemberValue(this object? obj, string member, out object? value)
