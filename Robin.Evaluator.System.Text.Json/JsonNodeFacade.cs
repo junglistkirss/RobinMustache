@@ -1,17 +1,28 @@
-using Robin.Abstractions.Accessors;
+using Robin.Abstractions.Context;
 using Robin.Abstractions.Facades;
+using Robin.Abstractions.Iterators;
+using Robin.Contracts.Nodes;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace Robin.Evaluator.System.Text.Json;
 
-internal sealed class JsonArrayIteraor(JsonArray array) : IIterator
+internal sealed class JsonArrayIteraor : BaseIterator
 {
-    public void Iterate(Action<object?> action)
+    public readonly static JsonArrayIteraor Instance = new();
+    private JsonArrayIteraor() { }
+
+    public override void Iterate<T>(object? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INodeVisitor<RenderContext<T>> visitor) where T : class
     {
-        foreach (var item in array)
-            action(item);
+        if (iterable is JsonArray list)
+            ProcessEnumerable<T, JsonArray>(list, context, partialTemplate, visitor);
+    }
+
+    public override void Iterate(object? iterable, Action<object?> action)
+    {
+        if (iterable is JsonArray list)
+            EnumerableProcess<JsonArray>(list, action);
     }
 }
 
@@ -26,7 +37,7 @@ internal sealed class JsonNodeFacade : IDataFacade
             {
                 case JsonValueKind.Array:
                     JsonArray jArray = node.AsArray()!;
-                    collection = new JsonArrayIteraor(jArray);
+                    collection = JsonArrayIteraor.Instance;
                     return jArray.Count > 0;
                 default:
                     break;

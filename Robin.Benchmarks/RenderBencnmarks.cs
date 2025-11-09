@@ -4,6 +4,7 @@ using BenchmarkDotNet.Exporters;
 using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Extensions;
 using Robin.Contracts.Nodes;
+using Robin.Contracts.Variables;
 using Robin.Extensions;
 using System.Collections.Immutable;
 using System.Text.Json;
@@ -13,10 +14,12 @@ namespace Robin.Benchmarks;
 [Config(typeof(AutoBenchmarkConfig))]
 [MemoryDiagnoser]
 [MarkdownExporter]
-public class TweetsBencnmarks
+public class RenderBencnmarks
 {
+    private record class Data(int N);
+
     private IServiceProvider serviceProvider = default!;
-    private Tweet[] tweets = [];
+    private Data[] data = [];
     private ImmutableArray<INode> template = [];
     private IStringRenderer renderer = default!;
 
@@ -28,7 +31,15 @@ public class TweetsBencnmarks
         services
             .AddServiceEvaluator()
             .AddStringRenderer()
-            .AddMemberObjectAccessor<Tweet>(TweetAccessor.GetNamedProperty);
+            .AddMemberObjectAccessor<Data>((Data obj, string member, out object? value) =>
+            {
+                value = member switch
+                {
+                    "N" => obj.N,
+                    _ => null
+                };
+                return true;
+            });
 
         serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
@@ -37,8 +48,10 @@ public class TweetsBencnmarks
         });
         string path = Path.Combine(AppContext.BaseDirectory, "datasets", "tweets.json");
         string json = File.ReadAllText(path);
-        tweets = JsonSerializer.Deserialize<Tweet[]>(json)!;
-        template = TweetsTemplates.List.AsSpan().Parse();
+        data = [.. Enumerable.Range(1, 1000).Select(x => new Data(x))];
+        template = @"Bencmarck that !!
+{{#N}}{{{.}}}
+{{/N}}".AsSpan().Parse();
         renderer = serviceProvider.GetRequiredService<IStringRenderer>();
 
     }
@@ -46,21 +59,21 @@ public class TweetsBencnmarks
     //     public INode[] ParseTweetsTemplate() => TweetsTemplates.List.AsSpan().Parse();
 
     [Benchmark(Baseline = true)]
-    public string RenderSingleTweets() => renderer.Render(template, tweets[0]);
+    public string RenderSingle() => renderer.Render(template, data[0]);
 
     [Benchmark]
-    public string RenderEmptyTweets() => renderer.Render(template, Array.Empty<Tweet>());
+    public string RenderEmpty() => renderer.Render(template, Array.Empty<Tweet>());
 
     [Benchmark]
-    public string RenderTake5TweetsAsArray() => renderer.Render(template, tweets.Take(5).ToArray());
+    public string RenderTake5AsArray() => renderer.Render(template, data.Take(5).ToArray());
 
     [Benchmark]
-    public string RenderTake50Tweets() => renderer.Render(template, tweets.Take(50).ToArray());
+    public string RenderTake50() => renderer.Render(template, data.Take(50).ToArray());
 
     [Benchmark]
-    public string RenderAllTweets() => renderer.Render(template, tweets);
+    public string RenderAll() => renderer.Render(template, data);
 
     [Benchmark]
-    public string RenderNullTweets() => renderer.Render(template, Enumerable.Repeat<Tweet>(null!, 1000).ToArray());
+    public string RenderNull() => renderer.Render(template, Enumerable.Repeat<Tweet>(null!, 1000).ToArray());
 
 }

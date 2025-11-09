@@ -16,7 +16,6 @@ namespace Robin.Benchmarks;
 [Config(typeof(AutoBenchmarkConfig))]
 [MemoryDiagnoser]
 [MarkdownExporter]
-
 public class EvaluatorBenchmarks
 {
     private IServiceProvider serviceProvider = default!;

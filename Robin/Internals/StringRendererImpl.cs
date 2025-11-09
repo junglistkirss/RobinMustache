@@ -9,6 +9,8 @@ internal sealed class StringRendererImpl(
 {
     public string Render(ImmutableArray<INode> template, object? data)
     {
-        return inner.Render(template, data);
+        if (data is not null)
+            return inner.Render(template, data);
+        return string.Empty;
     }
 }

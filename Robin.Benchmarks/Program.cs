@@ -6,6 +6,7 @@ using Robin.Benchmarks;
 Type[] benchmarks =
 [
     typeof(EvaluatorBenchmarks),
+    typeof(RenderBencnmarks),
     typeof(TweetsBencnmarks)
 ];
 

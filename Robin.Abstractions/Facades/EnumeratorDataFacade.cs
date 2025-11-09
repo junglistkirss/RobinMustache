@@ -1,4 +1,3 @@
-using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Iterators;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -12,12 +11,7 @@ internal sealed class EnumeratorDataFacade : IDataFacade
     public bool IsTrue([NotNullWhen(true)] object? _) => true;
     public bool IsCollection(object? obj, [NotNullWhen(true)] out IIterator? collection)
     {
-        if (obj is IEnumerator value)
-        {
-            collection = new IEnumeratorIterator(value);
-            return true;
-        }
-        collection = null;
-        return false;
+        collection = IEnumeratorIterator.Instance;
+        return true;
     }
 }

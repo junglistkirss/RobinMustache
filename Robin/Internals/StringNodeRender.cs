@@ -1,6 +1,6 @@
-using Robin.Abstractions.Accessors;
 using Robin.Abstractions.Context;
 using Robin.Abstractions.Facades;
+using Robin.Abstractions.Iterators;
 using Robin.Contracts.Nodes;
 using Robin.Extensions;
 using System.Collections.Immutable;
@@ -51,9 +51,9 @@ internal sealed class StringNodeRender : INodeVisitor<RenderContext<StringBuilde
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         bool thruly = facade.IsTrue(value);
 
-        if (!node.Inverted && thruly || node.Inverted && !thruly)
+        if ((!node.Inverted && thruly) || (node.Inverted && !thruly))
         {
-            RenderTree(context, value, facade, node.Children);
+            RenderTree(context, value, facade, node.Children.AsSpan());
         }
 
     }
@@ -68,33 +68,23 @@ internal sealed class StringNodeRender : INodeVisitor<RenderContext<StringBuilde
 
             using (new PartialsScope<StringBuilder>(context, tempPartials))
             {
-                // Ici context.Partials == tempPartials
-                // tu peux faire ton rendu spécifique
-                RenderTree(context, value, facade, partialTemplate);
+                RenderTree(context, value, facade, partialTemplate.AsSpan());
             }
-
         }
     }
 
-    private void RenderTree(RenderContext<StringBuilder> context, object? value, IDataFacade facade, ImmutableArray<INode> partialTemplate)
+    private void RenderTree(RenderContext<StringBuilder> context, object? value, IDataFacade facade, ReadOnlySpan<INode> partialTemplate)
     {
-        void action(object? o)
-        {
-            using (DataContext.Push(o))
+        if (facade.IsCollection(value, out IIterator? iterator))
+            iterator.Iterate(value, context, partialTemplate, this);
+        else
+            using (DataContext.Push(value))
             {
-
-                foreach (var node in partialTemplate)
+                foreach (INode node in partialTemplate)
                 {
                     node.Accept(this, context);
                 }
             }
-        }
-
-        if (facade.IsCollection(value, out IIterator? collection))
-            collection.Iterate(action);
-        else
-            action(value);
-
     }
 
     public void VisitLineBreak(LineBreakNode node, RenderContext<StringBuilder> context)

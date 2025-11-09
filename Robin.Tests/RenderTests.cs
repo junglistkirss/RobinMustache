@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Robin.Abstractions.Extensions;
 using Robin.Contracts.Nodes;
 using Robin.Extensions;
+using System.Collections;
 using System.Collections.Immutable;
 
 namespace Robin.tests;
@@ -47,7 +48,7 @@ public class RenderTests
     public void Test_Render_SimpleTemplate()
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
-        var sample = new TestSample { Name = "Alice", Age = 30 };
+        TestSample sample = new() { Name = "Alice", Age = 30 };
         ImmutableArray<INode> template = "Name: {{ Name }}, Age: {{ Age }}".AsSpan().Parse();
         string result = renderer.Render(template, sample);
         Assert.Equal("Name: Alice, Age: 30", result);
@@ -57,20 +58,66 @@ public class RenderTests
     public void ParentTest_Render_SimpleTemplate()
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
-        var parent = new ParentTestSample { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = 30 } };
+        ParentTestSample parent = new() { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = 30 } };
         ImmutableArray<INode> template = "Name: {{ Alias }}, Nested: {{ nested.Name }}".AsSpan().Parse();
         string result = renderer.Render(template, parent);
         Assert.Equal("Name: Bob, Nested: Alice", result);
     }
 
     [Fact]
-    public void ParentTest_Render_SectionTemplate()
+    public void ParentTest_Render_ImmutableArray()
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
 
         ImmutableArray<INode> template = "{{#.}}Name: {{ Alias }}, {{# nested }}Nested: {{ Name }}{{/ nested }}{{/.}}".AsSpan().Parse();
-        var data = Enumerable.Range(0, 10).Select(i => new ParentTestSample { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = i } }).ToArray();
+        ImmutableArray<ParentTestSample> data = [.. Enumerable.Range(0, 10).Select(i => new ParentTestSample { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = i } })];
         string result = renderer.Render(template, data);
         Assert.Contains("Name: Bob, Nested: Alice", result);
+    }
+
+    [Fact]
+    public void ParentTest_Render_Array()
+    {
+        IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
+
+        ImmutableArray<INode> template = "{{#.}}Name: {{ Alias }}, {{# nested }}Nested: {{ Name }}{{/ nested }}{{/.}}".AsSpan().Parse();
+        ParentTestSample[] data = [.. Enumerable.Range(0, 10).Select(i => new ParentTestSample { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = i } })];
+        string result = renderer.Render(template, data);
+        Assert.Contains("Name: Bob, Nested: Alice", result);
+    }
+
+    [Fact]
+    public void ParentTest_Render_ListOf()
+    {
+        IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
+
+        ImmutableArray<INode> template = "{{#.}}Name: {{ Alias }}, {{# nested }}Nested: {{ Name }}{{/ nested }}{{/.}}".AsSpan().Parse();
+        List<ParentTestSample> data = [.. Enumerable.Range(0, 10).Select(i => new ParentTestSample { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = i } })];
+        string result = renderer.Render(template, data);
+        Assert.Contains("Name: Bob, Nested: Alice", result);
+    }
+
+    [Fact]
+    public void ParentTest_Render_IEnumerableOf()
+    {
+        IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
+
+        ImmutableArray<INode> template = "{{#.}}Name: {{ Alias }}, {{# nested }}Nested: {{ Name }}{{/ nested }}{{/.}}".AsSpan().Parse();
+        TestCollection<ParentTestSample> data = new([.. Enumerable.Range(0, 10).Select(i => new ParentTestSample { Alias = "Bob", Nested = new TestSample { Name = "Alice", Age = i } })]);
+        string result = renderer.Render(template, data);
+        Assert.Contains("Name: Bob, Nested: Alice", result);
+    }
+
+    private class TestCollection<T>(IEnumerable<T> items) : IEnumerable<T>
+    {
+        public IEnumerator<T> GetEnumerator()
+        {
+            return items.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

@@ -1,9 +1,11 @@
-using Robin.Abstractions.Accessors;
+using Robin.Abstractions.Context;
+using Robin.Contracts.Nodes;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Robin.Abstractions.Iterators;
 
@@ -29,57 +31,81 @@ public static class IteratorCache
         return _cache.GetOrAdd(type, (t) =>
         {
             if (t.IsArray)
-                return o => new ArrayIterator(o);
+                return _ => ArrayIterator.Instance;
 
             if (t.IsGenericType)
             {
-                var genericDef = t.GetGenericTypeDefinition();
+                Type genericDef = t.GetGenericTypeDefinition();
                 if (genericDef == typeof(ImmutableArray<>))
                 {
-                    var elementType = t.GetGenericArguments()[0];
-                    var iterType = typeof(ImmutableArrayIterator<>).MakeGenericType(elementType);
-                    return CreateFactory(iterType);
+                    Type elementType = t.GetGenericArguments()[0];
+                    Type iterType = typeof(ImmutableArrayIterator<>).MakeGenericType(elementType);
+                    return GetStaticInstance(iterType, nameof(ImmutableArrayIterator<object?>.Instance));
                 }
 
                 if (typeof(List<>).IsAssignableFrom(genericDef))
                 {
-                    var elementType = t.GetGenericArguments()[0];
-                    var iterType = typeof(ListIterator<>).MakeGenericType(elementType);
-                    return CreateFactory(iterType);
+                    Type elementType = t.GetGenericArguments()[0];
+                    Type iterType = typeof(ListIterator<>).MakeGenericType(elementType);
+                    return GetStaticInstance(iterType, nameof(ListIterator<object?>.Instance));
                 }
             }
 
-
             if (typeof(IEnumerable).IsAssignableFrom(t))
-                return o => new EnumerableIterator(o);
+                return _ => EnumerableIterator.Instance;
 
-            return (_) => _empty;
+            return (_) => None;
         });
 
     }
-
-    private static Factory CreateFactory(Type iterType)
+    private static Factory GetStaticInstance(Type iterType, string fieldName)
     {
-        var ctor = iterType.GetConstructor([typeof(object)]) ?? throw new InvalidOperationException($"Aucun constructeur (object) trouvé sur {iterType}");
 
-        var param = Expression.Parameter(typeof(object), "instance");
-        var newExpr = Expression.New(ctor, param);
+        LabelTarget returnLabel = Expression.Label(typeof(IIterator), "returnLabel");
+        ParameterExpression param = Expression.Parameter(typeof(object), "_");
+
+
+        FieldInfo staticInstance = iterType.GetField(fieldName, BindingFlags.Static | BindingFlags.Public) ?? throw new InvalidOperationException($"Aucun constructeur (object) trouvé sur {iterType}");
+
+        MemberExpression retrieveStaticInstance = Expression.MakeMemberAccess(null, staticInstance);
 
         // label de retour (inutile ici mais conforme à ton code d'origine)
-        var returnLabel = Expression.Label(typeof(IIterator), "returnLabel");
 
-        var returnExpr = Expression.Return(returnLabel, newExpr, typeof(IIterator));
-        var labelTarget = Expression.Label(returnLabel, Expression.Default(typeof(IIterator)));
-        var block = Expression.Block(returnExpr, labelTarget);
-        var lambda = Expression.Lambda<Factory>(block, param);
+        GotoExpression returnExpr = Expression.Return(returnLabel, retrieveStaticInstance, typeof(IIterator));
+        LabelExpression labelTarget = Expression.Label(returnLabel, Expression.Default(typeof(IIterator)));
+        BlockExpression block = Expression.Block(returnExpr, labelTarget);
+        Expression<Factory> lambda = Expression.Lambda<Factory>(block, param);
         Factory factory = lambda.Compile();
         return factory;
     }
 
-    private static readonly IIterator _empty = new EmptyIterator();
+    //private static Factory CreateFactory(Type iterType)
+    //{
 
-    private class EmptyIterator : IIterator
+    //    LabelTarget returnLabel = Expression.Label(typeof(IIterator), "returnLabel");
+    //    ParameterExpression param = Expression.Parameter(typeof(object), "instance");
+
+
+    //    System.Reflection.ConstructorInfo ctor = iterType.GetConstructor([typeof(object)]) ?? throw new InvalidOperationException($"Aucun constructeur (object) trouvé sur {iterType}");
+    //    NewExpression newExpr = Expression.New(ctor, param);
+
+    //    // label de retour (inutile ici mais conforme à ton code d'origine)
+
+    //    GotoExpression returnExpr = Expression.Return(returnLabel, newExpr, typeof(IIterator));
+    //    LabelExpression labelTarget = Expression.Label(returnLabel, Expression.Default(typeof(IIterator)));
+    //    BlockExpression block = Expression.Block(returnExpr, labelTarget);
+    //    Expression<Factory> lambda = Expression.Lambda<Factory>(block, param);
+    //    Factory factory = lambda.Compile();
+    //    return factory;
+    //}
+
+    public static readonly IIterator None = new NoneIterator();
+
+    private class NoneIterator : IIterator
     {
-        public void Iterate(Action<object?> action) { }
+        public void Iterate(object? iterable, Action<object?> action) { }
+
+        public void Iterate<T>(object? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INodeVisitor<RenderContext<T>> visitor) where T : class
+        { }
     }
 }

@@ -1,4 +1,4 @@
-using Robin.Abstractions.Accessors;
+using Robin.Abstractions.Iterators;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Robin.Abstractions.Facades;

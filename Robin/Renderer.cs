@@ -12,7 +12,13 @@ namespace Robin;
 
 public static class Renderer
 {
-    public static void Render<T>(this T defaultBuilder, INodeVisitor<RenderContext<T>> visitor, IEvaluator evaluator, ImmutableArray<INode> template, object? data, Action<Helper>? helperConfig = null)
+    public static void Render<T>(
+        this T defaultBuilder,
+        INodeVisitor<RenderContext<T>> visitor,
+        IEvaluator evaluator,
+        ImmutableArray<INode> template,
+        object? data,
+        Action<Helper>? helperConfig = null)
         where T : class
     {
         ReadOnlyDictionary<string, ImmutableArray<INode>> partials = template.ExtractsPartials().AsReadOnly(); // calculer une seule fois
@@ -22,15 +28,13 @@ public static class Renderer
             RenderContext<T> ctx = RenderContextPool<T>.Get(evaluator, defaultBuilder, partials);
             try
             {
-
-                foreach (var item in template)
+                foreach (INode item in template)
                     item.Accept(visitor, ctx);
             }
             finally
             {
                 RenderContextPool<T>.Return(ctx); // remet dans le pool
             }
-
         }
     }
 
