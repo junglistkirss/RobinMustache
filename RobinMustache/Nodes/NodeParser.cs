@@ -25,25 +25,33 @@ public static class NodeParser
         }
     }
 
+
+    public static bool IsStandaloneTag(this Token token) => token.Type is TokenType.Comment or TokenType.SectionOpen or TokenType.InvertedSection or TokenType.PartialCall or TokenType.PartialDefine or TokenType.SectionClose;
     public static ImmutableArray<INode> Parse(this ref NodeLexer lexer)
     {
         List<INode> nodes = [];
-        while (lexer.TryGetNextToken(out Token? token) && token is not null)
+        while (lexer.TryGetNextToken(out Token token))
         {
-            nodes.Add(lexer.ParseNode(token.Value));
+            INode node = lexer.ParseNode(token, out bool openStandalone, out bool closeStandalone);
+            bool isStandaloneTag = token.IsStandaloneTag();
+
+            if (isStandaloneTag && openStandalone)
+                RemoveTrailingWhiteSpace(nodes);
+            nodes.Add(node);
+
+
         }
         return [.. nodes];
     }
 
-    private static LineBreakNode AggregateLineBreaks(ref NodeLexer lexer)
+    private static LineBreakNode ParseLineBreak(string lineBreakType)
     {
-        int c = 1;
-        while (lexer.TryPeekNextToken(out Token? nextToken, out int position) && nextToken is not null && nextToken.Value.Type == TokenType.LineBreak)
+        return lineBreakType switch
         {
-            c++;
-            lexer.AdvanceTo(position);
-        }
-        return new LineBreakNode(c);
+            "\r" => LineBreakNode.InstanceReturn,
+            "\n" => LineBreakNode.InstanceLine,
+            _ => LineBreakNode.Instance,
+        };
     }
 
     private static VariableNode ParseVariable(string variableExpression, bool isEscaped)
@@ -54,32 +62,57 @@ public static class NodeParser
         return new VariableNode(node, isEscaped);
     }
 
-    private static PartialCallNode ParsePartialCall(string variableExpression)
+    private static PartialCallNode ParsePartialCall(this ref NodeLexer lexer, Token token, out bool openStandalone, out bool closeStandalone)
     {
+        string variableExpression = lexer.GetValue(token);
         int firstSpace = variableExpression.IndexOf(' ');
+        IExpressionNode expressionNode;
+        string name;
         if (firstSpace == -1)
         {
-            return new PartialCallNode(variableExpression, That);
+            name = variableExpression;
+            expressionNode = That;
         }
         else
         {
-            string name = variableExpression.Substring(0, firstSpace);
-            ExpressionLexer exprLexer = new(variableExpression.Substring(firstSpace + 1).AsSpan());
-            IExpressionNode node = exprLexer.Parse() ?? throw new Exception("Variable expression is invalid");
-            return new PartialCallNode(name, node);
+            name = variableExpression.Substring(0, firstSpace);
+            var expression = variableExpression.Substring(firstSpace + 1).AsSpan();
+            expressionNode = expression.ParseExpression() ?? throw new Exception("Variable expression is invalid");
         }
+        openStandalone = token.IsAtLineStart;
+        closeStandalone = token.IsAtLineEnd;
+        return new PartialCallNode(name, expressionNode);
     }
 
-    private static PartialDefineNode ParsePartialDefine(ref NodeLexer lexer, Token startToken)
+    private static PartialDefineNode ParsePartialDefine(ref NodeLexer lexer, Token startToken, out bool openStandalone, out bool closeStandalone)
     {
         string name = lexer.GetValue(startToken);
         List<INode> nodes = [];
-        while (lexer.TryGetNextToken(out Token? token) && token is not null)
+        openStandalone = startToken.IsAtLineStart & startToken.IsAtLineEnd;
+        closeStandalone = false;
+        if (openStandalone)
+            lexer.SkipNextLineBreak(out _);
+        while (lexer.TryGetNextToken(out Token token))
         {
-            if (token.Value.Type == TokenType.SectionClose && lexer.GetValue(token.Value).Equals(name))
-                break;
+            if (token.Type is TokenType.SectionClose && lexer.GetValue(token).Equals(name))
+            {
+                closeStandalone = token.IsAtLineStart & token.IsAtLineEnd;
 
-            nodes.Add(lexer.ParseNode(token.Value));
+                if (closeStandalone)
+                {
+                    RemoveTrailingLineBreak(nodes);
+                }
+
+                lexer.SkipNextLineBreak(out INode[] after);
+                nodes.AddRange(after);
+
+
+                break;
+            }
+            INode node = lexer.ParseNode(token, out bool isNodeOpenStandalone, out bool isNodeCloseStandalone);
+            if (isNodeOpenStandalone && token.IsStandaloneTag())
+                RemoveTrailingWhiteSpace(nodes);
+            nodes.Add(node);
         }
         PartialDefineNode partial = new(name, [.. nodes]);
 
@@ -87,48 +120,103 @@ public static class NodeParser
 
     }
 
-    private static SectionNode ParseSection(ref NodeLexer lexer, Token startToken, bool inverted)
+    private static SectionNode ParseSection(ref NodeLexer lexer, Token startToken, bool inverted, out bool openStandalone, out bool closeStandalone)
     {
         string name = lexer.GetValue(startToken);
-        ExpressionLexer exprLexer = new(name.AsSpan());
-        IExpressionNode node = exprLexer.Parse() ?? throw new Exception("Variable expression is invalid");
+        IExpressionNode expNode = name.AsSpan().ParseExpression() ?? throw new Exception("Variable expression is invalid");
         List<INode> nodes = [];
-        while (lexer.TryGetNextToken(out Token? token) && token is not null)
+        openStandalone = startToken.IsAtLineStart & startToken.IsAtLineEnd;
+        closeStandalone = false;
+        if (openStandalone)
+            lexer.SkipNextLineBreak(out _);
+        while (lexer.TryGetNextToken(out Token token))
         {
-            if (token.Value.Type == TokenType.SectionClose && lexer.GetValue(token.Value).Equals(name))
-                break;
+            if (token.Type is TokenType.SectionClose && lexer.GetValue(token).Equals(name))
+            {
+                closeStandalone = token.IsAtLineStart & token.IsAtLineEnd;
 
-            nodes.Add(lexer.ParseNode(token.Value));
+                if (closeStandalone)
+                {
+                    RemoveTrailingLineBreak(nodes);
+                }
+                
+                lexer.SkipNextLineBreak(out INode[] after);
+                    nodes.AddRange(after);
+                
+
+                break;
+            }
+            INode node = lexer.ParseNode(token, out bool isNodeOpenStandalone, out bool isNodeCloseStandalone);
+            if (isNodeOpenStandalone && token.IsStandaloneTag())
+                RemoveTrailingWhiteSpace(nodes);
+            nodes.Add(node);
         }
-        SectionNode section = new(node, [.. nodes], inverted);
+        SectionNode section = new(expNode, [.. nodes], inverted);
 
         return section;
     }
 
-    private static INode ParseNode(this ref NodeLexer lexer, Token token)
+    private static CommentNode ParseComment(this ref NodeLexer lexer, Token token, out bool openStandalone, out bool closeStandalone)
     {
-        switch (token.Type)
+        openStandalone = token.IsAtLineStart;
+        closeStandalone = token.IsAtLineEnd;
+        if (openStandalone && closeStandalone)
+            lexer.SkipNextLineBreak(out _);
+        return new(lexer.GetValue(token));
+
+    }
+
+    private static INode ParseNode(this ref NodeLexer lexer, Token token, out bool openStandalone, out bool closeStandalone)
+    {
+        openStandalone = false;
+        closeStandalone = false;
+        return token.Type switch
         {
-            case TokenType.Text:
-                return new TextNode(lexer.GetValue(token));
-            case TokenType.Variable:
-                return ParseVariable(lexer.GetValue(token), false);
-            case TokenType.UnescapedVariable:
-                return ParseVariable(lexer.GetValue(token), true);
-            case TokenType.SectionOpen:
-                return ParseSection(ref lexer, token, false);
-            case TokenType.InvertedSection:
-                return ParseSection(ref lexer, token, true);
-            case TokenType.Comment:
-                return new CommentNode(lexer.GetValue(token));
-            case TokenType.PartialCall:
-                return ParsePartialCall(lexer.GetValue(token));
-            case TokenType.PartialDefine:
-                return ParsePartialDefine(ref lexer, token);
-            case TokenType.LineBreak:
-                return AggregateLineBreaks(ref lexer);
-            default:
-                throw new InvalidTokenException($"Unsupported token {token} in section");
+            TokenType.Text => new TextNode(lexer.GetValue(token)),
+            TokenType.Variable => ParseVariable(lexer.GetValue(token), false),
+            TokenType.UnescapedVariable => ParseVariable(lexer.GetValue(token), true),
+            TokenType.SectionOpen => ParseSection(ref lexer, token, false, out openStandalone, out closeStandalone),
+            TokenType.InvertedSection => ParseSection(ref lexer, token, true, out openStandalone, out closeStandalone),
+            TokenType.Comment => ParseComment(ref lexer, token, out openStandalone, out closeStandalone),
+            TokenType.PartialCall => lexer.ParsePartialCall(token, out openStandalone, out closeStandalone),
+            TokenType.PartialDefine => ParsePartialDefine(ref lexer, token, out openStandalone, out closeStandalone),
+            TokenType.LineBreak => ParseLineBreak(lexer.GetValue(token)),
+            TokenType.Whitepsaces => new WhitespaceNode(lexer.GetValue(token)),
+            _ => throw new InvalidTokenException($"Unsupported token {token} in section"),
+        };
+    }
+    private static void RemoveTrailingWhiteSpace(this List<INode> nodes)
+    {
+        for (int i = nodes.Count - 1; i >= 0; i--)
+        {
+            if (nodes[i] is WhitespaceNode)
+                nodes.RemoveAt(i);
+            else break;
         }
+    }
+    private static void RemoveTrailingLineBreak(this List<INode> nodes)
+    {
+        for (int i = nodes.Count - 1; i >= 0; i--)
+        {
+            if (nodes[i] is WhitespaceNode)
+                nodes.RemoveAt(i);
+            else if (nodes[i] is LineBreakNode)
+            {
+                nodes.RemoveAt(i);
+                break; // stop après avoir retiré un seul saut de ligne
+            }
+            else break;
+        }
+    }
+
+    private static void SkipNextLineBreak(this ref NodeLexer lexer, out INode[] nodes)
+    {
+        List<INode> peekeds = [];
+        while (lexer.TryPeekNextToken(out Token nextToken, out int next) && nextToken.Type is TokenType.LineBreak or TokenType.Whitepsaces)
+        {
+            peekeds.Add(lexer.ParseNode(nextToken, out _, out _));
+            lexer.AdvanceTo(next);
+        }
+        nodes = [.. peekeds];
     }
 }
