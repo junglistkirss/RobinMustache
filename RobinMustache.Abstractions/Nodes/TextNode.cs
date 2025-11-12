@@ -6,6 +6,8 @@ public sealed class TextNode(string text) : INode
 {
     public string Text { get; } = text;
 
+    public bool IsStandalone => false;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)
     {
@@ -20,6 +22,8 @@ public sealed class TextNode(string text) : INode
 public sealed class WhitespaceNode(string text) : INode
 {
     public string Text { get; } = text;
+
+    public bool IsStandalone => false;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)

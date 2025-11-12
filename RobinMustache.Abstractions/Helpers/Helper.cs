@@ -1,17 +1,16 @@
-﻿using static RobinMustache.Abstractions.Helpers.Helper;
+﻿using System.Collections.Concurrent;
+using static RobinMustache.Abstractions.Helpers.Helper;
 
 namespace RobinMustache.Abstractions.Helpers;
 
 public static class GlobalHelpers
 {
-    private static readonly Dictionary<string, Function> _functions = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, Function> _functions = new(StringComparer.OrdinalIgnoreCase);
 
-    public static bool TryAddFunction(string name, Function function)
+    public static void TryAddFunction(string name, Function function)
     {
-        if (_functions.ContainsKey(name))
-            return false;
-        _functions.Add(name, function);
-        return true;
+        if (!_functions.ContainsKey(name))
+            _functions.TryAdd(name, function);
     }
 
     public static bool TryGetFunction(string name, out Function? function)

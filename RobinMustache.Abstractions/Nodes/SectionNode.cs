@@ -4,10 +4,11 @@ using System.Runtime.CompilerServices;
 
 namespace RobinMustache.Abstractions.Nodes;
 
-public sealed class SectionNode(IExpressionNode expression, ImmutableArray<INode> children, bool inverted = false) : INode
+public sealed class SectionNode(IExpressionNode expression, ImmutableArray<INode> children, bool isStandalone, bool inverted = false) : INode
 {
     public IExpressionNode Expression { get; } = expression;
     public ImmutableArray<INode> Children { get; } = children;
+    public bool IsStandalone { get; } = isStandalone;
     public bool Inverted { get; } = inverted;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)

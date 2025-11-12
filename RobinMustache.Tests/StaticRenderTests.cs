@@ -44,7 +44,7 @@ public class StaticRenderTests
         Assert.Equal("Bonjour", result);
     }
     [Fact]
-    public void Test_Render_StandaloneTagRemoval2()
+    public void Test_Render_StandaloneTagRemovalInverted()
     {
         TestSample sample = new() { Name = "Alice", Age = 30 };
         ImmutableArray<INode> template = "Hello\r\n{{^.}}\r\nDetails:\r\n  - Name: {{&Name}}\r\n  - Age: {{&Age}}\r\n{{/.}}\r\nBye".AsSpan().Parse();
@@ -52,7 +52,7 @@ public class StaticRenderTests
         Assert.Equal("Hello\r\nBye", result);
     }
     [Fact]
-    public void Test_Render_StandaloneTagRemoval3()
+    public void Test_Render_StandaloneTagRemovalSection()
     {
         TestSample sample = new() { Name = "Alice", Age = 30 };
         ImmutableArray<INode> template = "Hello\r\n{{#.}}\r\nDetails:\r\n  - Name: {{&Name}}\r\n  - Age: {{&Age}}\r\n{{/.}}\r\nBye".AsSpan().Parse();

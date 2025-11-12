@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RobinMustache.Abstractions.Nodes;
 using System.Collections.Immutable;
 using System.Text.Json;
+using Xunit.Sdk;
 
 namespace RobinMustache.Specs.Tests;
 
@@ -24,7 +25,13 @@ public class InvertedTests : BaseMustacheTests
         var tokens = Tokenizer.Tokenize(@case.Template.AsSpan());
         ImmutableArray<INode> template = @case.Template.AsSpan().Parse();
         string result = renderer.Render(template, @case.Data);
-        Assert.Equal(@case.Expected, result);
-
+        try
+        {
+            Assert.Equal(@case.Expected, result);
+        }
+        catch (EqualException ex)
+        {
+            throw new XunitException(@case.Name, ex);
+        }
     }
 }

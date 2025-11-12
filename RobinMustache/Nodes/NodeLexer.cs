@@ -28,6 +28,52 @@ public ref struct NodeLexer
         return TryGetNextTokenInternal(out token, ref _position);
 
     }
+    private readonly bool IsAtLineStart(int pos)
+    {
+        if (pos == 0) return true;
+
+
+        return _source[pos - 1] is '\n' or '\r'; // uniquement des espaces avant le dÃ©but
+    }
+    private readonly bool IsAtLineEnd(int endPos)
+    {
+        int i = endPos;
+        while (i < _source.Length)
+        {
+            char c = _source[i];
+            if (c == '\n' || c == '\r')
+                return true;
+            if (c != ' ' && c != '\t')
+                return false;
+            i++;
+        }
+        return true; // ligne se termine lÃ 
+    }
+    /// <summary>
+    /// Avance contentStart jusqu'au premier caractÃ¨re non-espace (hors \r et \n).
+    /// </summary>
+    private readonly void SkipLeadingSpaces(ref int start, int end)
+    {
+        while (start < end && char.IsWhiteSpace(_source[start]) && _source[start] is not ('\r' or '\n'))
+            start++;
+    }
+    private readonly void SkipTrailingSpaces(int start, ref int end)
+    {
+        while (end > start && char.IsWhiteSpace(_source[end - 1]) && _source[end - 1] is not ('\r' or '\n'))
+            end--;
+    }
+
+    private readonly void SkipLeadingWhitespace(ref int start, int end)
+    {
+        while (start < end && char.IsWhiteSpace(_source[start]))
+            start++;
+    }
+    private readonly void SkipTrailingWhitespace(int start, ref int end)
+    {
+        while (end > start && char.IsWhiteSpace(_source[end - 1]))
+            end--;
+    }
+
     private readonly bool TryGetNextTokenInternal(out Token token, ref int pos)
     {
         if (pos >= _source.Length)
@@ -35,13 +81,13 @@ public ref struct NodeLexer
             token = Token.EOF;
             return false;
         }
-        bool isAtLineStart = pos == 0 || _source[pos - 1] is '\n' or '\r';
-        // Détection du retour à la ligne avant tout
+        bool isAtLineStart = pos == 0 || IsAtLineStart(pos);
+        // Dï¿½tection du retour ï¿½ la ligne avant tout
         if (_source[pos] is '\r' or '\n')
         {
             int start = pos;
 
-            // Gérer \r\n comme un seul token
+            // Gï¿½rer \r\n comme un seul token
             if (_source[pos] is '\r' && pos + 1 < _source.Length && _source[pos + 1] is '\n')
             {
                 pos += 2;
@@ -85,7 +131,7 @@ public ref struct NodeLexer
             }
 
             pos += delimiterPos;
-            bool isAtLineEnd = _source[pos + 1] is '\n' or '\r';
+            bool isAtLineEnd = IsAtLineEnd(pos);
             if (isAtLineStart && slice.IsWhiteSpace())
             {
                 token = new Token(TokenType.Whitepsaces, start, delimiterPos, isAtLineStart, isAtLineEnd);
@@ -176,7 +222,7 @@ public ref struct NodeLexer
         {
             // Malformed tag - treat as text
             pos = tagStart;
-            bool isAtLineEnd = pos + 1 >= _source.Length || _source[pos + 1] is '\n' or '\r';
+            bool isAtLineEnd = IsAtLineEnd(pos);// pos + 1 >= _source.Length || _source[pos + 1] is '\n' or '\r';
 
             token = new Token(TokenType.Text, tagStart, 2, isAtLineStart, isAtLineEnd);
             pos += 2;
@@ -186,23 +232,16 @@ public ref struct NodeLexer
         int contentEnd = pos + closePos;
         if (tokenType == TokenType.Comment)
         {
-            while (contentStart < contentEnd && char.IsWhiteSpace(_source[contentStart]) && _source[contentStart] is not ('\r' or '\n'))
-                contentStart++;
-            while (contentEnd > contentStart && char.IsWhiteSpace(_source[contentEnd - 1]) && _source[contentStart] is not ('\r' or '\n'))
-                contentEnd--;
+            SkipLeadingSpaces(ref contentStart, contentEnd);
+            SkipTrailingSpaces(contentStart, ref contentEnd);
         }
         else
         {
-            while (contentStart < contentEnd && char.IsWhiteSpace(_source[contentStart]))
-                contentStart++;
-
-            while (contentEnd > contentStart && char.IsWhiteSpace(_source[contentEnd - 1]))
-                contentEnd--;
-            // Skip only spaces and tabs, but keep line breaks
-
+            SkipLeadingWhitespace(ref contentStart, contentEnd);
+            SkipTrailingWhitespace(contentStart, ref contentEnd);
         }
         pos += closePos + closingDelim.Length;
-        token = new Token(tokenType, contentStart, contentEnd - contentStart, isAtLineStart, pos + 1 >= _source.Length || _source[pos + 1] is '\n' or '\r');
+        token = new Token(tokenType, contentStart, contentEnd - contentStart, isAtLineStart, IsAtLineEnd(pos));
         return true;
     }
 

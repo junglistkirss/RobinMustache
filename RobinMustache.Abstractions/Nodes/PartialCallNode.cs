@@ -3,8 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace RobinMustache.Abstractions.Nodes;
 
-public sealed class PartialCallNode(string name, IExpressionNode expression) : INode
+public sealed class PartialCallNode(string name, IExpressionNode expression, bool isStandalone) : INode
 {
+    public bool IsStandalone => isStandalone;
     public string PartialName { get; } = name;
     public IExpressionNode Expression { get; } = expression;
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

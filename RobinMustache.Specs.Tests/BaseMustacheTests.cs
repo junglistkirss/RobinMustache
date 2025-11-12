@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RobinMustache.Evaluator.System.Text.Json;
 using RobinMustache.Extensions;
+using Xunit.Sdk;
 
 namespace RobinMustache.Specs.Tests;
 

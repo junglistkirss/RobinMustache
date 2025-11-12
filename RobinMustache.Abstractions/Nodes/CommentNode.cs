@@ -2,9 +2,10 @@ using System.Runtime.CompilerServices;
 
 namespace RobinMustache.Abstractions.Nodes;
 
-public sealed class CommentNode(string message) : INode
+public sealed class CommentNode(string message, bool isStandalone) : INode
 {
     public string Message { get; } = message;
+    public bool IsStandalone { get; } = isStandalone;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)
