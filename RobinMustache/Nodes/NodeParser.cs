@@ -25,8 +25,9 @@ public static class NodeParser
         }
     }
 
+    public static bool IsStandaloneTag(this Token token)
+        => token.Type is TokenType.Comment or TokenType.SectionOpen or TokenType.InvertedSection or TokenType.PartialDefine or TokenType.SectionClose;
 
-    public static bool IsStandaloneTag(this Token token) => token.Type is TokenType.Comment or TokenType.SectionOpen or TokenType.InvertedSection or TokenType.PartialCall or TokenType.PartialDefine or TokenType.SectionClose;
     public static ImmutableArray<INode> Parse(this ref NodeLexer lexer)
     {
         List<INode> nodes = [];
@@ -38,8 +39,6 @@ public static class NodeParser
             if (isStandaloneTag && openStandalone)
                 RemoveTrailingWhiteSpace(nodes);
             nodes.Add(node);
-
-
         }
         return [.. nodes];
     }
@@ -101,10 +100,8 @@ public static class NodeParser
                 if (closeStandalone)
                 {
                     RemoveTrailingLineBreak(nodes);
+                    lexer.SkipNextLineBreak(out _);
                 }
-
-                lexer.SkipNextLineBreak(out _);
-
                 break;
             }
             INode node = lexer.ParseNode(token, out bool isNodeOpenStandalone, out bool isNodeCloseStandalone);
@@ -136,11 +133,9 @@ public static class NodeParser
                 if (closeStandalone)
                 {
                     RemoveTrailingLineBreak(nodes);
-                }
-                
-                lexer.SkipNextLineBreak(out INode[] after);
+                    lexer.SkipNextLineBreak(out INode[] after);
                     nodes.AddRange(after);
-                
+                }
 
                 break;
             }
@@ -212,7 +207,8 @@ public static class NodeParser
         List<INode> peekeds = [];
         while (lexer.TryPeekNextToken(out Token nextToken, out int next) && nextToken.Type is TokenType.LineBreak or TokenType.Whitepsaces)
         {
-            peekeds.Add(lexer.ParseNode(nextToken, out _, out _));
+            if (nextToken.Type is TokenType.LineBreak)
+                peekeds.Add(lexer.ParseNode(nextToken, out _, out _));
             lexer.AdvanceTo(next);
         }
         nodes = [.. peekeds];
