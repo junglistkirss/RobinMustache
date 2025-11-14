@@ -59,7 +59,7 @@ internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : IN
         {
             RenderTree(context, value, facade, node.Children.AsSpan());
         }
-        if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || !node.Inverted && shouldRenderTree ))
+        if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || (!node.Inverted && shouldRenderTree)))
             VisitLineBreak(node.TrailingBreak, context);
     }
 
