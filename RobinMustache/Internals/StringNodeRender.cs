@@ -54,12 +54,13 @@ internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : IN
     {
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         bool thruly = facade.IsTrue(value);
-
-        if ((!node.Inverted && thruly) || (node.Inverted && !thruly))
+        bool shouldRenderTree = (!node.Inverted && thruly) || (node.Inverted && !thruly);
+        if (shouldRenderTree)
         {
             RenderTree(context, value, facade, node.Children.AsSpan());
         }
-
+        if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || !node.Inverted && shouldRenderTree ))
+            VisitLineBreak(node.TrailingBreak, context);
     }
 
     public void VisitPartialCall(PartialCallNode node, RenderContext<StringBuilder> context)
