@@ -41,7 +41,7 @@ public class StaticRenderTests
         TestSample sample = new() { Name = "Alice", Age = 30 };
         ImmutableArray<INode> template = "{{#.}}\r\nBonjour\r\n{{/.}}".AsSpan().Parse();
         string result = StringRenderer.Render(template, sample);
-        Assert.Equal("Bonjour", result);
+        Assert.Equal($"Bonjour{Environment.NewLine}", result);
     }
     [Fact]
     public void Test_Render_StandaloneTagRemovalInverted()

@@ -58,7 +58,8 @@ public static class NodeParser
         {
             "\r" => LineBreakNode.InstanceReturn,
             "\n" => LineBreakNode.InstanceLine,
-            _ => LineBreakNode.Instance,
+            "\r\n" => LineBreakNode.Instance,
+            _ => new LineBreakNode(Environment.NewLine),
         };
     }
 
@@ -99,8 +100,8 @@ public static class NodeParser
         List<INode> nodes = [];
         openStandalone = startToken.IsAtLineStart & startToken.IsAtLineEnd;
         closeStandalone = false;
-        if (openStandalone)
-            lexer.SkipNextLineBreak(out _);
+        if (openStandalone && lexer.SkipNextLineBreak(out _, out bool isEOF) && isEOF)
+            throw new Exception("Unexpected end of partial define");
         while (lexer.TryGetNextToken(out Token token))
         {
             if (token.Type is TokenType.SectionClose && lexer.GetValue(token).Equals(name))
@@ -110,11 +111,11 @@ public static class NodeParser
                 if (closeStandalone)
                 {
                     RemoveTrailingLineBreak(nodes);
-                    lexer.SkipNextLineBreak(out _);
+                    lexer.SkipNextLineBreak(out _, out _);
                 }
                 break;
             }
-            INode node = lexer.ParseNode(token, out bool isNodeOpenStandalone, out bool isNodeCloseStandalone);
+            INode node = lexer.ParseNode(token, out bool isNodeOpenStandalone, out bool _);
             if (isNodeOpenStandalone && token.IsStandaloneTag())
                 RemoveTrailingWhiteSpace(nodes);
             nodes.Add(node);
@@ -133,8 +134,8 @@ public static class NodeParser
         List<INode> nodes = [];
         openStandalone = startToken.IsAtLineStart & startToken.IsAtLineEnd;
         closeStandalone = false;
-        if (openStandalone)
-            lexer.SkipNextLineBreak(out _);
+        if (openStandalone && lexer.SkipNextLineBreak(out _, out bool isEOF) && isEOF)
+            throw new Exception("Unexpected EOF");
         while (lexer.TryGetNextToken(out Token token))
         {
             if (token.Type is TokenType.SectionClose && lexer.GetValue(token).Equals(name))
@@ -144,12 +145,12 @@ public static class NodeParser
                 if (closeStandalone)
                 {
                     RemoveTrailingLineBreak(nodes);
-                    if (lexer.SkipNextLineBreak(out LineBreakNode? after))
+                    if (lexer.SkipNextLineBreak(out LineBreakNode? after, out _) && nodes.Count > 0)
                         trailingBreak = after;
                 }
                 break;
             }
-            INode node = lexer.ParseNode(token, out bool isNodeOpenStandalone, out bool isNodeCloseStandalone);
+            INode node = lexer.ParseNode(token, out bool isNodeOpenStandalone, out bool _);
             if (isNodeOpenStandalone && token.IsStandaloneTag())
                 RemoveTrailingWhiteSpace(nodes);
             nodes.Add(node);
@@ -164,7 +165,7 @@ public static class NodeParser
         openStandalone = token.IsAtLineStart;
         closeStandalone = token.IsAtLineEnd;
         if (openStandalone && closeStandalone)
-            lexer.SkipNextLineBreak(out _);
+            lexer.SkipNextLineBreak(out _, out _);
         return new(lexer.GetValue(token));
 
     }
@@ -212,7 +213,7 @@ public static class NodeParser
         }
     }
 
-    private static bool SkipNextLineBreak(this ref NodeLexer lexer, out LineBreakNode? lineBreak)
+    private static bool SkipNextLineBreak(this ref NodeLexer lexer, out LineBreakNode? lineBreak, out bool isEOF)
     {
         while (true)
         {
@@ -223,17 +224,20 @@ public static class NodeParser
                 if (nextToken.Type is TokenType.LineBreak)
                 {
                     lineBreak = lexer.ParseLineBreak(nextToken);
+                    isEOF = false;
                     return true;
                 }
             }
-            // else if (nextToken.Type is TokenType.EOF)
-            // {
-            //     lineBreak = lexer.ParseLineBreak(nextToken);
-            //     return true;
-            // }
+            else if (nextToken.Type is TokenType.EOF)
+            {
+                lineBreak = lexer.ParseLineBreak(nextToken);
+                isEOF = true;
+                return true;
+            }
             else break;
         }
         lineBreak = null;
+        isEOF = false;
         return false;
     }
 }
