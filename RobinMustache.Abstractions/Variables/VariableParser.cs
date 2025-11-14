@@ -6,7 +6,7 @@ public static class VariableParser
     {
         try
         {
-            accesorPath = path.Parse();
+            accesorPath = path.ParseVariablePath();
             return true;
         }
         catch (Exception)
@@ -16,7 +16,7 @@ public static class VariableParser
         }
     }
 
-    public static VariablePath Parse(this string strPath)
+    public static VariablePath ParseVariablePath(this string strPath)
     {
         if (string.IsNullOrEmpty(strPath))
             return new VariablePath([]);

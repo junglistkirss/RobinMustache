@@ -37,7 +37,7 @@ public class GeneratedAccessorTests
             IntValue = 42,
             StringValue = "Test"
         };
-        VariablePath path = VariableParser.Parse(".");
+        VariablePath path = ".".ParseVariablePath();
         Assert.IsType<ThisSegment>(Assert.Single(path.Segments));
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
@@ -55,7 +55,7 @@ public class GeneratedAccessorTests
     {
         IEvaluator eval = ServiceProvider.GetRequiredService<IEvaluator>();
         TestModel model = new();
-        VariablePath path = VariableParser.Parse("IntValue");
+        VariablePath path = "IntValue".ParseVariablePath();
         MemberSegment member = Assert.IsType<MemberSegment>(Assert.Single(path.Segments));
         Assert.Equal("IntValue", member.MemberName);
         IExpressionNode expression = new IdentifierExpressionNode(path);
@@ -78,7 +78,7 @@ public class GeneratedAccessorTests
         {
             BooleanValue = null
         };
-        VariablePath path = VariableParser.Parse("BooleanValue");
+        VariablePath path = "BooleanValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -98,7 +98,7 @@ public class GeneratedAccessorTests
         {
             BooleanValue = true
         };
-        VariablePath path = VariableParser.Parse("BooleanValue");
+        VariablePath path = "BooleanValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -119,7 +119,7 @@ public class GeneratedAccessorTests
         {
             BooleanValue = false
         };
-        VariablePath path = VariableParser.Parse("BooleanValue");
+        VariablePath path = "BooleanValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -143,7 +143,7 @@ public class GeneratedAccessorTests
         {
             CharValue = null
         };
-        VariablePath path = VariableParser.Parse("CharValue");
+        VariablePath path = "CharValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -163,7 +163,7 @@ public class GeneratedAccessorTests
         {
             CharValue = 'x'
         };
-        VariablePath path = VariableParser.Parse("CharValue");
+        VariablePath path = "CharValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -184,7 +184,7 @@ public class GeneratedAccessorTests
         {
             CharValue = '\0'
         };
-        VariablePath path = VariableParser.Parse("CharValue");
+        VariablePath path = "CharValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -207,7 +207,7 @@ public class GeneratedAccessorTests
         {
             StringValue = "1001",
         };
-        VariablePath path = VariableParser.Parse("StringValue");
+        VariablePath path = "StringValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -228,7 +228,7 @@ public class GeneratedAccessorTests
         {
             StringValue = null!,
         };
-        VariablePath path = VariableParser.Parse("StringValue");
+        VariablePath path = "StringValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -247,7 +247,7 @@ public class GeneratedAccessorTests
         {
             DoubleValue = 1.2,
         };
-        VariablePath path = VariableParser.Parse("DoubleValue");
+        VariablePath path = "DoubleValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -268,7 +268,7 @@ public class GeneratedAccessorTests
         {
             LongValue = 13,
         };
-        VariablePath path = VariableParser.Parse("LongValue");
+        VariablePath path = "LongValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -289,7 +289,7 @@ public class GeneratedAccessorTests
         {
             FloatValue = float.Epsilon,
         };
-        VariablePath path = VariableParser.Parse("FloatValue");
+        VariablePath path = "FloatValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -310,7 +310,7 @@ public class GeneratedAccessorTests
         {
             DecimalValue = decimal.MinusOne,
         };
-        VariablePath path = VariableParser.Parse("DecimalValue");
+        VariablePath path = "DecimalValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -332,7 +332,7 @@ public class GeneratedAccessorTests
         {
             FloatValue = float.NaN,
         };
-        VariablePath path = VariableParser.Parse("FloatValue");
+        VariablePath path = "FloatValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -354,7 +354,7 @@ public class GeneratedAccessorTests
         {
             DoubleValue = double.NaN,
         };
-        VariablePath path = VariableParser.Parse("DoubleValue");
+        VariablePath path = "DoubleValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -376,7 +376,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel");
+        VariablePath path = "SubModel".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -401,7 +401,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DateTimeValue");
+        VariablePath path = "SubModel.DateTimeValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -426,7 +426,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.MissingValue");
+        VariablePath path = "SubModel.MissingValue".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -451,7 +451,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.StringCollection");
+        VariablePath path = "SubModel.StringCollection".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -476,7 +476,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.StringCollection[0]");
+        VariablePath path = "SubModel.StringCollection[0]".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -501,7 +501,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.StringCollection[1]");
+        VariablePath path = "SubModel.StringCollection[1]".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -525,7 +525,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.StringCollection");
+        VariablePath path = "SubModel.StringCollection".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -555,7 +555,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection");
+        VariablePath path = "SubModel.DictionaryCollection".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -584,7 +584,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection.test");
+        VariablePath path = "SubModel.DictionaryCollection.test".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -613,7 +613,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection.TEST");
+        VariablePath path = "SubModel.DictionaryCollection.TEST".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -637,7 +637,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryCollection");
+        VariablePath path = "SubModel.DictionaryCollection".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -670,7 +670,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection");
+        VariablePath path = "SubModel.DictionaryImplicitKeyCollection".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -699,7 +699,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection.test");
+        VariablePath path = "SubModel.DictionaryImplicitKeyCollection.test".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -727,7 +727,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection.other");
+        VariablePath path = "SubModel.DictionaryImplicitKeyCollection.other".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
@@ -751,7 +751,7 @@ public class GeneratedAccessorTests
         {
             SubModel = sub,
         };
-        VariablePath path = VariableParser.Parse("SubModel.DictionaryImplicitKeyCollection");
+        VariablePath path = "SubModel.DictionaryImplicitKeyCollection".ParseVariablePath();
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(model))
         {
