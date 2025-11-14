@@ -30,7 +30,7 @@ public class JsonEvaluatorTests
     {
         IJsonEvaluator eval = ServiceProvider.GetRequiredService<IJsonEvaluator>();
         JsonObject json = [];
-        VariablePath path = VariableParser.Parse(".");
+        VariablePath path = ".".ParseVariablePath();
         Assert.IsType<ThisSegment>(Assert.Single(path.Segments));
         IExpressionNode expression = new IdentifierExpressionNode(path);
         using (DataContext.Push(json))
@@ -81,7 +81,7 @@ public class JsonEvaluatorTests
         {
             ["prop"] = "test"
         };
-        IExpressionNode expression = new IdentifierExpressionNode(VariableParser.Parse("prop"));
+        IExpressionNode expression = new IdentifierExpressionNode("prop".ParseVariablePath());
         using (DataContext.Push(json))
         {
             object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
@@ -100,7 +100,7 @@ public class JsonEvaluatorTests
         {
             ["prop"] = new JsonArray { "test", "test2" }
         };
-        IExpressionNode expression = new IdentifierExpressionNode(VariableParser.Parse("prop[1]"));
+        IExpressionNode expression = new IdentifierExpressionNode("prop[1]".ParseVariablePath());
         using (DataContext.Push(json))
         {
             object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);
@@ -121,7 +121,7 @@ public class JsonEvaluatorTests
                 ["inner"] = "inner test"
             }
         };
-        IExpressionNode expression = new IdentifierExpressionNode(VariableParser.Parse("prop.inner"));
+        IExpressionNode expression = new IdentifierExpressionNode("prop.inner".ParseVariablePath());
         using (DataContext.Push(json))
         {
             object? rawValue = eval.Resolve(expression, DataContext.Current, out IDataFacade facade);

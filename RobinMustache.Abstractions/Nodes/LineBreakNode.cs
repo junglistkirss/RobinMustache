@@ -2,18 +2,13 @@ using System.Runtime.CompilerServices;
 
 namespace RobinMustache.Abstractions.Nodes;
 
-public sealed class LineBreakNode : INode
+public sealed class LineBreakNode(string content) : INode
 {
-
     public readonly static LineBreakNode InstanceReturn = new("\r");
     public readonly static LineBreakNode InstanceLine= new("\n");
     public readonly static LineBreakNode Instance = new("\r\n");
-    private LineBreakNode(string content)
-    {
-        Content = content;
-    }
 
-    public string Content { get; }
+    public string Content { get; } = content;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TOut Accept<TOut, TArgs>(INodeVisitor<TOut, TArgs> visitor, TArgs args)

@@ -135,7 +135,7 @@ public static class ExpressionParser
             }
 
             // Sinon, c'est une variable
-            VariablePath chainPath = name.Parse();
+            VariablePath chainPath = name.ParseVariablePath();
             return new IdentifierExpressionNode(chainPath);
         }
 
