@@ -55,12 +55,22 @@ internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : IN
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         bool thruly = facade.IsTrue(value);
         bool shouldRenderTree = (!node.Inverted && thruly) || (node.Inverted && !thruly);
-        if (shouldRenderTree)
+        if (shouldRenderTree && facade.IsCollection(value, out IIterator? iterator) && iterator is not null)
         {
-            RenderTree(context, value, facade, node.Children.AsSpan());
+            iterator.Iterate(value, context, node.Children.AsSpan(), node.TrailingBreak, this);
         }
-        if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || (!node.Inverted && shouldRenderTree)))
-            VisitLineBreak(node.TrailingBreak, context);
+        else if (shouldRenderTree)
+        {
+            using (DataContext.Push(value))
+            {
+                foreach (INode child in node.Children.AsSpan())
+                {
+                    child.Accept(this, context);
+                }
+            }
+            if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || (!node.Inverted && shouldRenderTree)))
+                VisitLineBreak(node.TrailingBreak, context);
+        }
     }
 
     public void VisitPartialCall(PartialCallNode node, RenderContext<StringBuilder> context)
@@ -78,26 +88,18 @@ internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : IN
                     ReadOnlyDictionary<string, ImmutableArray<INode>> tempPartials = new(span.ExtractsPartials(context.Partials));
                     using (new PartialsScope<StringBuilder>(context, tempPartials))
                     {
-                        RenderTree(context, value, facade, span);
+                        using (DataContext.Push(value))
+                        {
+                            foreach (INode child in span)
+                            {
+                                child.Accept(this, context);
+                            }
+                        }
                     }
                     return;
                 }
             }
         }
-    }
-
-    private void RenderTree(RenderContext<StringBuilder> context, object? value, IDataFacade facade, ReadOnlySpan<INode> partialTemplate)
-    {
-        if (facade.IsCollection(value, out IIterator? iterator) && iterator is not null)
-            iterator.Iterate(value, context, partialTemplate, this);
-        else
-            using (DataContext.Push(value))
-            {
-                foreach (INode node in partialTemplate)
-                {
-                    node.Accept(this, context);
-                }
-            }
     }
 
     public void VisitLineBreak(LineBreakNode node, RenderContext<StringBuilder> context)

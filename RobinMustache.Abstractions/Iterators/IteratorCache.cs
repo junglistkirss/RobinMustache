@@ -102,9 +102,9 @@ public static class IteratorCache
 
     private class NoneIterator : IIterator
     {
-        public void Iterate(object? iterable, Action<object?> action) { }
+        public void Iterate(object? _, Action<object?> action) { }
 
-        public void Iterate<T>(object? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INodeVisitor<RenderContext<T>> visitor) where T : class
+        public void Iterate<T>(object? _, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INode? trailing, INodeVisitor<RenderContext<T>> visitor) where T : class
         { }
     }
 }

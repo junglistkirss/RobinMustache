@@ -15,10 +15,13 @@ internal sealed class IEnumeratorIterator : BaseIterator
                 action(enumerator.Current);
     }
 
-    public override void Iterate<T>(object? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INodeVisitor<RenderContext<T>> visitor) where T : class
+    public override void Iterate<T>(object? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INode? trailing, INodeVisitor<RenderContext<T>> visitor) where T : class
     {
         if (iterable is IEnumerator enumerator)
             while (enumerator.MoveNext())
+            {
                 ProcessItem(enumerator.Current, context, partialTemplate, visitor);
+                trailing?.Accept(visitor, context);
+            }
     }
 }

@@ -53,9 +53,8 @@ public class StaticRenderTests
     }
 
     [Fact]
-    public void Test_Render_StandaloneTagRemovalInvertedFalsy()
+    public void Test_Render_StandaloneTagRemovalFalsy()
     {
-        // TestSample sample = new() { Name = "Alice", Age = 30 };
         ImmutableArray<INode> template = "Hello\r\n{{#.}}\r\nDetails:\r\n  - Name: {{&Name}}\r\n  - Age: {{&Age}}\r\n{{/.}}\r\nBye".AsSpan().Parse();
         string result = StringRenderer.Render(template, null);
         Assert.Equal("Hello\r\nBye", result);
@@ -70,11 +69,44 @@ public class StaticRenderTests
     }
 
     [Fact]
-    public void Test_Render_StandaloneTagRemovalSectionFalsy()
+    public void Test_Render_StandaloneTagRemovalSectionIvertedFalsy()
     {
-        // TestSample sample = new() { Name = "Alice", Age = 30 };
         ImmutableArray<INode> template = "Hello\r\n{{^.}}\r\nDetails:\r\n  - Name: {{&Name}}\r\n  - Age: {{&Age}}\r\n{{/.}}\r\nBye".AsSpan().Parse();
         string result = StringRenderer.Render(template, null);
         Assert.Equal("Hello\r\nDetails:\r\n  - Name: \r\n  - Age: \r\nBye", result);
+    }
+
+
+    [Fact]
+    public void Test_RenderCollection_StandaloneTagRemovalInverted()
+    {
+        string[] samples = ["Bob", "Alice"];
+        ImmutableArray<INode> template = "Hello\r\n{{^.}}\r\n  - Name: {{&.}}\r\n{{/.}}\r\nBye".AsSpan().Parse();
+        string result = StringRenderer.Render(template, samples);
+        Assert.Equal("Hello\r\nBye", result);
+    }
+
+    [Fact]
+    public void Test_RenderCollection_StandaloneTagRemovalFalsy()
+    {
+        ImmutableArray<INode> template = "Hello\r\n{{#.}}\r\n  - Name: {{&.}}\r\n{{/.}}\r\nBye".AsSpan().Parse();
+        string result = StringRenderer.Render(template, null);
+        Assert.Equal("Hello\r\nBye", result);
+    }
+    [Fact]
+    public void Test_RenderCollection_StandaloneTagRemovalSection()
+    {
+        string[] samples = ["Bob", "Alice"];
+        ImmutableArray<INode> template = "Hello\r\n{{#.}}\r\n  - Name: {{&.}}\r\n{{/.}}\r\nBye".AsSpan().Parse();
+        string result = StringRenderer.Render(template, samples);
+        Assert.Equal("Hello\r\n  - Name: Bob\r\n  - Name: Alice\r\nBye", result);
+    }
+
+    [Fact]
+    public void Test_RenderCollection_StandaloneTagRemovalSectionIvertedFalsy()
+    {
+        ImmutableArray<INode> template = "Hello\r\n{{^.}}\r\n  - Name: {{&.}}\r\n{{/.}}\r\nBye".AsSpan().Parse();
+        string result = StringRenderer.Render(template, null);
+        Assert.Equal("Hello\r\n  - Name: \r\nBye", result);
     }
 }
