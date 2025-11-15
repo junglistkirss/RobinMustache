@@ -26,9 +26,9 @@ public abstract class BaseIterator : IIterator
                 action(item);
         }
     }
-    public abstract void Iterate<T>(object? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INodeVisitor<RenderContext<T>> visitor) where T : class;
+    public abstract void Iterate<T>(object? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INode? trailing, INodeVisitor<RenderContext<T>> visitor) where T : class;
 
-    protected static void ProcessIterable<T, TIterable, TItem>(TIterable? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INodeVisitor<RenderContext<T>> visitor)
+    protected static void ProcessIterable<T, TIterable, TItem>(TIterable? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INode? trailing, INodeVisitor<RenderContext<T>> visitor)
         where T : class
         where TIterable : IEnumerable<TItem>
     {
@@ -36,13 +36,14 @@ public abstract class BaseIterator : IIterator
         {
             foreach (TItem item in arr)
             {
-                if (item is not null)
-                    ProcessItem(item, context, partialTemplate, visitor);
+                //if (item is not null)
+                ProcessItem(item, context, partialTemplate, visitor);
+                trailing?.Accept(visitor, context);
             }
         }
     }
 
-    protected static void ProcessEnumerable<T, TIterable>(TIterable? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INodeVisitor<RenderContext<T>> visitor)
+    protected static void ProcessEnumerable<T, TIterable>(TIterable? iterable, RenderContext<T> context, ReadOnlySpan<INode> partialTemplate, INode? trailing, INodeVisitor<RenderContext<T>> visitor)
        where T : class
        where TIterable : IEnumerable
     {
@@ -50,8 +51,9 @@ public abstract class BaseIterator : IIterator
         {
             foreach (object? item in arr)
             {
-                if (item is not null)
-                    ProcessItem(item, context, partialTemplate, visitor);
+                //if (item is not null)
+                ProcessItem(item, context, partialTemplate, visitor);
+                trailing?.Accept(visitor, context);
             }
         }
     }

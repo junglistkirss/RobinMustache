@@ -55,27 +55,21 @@ internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : IN
         object? value = context.Evaluator.Resolve(node.Expression, DataContext.Current, out IDataFacade facade);
         bool thruly = facade.IsTrue(value);
         bool shouldRenderTree = (!node.Inverted && thruly) || (node.Inverted && !thruly);
-        if (shouldRenderTree)
+        if (shouldRenderTree && facade.IsCollection(value, out IIterator? iterator) && iterator is not null)
         {
-            if (facade.IsCollection(value, out IIterator? iterator) && iterator is not null)
+            iterator.Iterate(value, context, node.Children.AsSpan(), node.TrailingBreak, this);
+        }
+        else if (shouldRenderTree)
+        {
+            using (DataContext.Push(value))
             {
-                if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || (!node.Inverted && shouldRenderTree)))
-                    iterator.Iterate(value, context, [.. node.Children.AsSpan(), node.TrailingBreak], this);
-                else
-                    iterator.Iterate(value, context, node.Children.AsSpan(), this);
-            }
-            else
-            {
-                using (DataContext.Push(value))
+                foreach (INode child in node.Children.AsSpan())
                 {
-                    foreach (INode child in node.Children.AsSpan())
-                    {
-                        child.Accept(this, context);
-                    }
+                    child.Accept(this, context);
                 }
-                if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || (!node.Inverted && shouldRenderTree)))
-                    VisitLineBreak(node.TrailingBreak, context);
             }
+            if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || (!node.Inverted && shouldRenderTree)))
+                VisitLineBreak(node.TrailingBreak, context);
         }
     }
 
