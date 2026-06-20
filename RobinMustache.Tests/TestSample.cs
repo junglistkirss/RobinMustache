@@ -8,5 +8,7 @@ internal record TestSample
 internal record ParentTestSample
 {
     public string? Alias { get; set; }
+    public string? Alias2 { get; set; }
+    public int Age { get; set; }
     public TestSample? Nested { get; set; }
 }

@@ -34,7 +34,9 @@ public sealed class DataContext
 
     public static IDisposable Push(object? data)
     {
-        var parent = _current.Value;
+        if (data is null)
+            return new Keep();
+        DataContext? parent = _current.Value;
         var child = GetFromPool(data, parent);
         _current.Value = child;
         return new Popper(parent, child);
@@ -44,6 +46,12 @@ public sealed class DataContext
         if (_pool.Count < MaxPoolSize)
             _pool.Add(ctx);
         // sinon on laisse l'objet à GC
+    }
+    private sealed class Keep : IDisposable
+    {
+        public void Dispose()
+        {
+        }
     }
     private sealed class Popper : IDisposable
     {

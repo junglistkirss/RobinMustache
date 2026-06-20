@@ -19,7 +19,7 @@ public class InvertedTests : BaseMustacheTests
     [Theory]
 
     [MemberData(nameof(GetTestsSpec1_4_3))]
-    public void Should_Add_Correctly(MustacheTestCase @case)
+    public void InvertedSpecs(MustacheTestCase @case)
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
         var tokens = Tokenizer.Tokenize(@case.Template.AsSpan());

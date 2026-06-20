@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Robin.Tests/bin/Debug/net9.0/Robin.Tests.dll",
+            "program": "${workspaceFolder}/Robin.Tests/bin/Debug/net10.0/Robin.Tests.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Robin.Tests",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

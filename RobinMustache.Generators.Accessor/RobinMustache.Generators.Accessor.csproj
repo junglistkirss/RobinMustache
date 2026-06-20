@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <PackageId>RobinMustache.Generators.Accessor</PackageId>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>Christian Bourbier</Authors>
     <Company>Christian Bourbier</Company>
     <PackageDescription>RobinMustache Generators - Accessor</PackageDescription>
@@ -29,8 +29,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.3.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

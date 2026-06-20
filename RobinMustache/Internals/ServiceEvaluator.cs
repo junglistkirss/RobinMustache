@@ -7,38 +7,42 @@ namespace RobinMustache.Internals;
 
 internal sealed class ServiceEvaluator(IExpressionNodeVisitor<DataContext> visitor, IEnumerable<IDataFacadeResolver> facadeResolver) : IEvaluator
 {
-    public object? Resolve(IExpressionNode expression, DataContext? data, out IDataFacade facade)
+
+    private bool TryResolve(IExpressionNode expression, DataContext data, out object? value, out IDataFacade facade)
     {
-        if (data is not null)
+        try
         {
-            if (expression.Accept(visitor, data, out object? value))
+            if (expression.Accept(visitor, data, out value))
             {
                 foreach (IDataFacadeResolver resolver in facadeResolver)
                 {
                     if (resolver.ResolveDataFacade(value, out IDataFacade? resolvedFacade) && resolvedFacade is not null)
                     {
                         facade = resolvedFacade;
-                        return value;
+                        return true;
                     }
                 }
                 facade = value.GetPrimitiveFacade();
+                return true;
+            }
+        }
+        catch (Exception) { }
+        facade = DataFacade.Null;
+        value = null;
+        return false;
+    }
+
+    public object? Resolve(IExpressionNode expression, DataContext? data, out IDataFacade facade)
+    {
+        if (data is not null)
+        {
+            if (TryResolve(expression, data, out object? value, out facade))
+            {
                 return value;
             }
-            else if (data.Parent is not null)
+            else if (data.Parent is not null && TryResolve(expression, data.Parent, out object? parentValue, out facade))
             {
-                if (expression.Accept(visitor, data.Parent, out object? parentValue))
-                {
-                    foreach (IDataFacadeResolver resolver in facadeResolver)
-                    {
-                        if (resolver.ResolveDataFacade(parentValue, out IDataFacade? resolvedFacade) && resolvedFacade is not null)
-                        {
-                            facade = resolvedFacade;
-                            return parentValue;
-                        }
-                    }
-                    facade = parentValue.GetPrimitiveFacade();
-                    return parentValue;
-                }
+                return parentValue;
             }
         }
         facade = DataFacade.Null;

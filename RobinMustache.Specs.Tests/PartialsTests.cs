@@ -41,7 +41,7 @@ public class PartialsTests : BaseMustacheTests
 
     [Theory]
     [MemberData(nameof(GetTestsSpec1_4_3))]
-    public void Should_Add_Correctly_InlineTemplate(MustacheTestCase @case)
+    public void PartialsSpecs(MustacheTestCase @case)
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
         StringBuilder templateInline = new();
