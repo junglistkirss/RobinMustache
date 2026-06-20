@@ -45,7 +45,9 @@ public class RenderTests
             {
                 value = member.ToLowerInvariant() switch
                 {
+                    "age" => (Func<ParentTestSample, int>)(x => x.Age),
                     "alias" => (Func<ParentTestSample, string?>)(x => x.Alias),
+                    "alias2" => (Func<ParentTestSample, string?>)(x => x.Alias2),
                     "nested" => (Func<ParentTestSample, TestSample?>)(x => x.Nested),
                     _ => throw new InvalidDataException($"Member does not exists : {member}"),
                 };
@@ -145,7 +147,7 @@ public class RenderTests
     }
 
     [Fact]
-    public void ParentTest_Render_NextedFunction()
+    public void ParentTest_Render_NestedFunction()
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
 
@@ -155,13 +157,24 @@ public class RenderTests
     }
 
     [Fact]
-    public void ParentTest_Render_NextedFunctionArg()
+    public void ParentTest_Render_NestedFunctionArg()
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
 
         ImmutableArray<INode> template = "{{{lowercase(trim(. 'c'))}}}".AsSpan().Parse();
         string result = renderer.Render(template, "TESTccc");
         Assert.Equal("test", result);
+    }
+
+    [Fact]
+    public void ParentTest_Render_NestedInverted()
+    {
+        IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
+
+        ImmutableArray<INode> template = "{{#.}}{{^Alias}}{{&Age}}{{# nested }}{{Name}}{{&Alias2}}{{Age}}{{/ nested }}{{/Alias}}{{/.}}".AsSpan().Parse();
+        ParentTestSample data = new ParentTestSample { Alias = null, Alias2 = "op", Age = 999, Nested = new TestSample { Name = "N", Age = 1 } };
+        string result = renderer.Render(template, data);
+        Assert.Equal("999Nop1", result);
     }
 
     private class TestCollection<T>(IEnumerable<T> items) : IEnumerable<T>
