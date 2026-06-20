@@ -11,24 +11,24 @@ namespace RobinMustache.Specs.Tests;
 public class PartialsTests : BaseMustacheTests
 {
     private readonly static string[] Skipped = [ 
-        "Standalone Without Newline", // Spec seems to include an extra double space
-        /*
-        Expected: ">\n  >\n  >"
-        Actual:   ">\n  >\n>"
-                           ↑ (pos 6)
-        */
-        "Standalone Without Previous Line", // Spec seems to include an extra double space
-        /*
-        Expected: "  >\n  >>"
-        Actual:   "  >\n>\n>"
-                        ↑ (pos 4)
-        */
-        "Standalone Indentation" // Spec seems to include an extra space
-        /*
-        Expected: "\\\n |\n <\n->\n |\n/\n"
-        Actual:   "\\\n |\n<\n->\n|\n/\n"
-                           ↑ (pos 5)
-        */
+        // "Standalone Without Newline", // Spec seems to include an extra double space
+        // /*
+        // Expected: ">\n  >\n  >"
+        // Actual:   ">\n  >\n>"
+        //                    ↑ (pos 6)
+        // */
+        // "Standalone Without Previous Line", // Spec seems to include an extra double space
+        // /*
+        // Expected: "  >\n  >>"
+        // Actual:   "  >\n>\n>"
+        //                 ↑ (pos 4)
+        // */
+        // "Standalone Indentation" // Spec seems to include an extra space
+        // /*
+        // Expected: "\\\n |\n <\n->\n |\n/\n"
+        // Actual:   "\\\n |\n<\n->\n|\n/\n"
+        //                    ↑ (pos 5)
+        // */
     ];
 
     public static TheoryData<MustacheTestCase> GetTestsSpec1_4_3()
@@ -41,7 +41,7 @@ public class PartialsTests : BaseMustacheTests
 
     [Theory]
     [MemberData(nameof(GetTestsSpec1_4_3))]
-    public void Should_Add_Correctly_InlineTemplate(MustacheTestCase @case)
+    public void PartialsSpecs(MustacheTestCase @case)
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
         StringBuilder templateInline = new();

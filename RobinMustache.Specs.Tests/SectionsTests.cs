@@ -19,7 +19,7 @@ public class SectionsTests : BaseMustacheTests
     [Theory]
 
     [MemberData(nameof(GetTestsSpec1_4_3))]
-    public void Should_Add_Correctly(MustacheTestCase @case)
+    public void SectionsSpecs(MustacheTestCase @case)
     {
         IStringRenderer renderer = ServiceProvider.GetRequiredService<IStringRenderer>();
         ImmutableArray<INode> template = @case.Template.AsSpan().Parse();
