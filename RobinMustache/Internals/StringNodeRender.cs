@@ -82,7 +82,7 @@ internal sealed class StringNodeRender(IEnumerable<IPartialLoader> loaders) : IN
                     }
                 }
 
-                if (node.TrailingBreak is not null && ((node.Inverted && shouldRenderTree) || (!node.Inverted && shouldRenderTree)))
+                if (node.TrailingBreak is not null)
                     VisitLineBreak(node.TrailingBreak, context);
             }
         }
