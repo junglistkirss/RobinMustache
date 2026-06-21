@@ -10,7 +10,7 @@
 
   <PropertyGroup>
     <PackageId>RobinMustache.Abstractions</PackageId>
-    <Version>0.0.6</Version>
+    <Version>0.0.7</Version>
     <Authors>Christian Bourbier</Authors>
     <Company>Christian Bourbier</Company>
     <PackageDescription>RobinMustache Abstractions</PackageDescription>
